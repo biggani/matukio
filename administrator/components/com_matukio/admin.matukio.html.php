@@ -343,7 +343,15 @@ class HTML_matukio
                 }
                 // 3. now we can assign the values
                 foreach ($bookingfields as $field) {
-                  $temp[] = ''. $values[$field->id];
+                  $l = $field->label; 
+                  if ($l == 'COM_MATUKIO_FIELDS_FIRST_NAME' ||
+                      $l == 'COM_MATUKIO_FIELDS_COMPANY'    ||
+                      $l == 'COM_MATUKIO_FIELDS_SURNAME'
+                  ){
+                    $temp[] = '<a href="'. $link . '">' . $values[$field->id] . '</a>';
+                  }else{
+                    $temp[] = ''. $values[$field->id];
+                  }
                 }
                 // -------------------------------- END dirty hack --------------------------------------
 
