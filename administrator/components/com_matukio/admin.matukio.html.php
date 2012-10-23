@@ -96,10 +96,10 @@ class HTML_matukio
                 }
                 $temp1 = "<input type=\"checkbox\" id=\"cb" . $i . "\" name=\"cid[]\" value=\"" . $row->id . "\" onclick=\"isChecked(this.checked);\" />";
                 $temp2 = "<a href=\"index.php?tmpl=component&option=com_matukio\" onclick=\"return listItemTask('cb" . $i . "','12')\">";
-                if (strlen($row->title) < 30) {
+                if (strlen($row->title) < 70) {
                     $temp2 .= $row->title;
                 } else {
-                    $temp2 .= substr($row->title, 0, 27) . "...";
+                    $temp2 .= substr($row->title, 0, 67) . "...";
                 }
                 $temp2 .= "</a>";
                 if (strlen($row->category) < 25) {
