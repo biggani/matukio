@@ -95,11 +95,12 @@ class MatukioControllerBookings extends JController
         $database = &JFactory::getDBO();
         $art = 4; // Backend
 
-        $event_id = JRequest::getVar('event_id', 0);
-        $uid = JRequest::getInt('uid', 0);
-        $uuid = JRequest::getInt('uuid', 0);
-        $nrbooked = JRequest::getInt('nrbooked', 0);
-        $userid = JRequest::getInt('userid', 0);;
+        $event_id         = JRequest::getVar('event_id',          0);
+        $uid              = JRequest::getInt('uid',               0);
+        $uuid             = JRequest::getInt('uuid',              0);
+        $nrbooked         = JRequest::getInt('nrbooked',          0);
+        $userid           = JRequest::getInt('userid',            0);
+        $sendConfirmation = JRequest::getInt('send_confirmation', 0);
 
         $payment_method = JRequest::getVar('payment', '');
 
@@ -196,6 +197,8 @@ class MatukioControllerBookings extends JController
         $neu->bookingdate = MatukioHelperUtilsDate::getCurrentDate();
         $neu->name = MatukioHelperUtilsBasic::cleanHTMLfromText($firstname . " " . $lastname);
         $neu->email = MatukioHelperUtilsBasic::cleanHTMLfromText($neu->email);
+
+        // omg!
         $neu->zusatz1 = MatukioHelperUtilsBasic::cleanHTMLfromText($neu->zusatz1);
         $neu->zusatz2 = MatukioHelperUtilsBasic::cleanHTMLfromText($neu->zusatz2);
         $neu->zusatz3 = MatukioHelperUtilsBasic::cleanHTMLfromText($neu->zusatz3);
@@ -254,8 +257,9 @@ class MatukioControllerBookings extends JController
         }
 
         if ($art == 4) {
-            // Send new confirmation mail
+          if ($sendConfirmation == 1) {
             MatukioHelperUtilsEvents::sendBookingConfirmationMail($event_id, $neu->id, 11);
+          }
 
         } else {
             MatukioHelperUtilsEvents::sendBookingConfirmationMail($event_id, $neu->id, 1);

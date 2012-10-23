@@ -37,6 +37,7 @@ JHTML::_('behavior.tooltip');
             </td>
         </tr>
         <?php
+        // ------------------------ Old booking form ---------------------//
         if (MatukioHelperSettings::getSettings('oldbookingform', 0) == 1) {
             // TODO
             ?>
@@ -58,14 +59,13 @@ JHTML::_('behavior.tooltip');
             </tr>
             <?php
         } else {
-            // New booking form..
+            // ------------------------ New booking form ---------------------//
 
             $fields = MatukioHelperUtilsBooking::getBookingFields();
             $fieldvals = explode(";", $this->booking->newfields);
             $event = JTable::getInstance('matukio', 'Table');
             $event->load($this->booking->semid);
             // 1::mr;14::;2::;3::Yves;4::Hoppe;5::;6::Libellenstraße;7::80939;8::München;9::;10::hoppe@asklepiad.de;11::;12::;13::;
-
             $value = array();
             foreach ($fieldvals as $val) {
                 $tmp = explode("::", $val);
@@ -108,6 +108,11 @@ JHTML::_('behavior.tooltip');
                     <?php
                 }
             }
+
+            echo '<tr>' .
+              '<td class="key" width="150px">' . JText::_('COM_MATUKIO_FIELD_CONFIRMATION_MAIL') . '</td>' .
+              '<td><input type="checkbox" name="send_confirmation" value=0 /></td>' .
+              '</tr>';
         }
         ?>
     </table>
