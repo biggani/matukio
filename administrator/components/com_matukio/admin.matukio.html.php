@@ -252,7 +252,34 @@ class HTML_matukio
 
         $html .= "\n<table class=\"adminlist\"><thead>";
         $temp3 = "<input type=\"checkbox\" name=\"toggle\" value=\"\" onclick=\"checkAll(" . count($rows) . ");\" />";
-        $temp = array($temp3, JTEXT::_('COM_MATUKIO_NAME'), JTEXT::_('COM_MATUKIO_EMAIL'), JTEXT::_('COM_MATUKIO_DATE_OF_BOOKING'), JTEXT::_('COM_MATUKIO_BOOKED_PLACES'));
+
+        // -------------------------- BEGIN dirty hack -------------------------------------
+        //
+        // 1. We don't need the name and eMail as separate header, so we remove
+        //
+        //     JTEXT::_('COM_MATUKIO_NAME')
+        //
+        // and
+        //
+        //     'JTEXT::_('COM_MATUKIO_EMAIL')
+        //
+        // from the array
+        $temp = array($temp3, JTEXT::_('COM_MATUKIO_DATE_OF_BOOKING'), JTEXT::_('COM_MATUKIO_BOOKED_PLACES'));
+
+        // 2. We need our booking fields
+        $bookingfields  = MatukioHelperUtilsBooking::getBookingFields();
+
+        // 3. Then we generate the headers
+        $bookingHeaders = array();
+        foreach ($bookingfields as $field) {
+          $bookingHeaders[] = JTEXT::_($field->label);
+	      }
+
+	      // 4. now we can merge it
+        $temp = array_merge($temp, $bookingHeaders);
+
+        // -------------------------- END dirty hack -------------------------------------
+
         if ($kurs->fees > 0) {
             $temp[] = JTEXT::_('COM_MATUKIO_PAID');
         }
@@ -290,12 +317,36 @@ class HTML_matukio
 
                 $link = "index.php?option=com_matukio&controller=bookings&task=editBooking&booking_id=" . $row->sid;
 
-                $temp[] = '<a href="'. $link . '">' . $row->name . '</a>';
+                // -------------------------- BEGIN dirty hack -------------------------------------
+                // We don't need the name and email address as separate entries.
+                //
+                // $temp[] = '<a href="'. $link . '">' . $row->name . '</a>';
+                // $temp[] = "<a href=\"mailto:" . $row->email . "\">" . $row->email . "</a>";
+                //
+                // -------------------------- END dirty hack -------------------------------------
 
-                $temp[] = "<a href=\"mailto:" . $row->email . "\">" . $row->email . "</a>";
                 $temp[] = JHTML::_('date', $row->bookingdate, MatukioHelperSettings::getSettings('date_format_without_time', 'd-m-Y')) .
                     ", " . JHTML::_('date', $row->bookingdate, MatukioHelperSettings::getSettings('time_format', 'H:i'));
                 $temp[] = $row->nrbooked;
+
+                // -------------------------------- BEGIN dirty hack -------------------------------------
+                // 1. we need the values from `newfields`
+                $newfields = explode(";", $row->newfields);
+                $values = array();
+
+                // 2. we have to separate the ID from the value
+                foreach ($newfields as $val){
+                  $tmp = explode("::", $val);
+                  if(count($tmp) > 1){
+                    $values[$tmp[0]]=$tmp[1];
+                  }
+                }
+                // 3. now we can assign the values
+                foreach ($bookingfields as $field) {
+                  $temp[] = ''. $values[$field->id];
+                }
+                // -------------------------------- END dirty hack --------------------------------------
+
                 $tempa = array("c", "", "", "c", "c");
                 if ($kurs->fees > 0) {
                     $htxt = "&nbsp;";
