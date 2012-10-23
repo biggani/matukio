@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<extension type="component" version="2.5" method="upgrade">
+    <name>COM_@@COMPONENTNAMEUPPERCASE@@</name>
+    <creationDate>@@DATE@@</creationDate>
+    <author>Yves Hoppe - Compojoom.com</author>
+    <copyright>(C) 2012 Yves Hoppe - Compojoom.com</copyright>
+    <description><![CDATA[Matukio is an advanced event manager by Compojoom.com]]>
+    </description>
+    <license>http://www.gnu.org/licenses/gpl.html</license>
+
+    <authorEmail>yves@compojoom.com</authorEmail>
+    <authorUrl>https://compojoom.com</authorUrl>
+    <version>@@VERSION@@</version>
+    <scriptfile>script.php</scriptfile>
+    <install>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/install.mysql.sql</file>
+        </sql>
+    </install>
+    <files folder="components/com_@@COMPONENTNAME@@">
+        ##FRONTENDCOMPONENTPACKAGEFILES##
+    </files>
+    <languages folder="language">
+        ##FRONTENDLANGUAGEFILES##
+    </languages>
+    <administration>
+        <menu img="../media/com_matukio/backend/images/icon-16-sem_logo.png">COM_@@COMPONENTNAMEUPPERCASE@@</menu>
+        <submenu>
+            <menu task="2" img="../media/com_matukio/backend/images/icon-16-sem_event.png">EVENTS</menu>
+           <!--<menu task="1" img="../media/com_matukio/backend/images/icon-16-sem_pattern.png">TEMPLATES</menu>-->
+            <menu link="option=com_categories&amp;extension=com_matukio"
+                  img="../media/com_matukio/backend/images/icon-16-sem_category.png">CATEGORIES
+            </menu>
+            <menu img="../media/com_matukio/backend/images/icon-16-coupons.png" view="coupons">COUPONS</menu>
+            <menu img="../media/com_matukio/backend/images/icon-16-bookingfields.png" view="bookingfields">BOOKINGFIELDS</menu>
+            <menu task="3" img="../media/com_matukio/backend/images/icon-16-sem_config.png">CONFIGURATION</menu>
+            <menu task="4" img="../media/com_matukio/backend/images/icon-16-sem_statistic.png">STATISTICS</menu>
+            <menu img="../media/com_matukio/backend/images/live-update.png" view="liveupdate">LIVEUPDATE</menu>
+        </submenu>
+        <files folder="administrator/components/com_@@COMPONENTNAME@@">
+            ##ADMINCOMPONENTPACKAGEFILES##
+        </files>
+        <languages folder="administrator/language">
+            ##ADMINLANGUAGEFILES##
+        </languages>
+    </administration>
+    <media destination="com_@@COMPONENTNAME@@" folder="media/com_@@COMPONENTNAME@@">
+        ##MEDIAPACKAGEFILES##
+    </media>
+</extension>

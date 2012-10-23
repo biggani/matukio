@@ -1,0 +1,35 @@
+#mat_booking{width: 100%; clear: both;}
+#mat_heading{width: 100%; margin-bottom: 5px; padding: 10px;}
+
+#mat_h1, #mat_h2, #mat_hp1, #mat_hp2, #mat_hp3 {width: 625px; height: 124px; }
+
+#mat_h1{background: url(../images/h_step1.png) no-repeat;}
+#mat_h2{background: url(../images/h_step2.png) no-repeat; display: none;}
+
+#mat_hp1{background: url(../images/hp_step1.png) no-repeat; }
+#mat_hp2{background: url(../images/hp_step2.png) no-repeat; display: none;}
+#mat_hp3{background: url(../images/hp_step3.png) no-repeat; display: none;}
+
+#mat_intro {margin: 15px 0;}
+
+#mat_pageone{padding: 0 10px;}
+#mat_pagetwo{display: none; padding: 0 10px;}
+#mat_pagethree{display: none; padding: 0 10px;}
+
+.mat_spacer{margin: 20px 0; background-color: #f9f9f9; color: #f9f9f9; border:1px solid #f9f9f9}
+.mat_req{color: #ff5d69;}
+
+.mat_table{border: 0; padding: 10px; margin-bottom: 20px;}
+.mat_table tr, .mat_table td {border: 0;}
+.mat_table td {padding: 5px 0}
+
+#mat_control {width: 100%; text-align: right; }
+#mat_control_inner{padding: 15px 20px; margin-bottom: 20px;}
+.mat_button{padding: 5px 7px;}
+
+#btn_next{}
+#btn_back{display: none;}
+#btn_submit{display: none;}
+
+#mat_banktransfer {padding: 10px; display: none;}
+#mat_paypal {padding: 10px; display: none;}

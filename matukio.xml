@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<extension type="component" version="2.5" method="upgrade">
+    <name>COM_MATUKIO</name>
+    <creationDate>2012-10-04</creationDate>
+    <author>Yves Hoppe - Compojoom.com</author>
+    <copyright>(C) 2012 Yves Hoppe - Compojoom.com</copyright>
+    <description><![CDATA[Matukio is an advanced event manager by Compojoom.com]]>
+    </description>
+    <license>http://www.gnu.org/licenses/gpl.html</license>
+
+    <authorEmail>yves@compojoom.com</authorEmail>
+    <authorUrl>https://compojoom.com</authorUrl>
+    <version>2.1.2</version>
+    <scriptfile>script.php</scriptfile>
+    <install>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/install.mysql.sql</file>
+        </sql>
+    </install>
+    <files folder="components/com_matukio">
+        <folder>captcha</folder>
+<folder>controllers</folder>
+<file>index.html</file>
+<file>matukio.class.php</file>
+<file>matukio.code.php</file>
+<file>matukio.html.php</file>
+<file>matukio.php</file>
+<folder>models</folder>
+<file>router.php</file>
+<folder>views</folder>
+    </files>
+    <languages folder="language">
+        <language tag="de-DE">de-DE/de-DE.com_matukio.ini</language>
+<language tag="en-GB">en-GB/en-GB.com_matukio.ini</language>
+<language tag="es-ES">es-ES/es-ES.com_matukio.ini</language>
+    </languages>
+    <administration>
+        <menu img="../media/com_matukio/backend/images/icon-16-sem_logo.png">COM_MATUKIO</menu>
+        <submenu>
+            <menu task="2" img="../media/com_matukio/backend/images/icon-16-sem_event.png">EVENTS</menu>
+           <!--<menu task="1" img="../media/com_matukio/backend/images/icon-16-sem_pattern.png">TEMPLATES</menu>-->
+            <menu link="option=com_categories&amp;extension=com_matukio"
+                  img="../media/com_matukio/backend/images/icon-16-sem_category.png">CATEGORIES
+            </menu>
+            <menu img="../media/com_matukio/backend/images/icon-16-coupons.png" view="coupons">COUPONS</menu>
+            <menu img="../media/com_matukio/backend/images/icon-16-bookingfields.png" view="bookingfields">BOOKINGFIELDS</menu>
+            <menu task="3" img="../media/com_matukio/backend/images/icon-16-sem_config.png">CONFIGURATION</menu>
+            <menu task="4" img="../media/com_matukio/backend/images/icon-16-sem_statistic.png">STATISTICS</menu>
+            <menu img="../media/com_matukio/backend/images/live-update.png" view="liveupdate">LIVEUPDATE</menu>
+        </submenu>
+        <files folder="administrator/components/com_matukio">
+            <file>access.xml</file>
+<file>admin.matukio.html.php</file>
+<file>admin.matukio.php</file>
+<file>config.xml</file>
+<folder>controlcenter</folder>
+<file>controller.php</file>
+<folder>controllers</folder>
+<folder>help</folder>
+<folder>helper</folder>
+<file>index.html</file>
+<file>install.matukio.php</file>
+<folder>joomfish</folder>
+<folder>liveupdate</folder>
+<file>matukio.php</file>
+<file>matukio.xml</file>
+<folder>models</folder>
+<file>script.php</file>
+<folder>sql</folder>
+<folder>tables</folder>
+<file>toolbar.matukio.php</file>
+<file>uninstall.matukio.php</file>
+<folder>views</folder>
+        </files>
+        <languages folder="administrator/language">
+            <language tag="de-DE">de-DE/de-DE.com_matukio.ini</language>
+<language tag="de-DE">de-DE/de-DE.com_matukio.sys.ini</language>
+<language tag="en-GB">en-GB/en-GB.com_matukio.ini</language>
+<language tag="en-GB">en-GB/en-GB.com_matukio.sys.ini</language>
+<language tag="es-ES">es-ES/es-ES.com_matukio.ini</language>
+<language tag="es-ES">es-ES/es-ES.com_matukio.sys.ini</language>
+<language tag="tr-TR">tr-TR/tr-TR.com_matukio.sys.ini</language>
+        </languages>
+    </administration>
+    <media destination="com_matukio" folder="media/com_matukio">
+        <folder>backend</folder>
+<folder>ccc</folder>
+<folder>css</folder>
+<folder>images</folder>
+<file>index.html</file>
+<folder>js</folder>
+    </media>
+</extension>

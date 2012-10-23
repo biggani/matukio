@@ -1,0 +1,44 @@
+<metadata>
+    <layout title="COM_MATUKIO_UPCOMING_EVENTS">
+        <message>COM_MATUKIO_UPCOMING_EVENTS_DESC</message>
+    </layout>
+    <name>COM_MATUKIO_UPCOMING_EVENTS</name>
+    <description>COM_MATUKIO_UPCOMING_EVENTS_DESC</description>
+    <!-- joomla 1.6 -->
+    <fields name="params">
+        <fieldset name="basic">
+            <field name="catid" type="text" size="4" default="0" required="true"
+                   label="COM_MATUKIO_UPCOMING_EVENTS_CATEGORY_ID">
+            </field>
+
+            <field name="number" type="text" size="4" default="10" required="true"
+                   label="COM_MATUKIO_UPCOMING_EVENTS_COUNT">
+            </field>
+
+            <field name="title" type="text" size="50" default="COM_MATUKIO_UPCOMING_EVENTS"
+                   label="COM_MATUKIO_UPCOMING_EVENTS_TITLE">
+            </field>
+
+            <!--
+            <field name="template" type="list" default="default" required="true"
+                   label="COM_MATUKIO_EVENT_TEMPLATE">
+                <option value="default">Default</option>
+                <option value="modern">Modern</option>
+            </field>
+            -->
+
+            <!--
+            <field name="number_events" type="list" default="10" label="COM_MATUKIO_EVENTLIST_COUNT">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </field>
+            -->
+        </fieldset>
+    </fields>
+</metadata>
