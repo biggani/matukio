@@ -22,6 +22,8 @@ $neudatum = MatukioHelperUtilsDate::getCurrentDate();
 JHTML::_('behavior.modal');
 JHTML::_('behavior.tooltip');
 
+$knopfoben = "";
+
 // ---------------------------------
 // Ist Kurs noch buchbar
 // ---------------------------------
@@ -77,7 +79,8 @@ if (count($buchopt[2]) > 0) {
 // ---------------------------------
 $tempdis = " disabled";
 if ((($buchopt[0] == 3 OR ($this->art == 1 AND MatukioHelperSettings::getSettings('booking_edit', 1) == 1 AND $bezahlt == 0))
-    AND strtotime($this->event->booked) - time() >= (MatukioHelperSettings::getSettings('booking_stornotage', 1) * 24 * 60 * 60)
+    /*AND strtotime($this->event->booked) - time() >= (MatukioHelperSettings::getSettings('booking_stornotage', 1) * 24 * 60 * 60)*/
+
         AND $this->art != 2) OR $this->art == 3
 ) {
     $tempdis = "";
@@ -134,8 +137,15 @@ $gmapicon = "";
 // Knopf fuer ICS-Datei anzeigen
 if (MatukioHelperSettings::getSettings('frontend_usericsdownload', 1) > 0) {
 
-    $icslink = JRoute::_("index.php?option=com_matukio&view=ics&format=raw&cid=" . $this->event->id);
+    $config =& JFactory::getConfig();
+    $_suffix = $config->getValue( 'config.sef_suffix' );
+    if ( $_suffix == 0) { // no .html suffix
+        $icslink = JRoute::_("index.php?option=com_matukio&tmpl=component&view=ics&format=raw&cid=" . $this->event->id);
+    } else {
+        $icslink = JRoute::_("index.php?option=com_matukio&tmpl=component&view=ics&cid=" . $this->event->id) . "?format=raw";
+    }
 
+    //http://localhost/joomla25-dev/index.php?tmpl=component&option=com_matukio&view=ics&format=raw
     $knopfoben .= "<a title=\"" . JTEXT::_('COM_MATUKIO_DOWNLOAD_CALENDER_FILE') . "\" href=\"" . $icslink . "\" target=\"_BLANK\"><img src=\""
         . MatukioHelperUtilsBasic::getComponentImagePath() . "3332.png\" border=\"0\" align=\"absmiddle\"></a>";
 
@@ -235,6 +245,13 @@ if ($this->art == 3 And $usrid != 0 AND ($this->event->nrbooked > 1 OR $zfleer =
 //        . $modify . "','" . $this->event->id . "','" . $buchopt[2][0]->id . "');\"><img src=\""
 //        . MatukioHelperUtilsBasic::getComponentImagePath() . "1416.png\" border=\"0\" align=\"absmiddle\">&nbsp;"
 //        . JTEXT::_('COM_MATUKIO_SAVE_CHANGES') . "</button>";
+}
+
+if($this->art == 1 && MatukioHelperSettings::getSettings('booking_edit', 1)) {
+
+    if($buchopt[0] == 2 && $buchopt[2][0]->paid == 0) {
+        $knopfunten .= ' <input type="submit" class="mat_button" value="' . JTEXT::_('COM_MATUKIO_SAVE_CHANGES') . '">';
+    }
 }
 
 // Aenderungen speichern Benutzer falls noch nicht gezahlt
@@ -642,9 +659,11 @@ if (MatukioHelperSettings::getSettings('oldbookingform', false)) {
         // AGB-Bestaetigung anzeigen
         if (MatukioHelperSettings::getSettings('agb_text', '') != "" AND ($buchopt[0] > 1 OR $this->art == 3) AND $this->art != 2) {
             $htx1 = "<input class=\"sem_inputbox\" type=\"checkbox\" name=\"veragb\" value=\"1\"";
+
             if ($buchopt[0] == 2) {
                 $htx1 .= " checked=\"checked\"";
-                if ($this->art == 0 OR $this->art == 2 OR $this->art == 4 OR $tempdis != "") {
+                if ($this->art == 0 OR $this->art == 2 OR $this->art == 1 OR $this->art == 4 OR $tempdis != "") {
+
                     $htx1 .= " disabled";
                 }
             }
@@ -697,12 +716,29 @@ echo MatukioHelperUtilsBasic::getCopyright();
 
 // Oldbooking form
 if ($this->art != 3) {
+
+    if($this->art == 1 && MatukioHelperSettings::getSettings('booking_edit', 1)) {
+
+        if($buchopt[0] == 2 && $buchopt[2][0]->paid == 0) {
+            //var_dump($buchopt);
+
+            // Buchung bearbeiten
+        ?>
+            <input type="hidden" name="option" value="com_matukio"/>
+            <input type="hidden" name="view" value="event"/>
+            <input type="hidden" name="controller" value="event"/>
+            <input type="hidden" name="task" value="bookevent"/>
+            <input type="hidden" name="booking_id" value="<?php echo $buchopt[2][0]->id; ?>"/>
+            <?php
+        }
+    } else {
     ?>
-<input type="hidden" name="option" value="com_matukio"/>
-<input type="hidden" name="view" value="event"/>
-<input type="hidden" name="controller" value="event"/>
-<input type="hidden" name="task" value="bookevent"/>
+    <input type="hidden" name="option" value="com_matukio"/>
+    <input type="hidden" name="view" value="event"/>
+    <input type="hidden" name="controller" value="event"/>
+    <input type="hidden" name="task" value="bookevent"/>
     <?php
+    }
 } else {
 // $savechangeslink = JRoute::_("index.php?option=com_matukio&view=participants&task=changeBookingOrganizer&uid="
 //    . $row->sid . "&cid=" . $this->kurs->id);

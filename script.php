@@ -185,7 +185,13 @@ class com_matukioInstallerScript
                 $db->setQuery($query);
                 $db->query();
 
-                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.2" WHERE title = ' . $db->Quote('db_version');
+                $query = "INSERT INTO " . $db->nameQuote('#__matukio_settings') . " (`title`, `value`, `values`, `type`, `catdisp`) VALUES
+                          ('oldbooking_redirect_after', 'bookingpage', '{bookingpage=BOOKINGPAGE}{eventpage=EVENTPAGE}{eventlist=EVENTLIST}', 'select', 'advanced');";
+
+                $db->setQuery($query);
+                $db->query();
+
+                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.3" WHERE title = ' . $db->Quote('db_version');
 
                 $db->setQuery($query);
                 $db->query();
@@ -195,23 +201,52 @@ class com_matukioInstallerScript
                 $db->setQuery($query);
                 $db->query();
 
-                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.2" WHERE title = ' . $db->Quote('db_version');
+                $query = "INSERT INTO " . $db->nameQuote('#__matukio_settings') . " (`title`, `value`, `values`, `type`, `catdisp`) VALUES
+                          ('oldbooking_redirect_after', 'bookingpage', '{bookingpage=BOOKINGPAGE}{eventpage=EVENTPAGE}{eventlist=EVENTLIST}', 'select', 'advanced');";
+
+                $db->setQuery($query);
+                $db->query();
+
+                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.3" WHERE title = ' . $db->Quote('db_version');
 
                 $db->setQuery($query);
                 $db->query();
            } else if ($update->value == "2.1.0") {
-                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.2" WHERE title = ' . $db->Quote('db_version');
+                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.3" WHERE title = ' . $db->Quote('db_version');
+
+                $db->setQuery($query);
+                $db->query();
+
+                $query = "INSERT INTO " . $db->nameQuote('#__matukio_settings') . " (`title`, `value`, `values`, `type`, `catdisp`) VALUES
+                          ('oldbooking_redirect_after', 'bookingpage', '{bookingpage=BOOKINGPAGE}{eventpage=EVENTPAGE}{eventlist=EVENTLIST}', 'select', 'advanced');";
 
                 $db->setQuery($query);
                 $db->query();
            } else if ($update->value == "2.1.1") {
-                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.2" WHERE title = ' . $db->Quote('db_version');
+                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.3" WHERE title = ' . $db->Quote('db_version');
+
+                $db->setQuery($query);
+                $db->query();
+
+                $query = "INSERT INTO " . $db->nameQuote('#__matukio_settings') . " (`title`, `value`, `values`, `type`, `catdisp`) VALUES
+                          ('oldbooking_redirect_after', 'bookingpage', '{bookingpage=BOOKINGPAGE}{eventpage=EVENTPAGE}{eventlist=EVENTLIST}', 'select', 'advanced');";
 
                 $db->setQuery($query);
                 $db->query();
            } else if ($update->value == "2.1.2") {
+                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.3" WHERE title = ' . $db->Quote('db_version');
 
-           } else {
+                $db->setQuery($query);
+                $db->query();
+
+                $query = "INSERT INTO " . $db->nameQuote('#__matukio_settings') . " (`title`, `value`, `values`, `type`, `catdisp`) VALUES
+                          ('oldbooking_redirect_after', 'bookingpage', '{bookingpage=BOOKINGPAGE}{eventpage=EVENTPAGE}{eventlist=EVENTLIST}', 'select', 'advanced');";
+
+                $db->setQuery($query);
+                $db->query();
+           } else if ($update->value == "2.1.3") {
+
+            }else {
                 // Reinsert settings
                 $this->settingsContent();
            }
@@ -410,7 +445,7 @@ class com_matukioInstallerScript
         (45, 'date_format_without_time', 'd-m-y', '', 'text', 'layout'),
         (46, 'time_format', 'H:i', '', 'text', 'layout'),
         (47, 'date_format', 'l, d. F Y - h:i a', '', 'text', 'layout'),
-        (48, 'db_version', '2.1.2', '', 'text', 'hidden'),
+        (48, 'db_version', '2.1.3', '', 'text', 'hidden'),
         (49, 'oldbookingform', '0', '', 'bool', 'layout'),
         (50, 'paypal_address', '', '', 'text', 'payment'),
         (51, 'paypal_currency', 'USD', '', 'text', 'payment'),
@@ -431,7 +466,9 @@ class com_matukioInstallerScript
         (66, 'banktransfer_iban', '', '', 'text', 'payment'),
         (67, 'banktransfer_bic', '', '', 'text', 'payment'),
         (68, 'frontend_unregisteredshowlogin', '1', '', 'bool', 'layout'),
-        (69, 'social_media', '1', '', 'bool', 'layout');";
+        (69, 'social_media', '1', '', 'bool', 'layout'),
+        (70, 'oldbooking_redirect_after', 'bookingpage', '{bookingpage=BOOKINGPAGE}{eventpage=EVENTPAGE}{eventlist=EVENTLIST}', 'select', 'advanced');
+        ";
 
         $db->setQuery($query);
         $this->status->sql['#__matukio_settings'] = $db->query();
@@ -506,7 +543,7 @@ class com_matukioInstallerScript
         $html[] = "<div align=\"center\"><table border=\"0\" width=\"90%\"><tbody>";
         $html[] = "<tr><td width=\"18%\"><b>Autor:</b></td><td width=\"80%\">Compojoom.com (Daniel Dimitrov &amp; Yves Hoppe)</td></tr>";
         $html[] = "<tr><td width=\"18%\"><b>Internet:</b></td><td width=\"80%\"><a target=\"_blank\" href=\"http://compojoom.com\">http://compojoom.com</a></td></tr>";
-        $html[] = "<tr><td width=\"18%\"><b>Version:</b></td><td width=\"80%\">2.1.2</td></tr>";
+        $html[] = "<tr><td width=\"18%\"><b>Version:</b></td><td width=\"80%\">2.1.3</td></tr>";
         switch ($sprache) {
             case "de":
                 $html[] = "<tr><td colspan=\"2\">";
@@ -605,8 +642,8 @@ class com_matukioInstallerScript
     }
 
     /*
-      * get a variable from the manifest file (actually, from the manifest cache).
-      */
+     * get a variable from the manifest file (actually, from the manifest cache).
+     */
     private function getParam($name)
     {
         $db = JFactory::getDbo();

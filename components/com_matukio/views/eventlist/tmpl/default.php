@@ -162,10 +162,11 @@ if (count($navioben1) > 0 OR $navioben1[0] != "NULL") {
                 $html .= MatukioHelperUtilsEvents::getTableCell(JTEXT::_('COM_MATUKIO_KIND') . ": "
                     . $this->datelist, 'd', 'c', '', 'sem_nav');
                 break;
+
             case "SEM_RESET":
-                $html .= MatukioHelperUtilsEvents::getTableCell("<button class=\"mat_button\" style=\"cursor:pointer;\"
+                $html .= MatukioHelperUtilsEvents::getTableCell("<button class=\"button\" style=\"cursor:pointer;\"
                     type=\"button\" onclick=\"resetEventlist();\">"
-                    . JTEXT::_('COM_MATUKIO_RESET') . "</button>", 'd', 'r', '', 'sem_nav');
+                    . JTEXT::_('COM_MATUKIO_RESET') . "</button>", 'd', 'r', '', 'sem_nav');                     // Should be button and not mat_button too big
                 break;
         }
     }
@@ -480,10 +481,20 @@ foreach ($navioben1 AS $el) {
             break;
     }
 }
+
+if($this->art== 0) {
+    $html .= "<input type=\"hidden\" name=\"dateid\" id=\"dateid\" value=\"" . $this->dateid . "\">";
+} else if ($this->art == 1) {
+    $html .= "<input type=\"hidden\" name=\"catid\" id=\"catid\" value=\"" . $this->catid . "\">";
+} else if ($this->art == 2) {
+    $html .= "<input type=\"hidden\" name=\"catid\" id=\"catid\" value=\"" . $this->catid . "\">";
+}
+
 $html .= MatukioHelperUtilsEvents::getHiddenFormElements($this->art, "", "", "", $this->limitstart, 0, "", -1);
 $html .= " <input type=\"hidden\" name=\"art\" id=\"hidden_art\" value=\"" . $this->art . "\">";
 echo $html;
 
 echo MatukioHelperUtilsBasic::getCopyright();
 ?>
+</form>
 </div>

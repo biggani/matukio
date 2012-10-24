@@ -26,7 +26,7 @@ class MatukioControllerEvent extends JController
         $model = $this->getModel('Event', 'MatukioModel');
         $view->setModel($model, true);
 
-        $tmpl = MatukioHelperSettings::getSettings("event_template", "default");  // TODO change back to default
+        $tmpl = MatukioHelperSettings::getSettings("event_template", "default");
 
         $params = &JComponentHelper::getParams( 'com_matukio' );
         $menuitemid = JRequest::getInt( 'Itemid' );
@@ -54,7 +54,7 @@ class MatukioControllerEvent extends JController
     public function bookevent()
     {
         $database = &JFactory::getDBO();
-        $my = &JFactory::getuser();
+        $my = &JFactory::getUser();
         $dateid = JRequest::getInt('dateid', 1);
         $id = JRequest::getInt('cid', 0);
         $uid = JRequest::getInt('uid', 0);
@@ -65,6 +65,13 @@ class MatukioControllerEvent extends JController
         $nrbooked = JRequest::getInt('nrbooked', 0);
         $name = JRequest::getVar('name', '');
         $email = JRequest::getVar('email', '');
+
+        // Edit own booking
+        $booking_id = JRequest::getInt('booking_id', 0);
+
+        // AGBs
+
+        $veragb = JRequest::getVar('veragb', 0);
 
         $reason = "";
 
@@ -91,8 +98,16 @@ class MatukioControllerEvent extends JController
         }
 
         // Pruefung ob Buchung erfolgreich durchfuehrbar
+
+
         $database->setQuery("SELECT * FROM #__matukio_bookings WHERE semid='$id' AND userid='$sqlid'");
+
         $temp = $database->loadObjectList();
+
+        if(!empty($booking_id)) {
+            $temp = null;
+        }
+
         $gebucht = MatukioHelperUtilsEvents::calculateBookedPlaces($row);
         $gebucht = $gebucht->booked;
 
@@ -133,11 +148,13 @@ class MatukioControllerEvent extends JController
 //        echo "Pflichtfeld " . $pflichtfeld;
 //        die("asd");
 
-        if($my->id > 0)
-        {
-            $name = $my->name;
-            $email = $my->email;
-        }
+        //if(empty($booking_id)) {
+            if($my->id > 0)
+            {
+                $name = $my->name;
+                $email = $my->email;
+            }
+       // }
 
         if((empty($name) || empty($email))) {
 
@@ -164,6 +181,10 @@ class MatukioControllerEvent extends JController
             $allesok = 2;
             $ueber1 = JTEXT::_('COM_MATUKIO_ADDED_WAITLIST');
             $reason = JTEXT::_('COM_MATUKIO_YOU_ARE_BOOKED_ON_THE_WAITING_LIST');
+        } else if (MatukioHelperSettings::getSettings('agb_text', '') != "" && $veragb != "1") {
+            $allesok = 0;
+            $ueber1 = JTEXT::_('COM_MATUKIO_BOOKING_WAS_NOT_SUCCESSFULL');
+            $reason = JTEXT::_('COM_MATUKIO_AGB_NOT_ACCEPTED');
         }
         if ($art == 4) {
             $allesok = 1;
@@ -185,8 +206,16 @@ class MatukioControllerEvent extends JController
             if (!$neu->bind(JRequest::get( 'post' ))) {
                 return JError::raiseError(500, $database->stderr());
             }
+            if(!empty($booking_id)){
+                $neu->id = $booking_id;
+            }
+
             $neu->semid = $id;
             $neu->userid = $usrid;
+
+            // Hmm really do that?
+            $neu->name = $name;
+            $neu->email = $email;
 
             $neu->bookingdate = MatukioHelperUtilsDate::getCurrentDate();
             $neu->name = MatukioHelperUtilsBasic::cleanHTMLfromText($neu->name);
@@ -228,9 +257,16 @@ class MatukioControllerEvent extends JController
                 $usrid = $neu->id * -1;
             }
 
-
             //$link = JRoute::_('index.php?option=com_matukio&view=event&catid=' .$catid . '&id=' . $row->id. "&art=1&uid=" . $usrid);
-            $link = JRoute::_(MatukioHelperRoute::getEventRoute($row->id, $catid, 1, $usrid), false);
+
+            if(MatukioHelperSettings::getSettings("oldbooking_redirect_after", "bookingpage") == "bookingpage") {
+                $link = JRoute::_(MatukioHelperRoute::getEventRoute($row->id, $catid, 1, $neu->id), false);
+            } else if(MatukioHelperSettings::getSettings("oldbooking_redirect_after", "bookingpage") == "eventpage") {
+                $link = JRoute::_(MatukioHelperRoute::getEventRoute($row->id, $catid, 1, $neu->id), false);
+            } else {
+                // category overview
+                $link = JRoute::_("index.php?option=com_matukio&view=eventlist");
+            }
 
 
             if ($art == 4) {

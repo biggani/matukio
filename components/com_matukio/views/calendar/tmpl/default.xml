@@ -7,9 +7,11 @@
     <!-- joomla 1.6 -->
     <fields name="params">
         <fieldset name="basic">
-            <field name="catid" type="text" size="4" default="0" required="true"
-                   label="COM_MATUKIO_CALENDAR_CATEGORY_ID">
-            </field>
+
+            <!--<field name="catid" type="category" extension="com_matukio" size="5" default="0"-->
+                   <!--label="COM_MATUKIO_EVENTLIST_CATEGORY" multiple="multiple">-->
+                <!--<option value="0">JALL</option>-->
+            <!--</field>-->
 
             <!--<field name="number" type="text" size="4" default="100" required="true"-->
                    <!--label="COM_MATUKIO_CALENDAR_COUNT">-->

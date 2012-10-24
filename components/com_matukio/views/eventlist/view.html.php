@@ -35,6 +35,9 @@ class MatukioViewEventlist extends JView {
         $catid = JRequest::getInt('catid', 0);
         $uuid = JRequest::getVar('uuid', '');
 
+//        echo "dateid: " . $dateid;
+//        echo "<br />catid: " . $catid;
+
         if(empty($catid)){
             $catid = $params->get('startcat', 0);
         }
@@ -52,6 +55,9 @@ class MatukioViewEventlist extends JView {
         $my = JFactory::getuser();
         $neudatum = MatukioHelperUtilsDate::getCurrentDate();
         $where = array();
+
+//        echo "<br />limit: " . $limit;
+
 
         // Check if user is logged in and allowed to see it's bookings
 
@@ -107,10 +113,10 @@ class MatukioViewEventlist extends JView {
                 $navioben = explode(" ", MatukioHelperSettings::getSettings('frontend_topnavshowmodules', 'SEM_NUMBER SEM_SEARCH SEM_CATEGORIES SEM_RESET'));
                 break;
             case "1":
-                $navioben = explode(" ", MatukioHelperSettings::getSettings('frontend_topnavbookingmodules', 'SEM_NUMBER SEM_SEARCH SEM_CATEGORIES SEM_RESET'));
+                $navioben = explode(" ", MatukioHelperSettings::getSettings('frontend_topnavbookingmodules', 'SEM_NUMBER SEM_SEARCH SEM_TYPES SEM_RESET'));
                 break;
             case "2":
-                $navioben = explode(" ", MatukioHelperSettings::getSettings('frontend_topnavoffermodules', 'SEM_NUMBER SEM_SEARCH SEM_CATEGORIES SEM_RESET'));
+                $navioben = explode(" ", MatukioHelperSettings::getSettings('frontend_topnavoffermodules', 'SEM_NUMBER SEM_SEARCH SEM_TYPES SEM_RESET'));
                 break;
         }
         switch (MatukioHelperSettings::getSettings('event_stopshowing', 2)) {
@@ -118,12 +124,16 @@ class MatukioViewEventlist extends JView {
                 $showend = "a.begin";
                 break;
             case "1":
-                $showend = "a.booked";
-                break;
-            default:
                 $showend = "a.end";
                 break;
+            case "2":
+            default:
+                $showend = "a.booked";
+                break;
         }
+
+        //var_dump($navioben);
+
         if (in_array('SEM_TYPES', $navioben)) {
             switch ($dateid) {
                 case "1":
@@ -241,7 +251,7 @@ class MatukioViewEventlist extends JView {
         $allekurse[] = JHTML::_('select.option', '1', JTEXT::_('COM_MATUKIO_CURRENT_EVENTS'));
         $allekurse[] = JHTML::_('select.option', '2', JTEXT::_('COM_MATUKIO_OLD_EVENTS'));
         $datelist = JHTML::_('select.genericlist', $allekurse, "dateid", "class=\"sem_inputbox\" size=\"1\"
-                onchange=\"document.FrontForm.limitstart.value=0;document.FrontForm.submit();\"", "value", "text", $dateid);
+                onchange=\"changeStatus();\"", "value", "text", $dateid);
 
         // Kategorieliste erstellen
         $reglevel = MatukioHelperUtilsBasic::getUserLevel();

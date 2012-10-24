@@ -439,7 +439,6 @@ function sem_g007($art)
 
     // Zuweisung der Buchungszeit
     $row->booked = JFactory::getDate($_booked_date, MatukioHelperUtilsBasic::getTimeZone())->format('Y-m-d H:i:s', false, false);
-    ;
 
     // neue Daten eintragen
     $row->description = str_replace('<br>', '<br />', $row->description);

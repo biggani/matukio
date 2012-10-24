@@ -107,6 +107,18 @@ function MatukioBuildRoute(&$query)
         unset($query['limit']);
     };
 
+    if(isset($query['dateid']))
+    {
+        $segments[] = $query['dateid'];
+        unset($query['dateid']);
+    };
+
+    if(isset($query['routing']))
+    {
+        $segments[] = $query['routing'];
+        unset($query['routing']);
+    };
+
     return $segments;
 }
 
@@ -193,12 +205,27 @@ function MatukioParseRoute($segments) {
                     $vars['limit']	= $segments[3];
                 }
 
+//                echo $count;
+//                var_dump($segments);
+
                 if($count == 5) {
                     $vars['view'] = 'eventlist';
                     $vars['catid']	= $segments[1];
                     $vars['art']	= $segments[2];
                     $vars['search']	= $segments[3];
                     $vars['limit']	= $segments[4];
+                }
+
+                // v 2.1.3 dateid
+
+                // 6array(6) { [0]=> string(9) "eventlist" [1]=> string(1) "0" [2]=> string(1) "1" [3]=> string(2) "10" [4]=> string(1) "2" [5]=> string(1) "a" }
+                if($count == 6) {
+                    $vars['view'] = 'eventlist';
+                    $vars['catid']	= $segments[1];
+                    $vars['art']	= $segments[2];
+                    $vars['search']	= "";
+                    $vars['limit']	= $segments[3];
+                    $vars['dateid']	= $segments[4];
                 }
 
                 break;
@@ -218,9 +245,12 @@ function MatukioParseRoute($segments) {
 
             case 'ics' :
                 // array(3) { [0]=> string(3) "ics" [1]=> string(1) "1" [2]=> string(3) "raw" } asdf
+                // mat-eventlist/ics/4/component/raw
+                //var_dump($segments);
                 $vars['view'] = 'ics';
                 $vars['cid'] = $segments[1];
-                $vars['format'] = $segments[2];
+                $vars['tmpl'] = $segments[2];
+                $vars['format'] = $segments[3];
                 break;
 
             case 'event'   :

@@ -19,7 +19,7 @@ var mecPHPPlugin = new Class({
                 //alert("loaded");
                 that.options.cEvents = cevents;
                 that.gotEvents = true;
-                $('loading').fade('out');
+                document.id('loading').fade('out');
                 that.loadCalEvents();
             }
         }).send('startDate=' + eventRangeStart.ymd() + '&endDate=' + eventRangeEnd.ymd());
