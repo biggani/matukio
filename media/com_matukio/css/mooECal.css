@@ -32,6 +32,7 @@ thead tr{height:30px;}
 .mooECal td.selected{background-color:#EEF;} /* color for the selected day */
 .mooECal td span{color:#333; font-size:0.8em;} /* day of the month (1-31) */
 .monthDay div{height:55px; overflow:hidden; cursor:default;}
+.monthDay div div {height:auto;}
 .mooECal td div div{font-size:10px; color:#009; /* height:20px;*/overflow:hidden; cursor:default;}
 .mooECal td a{font-size:10px; color:#009; text-decoration:underline;}
 .mooECal td div.fullEvent{height:auto; overflow:auto; font-size:14px; border-bottom:1px solid #DDD;}

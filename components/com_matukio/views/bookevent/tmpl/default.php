@@ -21,23 +21,27 @@ $usermail = $this->user->email;
 <script type="text/javascript">
 window.addEvent('domready', function () {
     var steps = <?php echo $this->steps; ?>;
-    var intro = $('mat_intro');
+    var intro = document.id('mat_intro');
     var current_step = 1;
 
-    var btn_next = $('btn_next');
-    var btn_back = $('btn_back');
-    var btn_submit = $('btn_submit');
+    var btn_next = document.id('btn_next');
+    var btn_back = document.id('btn_back');
+    var btn_submit = document.id('btn_submit');
 
-    var page_one = $('mat_pageone');
-    var page_two = $('mat_pagetwo');
-    var page_three = $('mat_pagethree');
-    var payment = $('payment');
+    var page_one = document.id('mat_pageone');
+    var page_two = document.id('mat_pagetwo');
+    var page_three = document.id('mat_pagethree');
+    var payment = document.id('payment');
 
     var usermail = '<?php echo $usermail; ?>';
 
-    var email = $('email');
+    var email = document.id('email');
 
     email.set('value', usermail);
+
+    if(usermail != "") {
+        email.set('disabled', true);
+    }
 
 <?php
 if (MatukioHelperSettings::getSettings("payment_coupon", 1) == 1 && !empty($this->event->fees)) {
@@ -52,22 +56,22 @@ for ($i = 0; $i < count($this->fields_p1); $i++) {
     $field = $this->fields_p1[$i];
 
     if ($field->type != 'spacer')
-        echo "var " . $field->field_name . " = $('" . $field->field_name . "');\n";
+        echo "var " . $field->field_name . " = document.id('" . $field->field_name . "');\n";
     // Confirmation fields
     if ($field->type != 'spacer')
-        echo "var conf_" . $field->field_name . " = $('conf_" . $field->field_name . "');\n";
+        echo "var conf_" . $field->field_name . " = document.id('conf_" . $field->field_name . "');\n";
 }
 ?>
 
     var mh1, mh2, mh3 = null;
 
     if (steps == 2) {
-        mh1 = $('mat_h1');
-        mh3 = $('mat_h2');
+        mh1 = document.id('mat_h1');
+        mh3 = document.id('mat_h2');
     } else {
-        mh1 = $('mat_hp1');
-        mh2 = $('mat_hp2');
-        mh3 = $('mat_hp3');
+        mh1 = document.id('mat_hp1');
+        mh2 = document.id('mat_hp2');
+        mh3 = document.id('mat_hp3');
     }
 
     function nextPage(event) {
@@ -171,7 +175,7 @@ for ($i = 0; $i < count($this->fields_p1); $i++) {
         event.stop();
 
         // alert("submitting");
-        $('FrontForm').submit();
+        document.id('FrontForm').submit();
 
     }
 
@@ -184,9 +188,9 @@ for ($i = 0; $i < count($this->fields_p1); $i++) {
             if($field->type != 'radio') {
                 echo "conf_" . $field->field_name . ".set('text', " . $field->field_name . ".get('value'));\n";
             } else {
-                echo "conf_" . $field->field_name . ".set('text', $(FrontForm).getElement('input[name="
+                echo "conf_" . $field->field_name . ".set('text', document.id(FrontForm).getElement('input[name="
                              . $field->field_name . "]:checked').value);\n";
-                //$('formID').getElement('input[name=foo]:checked").value
+                //document.id('formID').getElement('input[name=foo]:checked").value
             }
         }
     }
@@ -201,7 +205,7 @@ for ($i = 0; $i < count($this->fields_p1); $i++) {
         }
     });
 
-    var validateForm = new Form.Validator.Inline($('FrontForm'), {
+    var validateForm = new Form.Validator.Inline(document.id('FrontForm'), {
         //useTitles: true
         errorPrefix:'<?php echo JText::_('COM_MATUKIO_ERROR');?>: '
     });
@@ -216,7 +220,7 @@ for ($i = 0; $i < count($this->fields_p1); $i++) {
 <?php
 if (MatukioHelperSettings::getSettings("payment_coupon", 1) == 1 && !empty($this->event->fees)) {
     ?>
-    var coupon_code = $('coupon_code');
+    var coupon_code = document.id('coupon_code');
 
     function validateCoupon() {
         var response = false;
@@ -263,10 +267,10 @@ if (!empty($this->event->fees) && !empty($this->payment)) {
 
         <?php
         if (MatukioHelperSettings::getSettings("payment_paypal", 1) == 1) {
-            echo "var div_pay_paypal = $('mat_paypal');\n";
+            echo "var div_pay_paypal = document.id('mat_paypal');\n";
         }
         if (MatukioHelperSettings::getSettings("payment_banktransfer", 1) == 1) {
-            echo "var div_pay_banktransfer = $('mat_banktransfer');\n";
+            echo "var div_pay_banktransfer = document.id('mat_banktransfer');\n";
         }
 
         if (MatukioHelperSettings::getSettings("payment_banktransfer", 1) == 1) {
@@ -429,7 +433,8 @@ if (!empty($this->event->fees) && !empty($this->payment)) {
         if ($tempdis == "") {
             $htx2 = $platzauswahl;
         } else {
-            $htx2 = "<input class=\"sem_inputbox\" type=\"text\" value=\"" . $buchopt[2][0]->nrbooked . "\"size=\"1\" style=\"text-align:right;\"" . $tempdis . " />";
+            $htx2 = "<input class=\"sem_inputbox\" type=\"text\" value=\"" . $buchopt[2][0]->nrbooked
+                . "\"size=\"1\" style=\"text-align:right;\"" . $tempdis . " />";
         }
 
         echo '<tr>';

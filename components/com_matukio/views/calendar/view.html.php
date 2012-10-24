@@ -29,6 +29,8 @@ class MatukioViewCalendar extends JView {
             $params->merge( $menuparams );
         }
 
+
+        // Todo integrate category support - in requests tmpl
         if(empty($catid)){
             $catid = $params->get('catid', 0);
         }

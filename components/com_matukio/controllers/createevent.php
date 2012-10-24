@@ -178,9 +178,18 @@ class MatukioControllerCreateEvent extends JController
         $row->cancelled = $cancel;
         $row->catid = $caid;
 
-        $row->begin = $_begin_date;
-        $row->end = $_end_date;
-        $row->booked = $_booked_date;
+//        $row->begin = $_begin_date;
+//        $row->end = $_end_date;
+//        $row->booked = $_booked_date;
+
+        // Zuweisung der Startzeit
+        $row->begin = JFactory::getDate($_begin_date, MatukioHelperUtilsBasic::getTimeZone())->format('Y-m-d H:i:s', false, false);
+
+        // Zuweisung der Endzeit
+        $row->end = JFactory::getDate($_end_date, MatukioHelperUtilsBasic::getTimeZone())->format('Y-m-d H:i:s', false, false);
+
+        // Zuweisung der Buchungszeit
+        $row->booked = JFactory::getDate($_booked_date, MatukioHelperUtilsBasic::getTimeZone())->format('Y-m-d H:i:s', false, false);
 
         // Zuweisung der aktuellen Zeit
         if ($cid == 0) {

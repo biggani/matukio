@@ -18,7 +18,9 @@ class MatukioHelperPayment
     public static function getPaymentSelect($payment_array, $selected = null){
 
         $html = "<select name=\"payment\" id=\"payment\">";
-        $html .= "<option name=\"choose\" value=\"\">" . JTEXT::_("COM_MATUKIO_FIELD_CHOOSE") ."</option>";
+        if(count($payment_array) > 1) {
+            $html .= "<option name=\"choose\" value=\"\">" . JTEXT::_("COM_MATUKIO_FIELD_CHOOSE") ."</option>";
+        }
 
         for($i = 0; $i < count($payment_array); $i++){
             $pay = $payment_array[$i];

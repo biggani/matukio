@@ -82,11 +82,13 @@ class MatukioHelperUtilsEvents
             $pageone = $limitstart / $limit + 1;
             $seiten = ceil($total / $limit);
             if ($pageone > 1) {
-                $navi .= "<a class=\"sem_tab\" href=\"javascript:document.FrontForm.limitstart.value='0';document.FrontForm.submit();\">" . JTEXT::_('START') . "</a>";
-                $navi .= " - <a class=\"sem_tab\" href=\"javascript:document.FrontForm.limitstart.value='" . ($limitstart - $limit) . "';document.FrontForm.submit();\">" . JTEXT::_('PREV') . "</a>";
+                $navi .= "<a class=\"sem_tab\" href=\"javascript:document.FrontForm.limitstart.value='0';document.FrontForm.submit();\">"
+                    . JTEXT::_('COM_MATUKIO_START') . "</a>";
+                $navi .= " - <a class=\"sem_tab\" href=\"javascript:document.FrontForm.limitstart.value='"
+                    . ($limitstart - $limit) . "';document.FrontForm.submit();\">" . JTEXT::_('COM_MATUKIO_PREV') . "</a>";
             } else {
-                $navi .= JTEXT::_('START');
-                $navi .= " - " . JTEXT::_('PREV');
+                $navi .= JTEXT::_('COM_MATUKIO_START');
+                $navi .= " - " . JTEXT::_('COM_MATUKIO_PREV');
             }
             $start = 0;
             $ende = $seiten;
@@ -107,7 +109,8 @@ class MatukioHelperUtilsEvents
             }
             for ($i = $start; $i < $ende; $i++) {
                 if ($i * $limit != $limitstart) {
-                    $navi .= " <a class=\"sem_tab\" href=\"javascript:document.FrontForm.limitstart.value='" . ($i * $limit) . "';document.FrontForm.submit();\">" . ($i + 1) . "</a>";
+                    $navi .= " <a class=\"sem_tab\" href=\"javascript:document.FrontForm.limitstart.value='"
+                        . ($i * $limit) . "';document.FrontForm.submit();\">" . ($i + 1) . "</a>";
                 } else {
                     $navi .= " " . ($i + 1);
                     $kurs1 = (($i * $limit) + 1);
@@ -129,14 +132,16 @@ class MatukioHelperUtilsEvents
             }
             $navi .= " -";
             if ($pageone < $seiten) {
-                $navi .= " <a class=\"sem_tab\" href=\"javascript:document.FrontForm.limitstart.value='" . ($limitstart + $limit) . "';document.FrontForm.submit();\">" . JTEXT::_('NEXT') . "</a>";
-                $navi .= " - <a class=\"sem_tab\" href=\"javascript:document.FrontForm.limitstart.value='" . ($seiten * $limit) . "';document.FrontForm.submit();\">" . JTEXT::_('END') . "</a>";
+                $navi .= " <a class=\"sem_tab\" href=\"javascript:document.FrontForm.limitstart.value='"
+                    . ($limitstart + $limit) . "';document.FrontForm.submit();\">" . JTEXT::_('COM_MATUKIO_NEXT') . "</a>";
+                $navi .= " - <a class=\"sem_tab\" href=\"javascript:document.FrontForm.limitstart.value='"
+                    . ($seiten * $limit) . "';document.FrontForm.submit();\">" . JTEXT::_('COM_MATUKIO_END') . "</a>";
             } else {
-                $navi .= " " . JTEXT::_('NEXT');
-                $navi .= " - " . JTEXT::_('END');
+                $navi .= " " . JTEXT::_('COM_MATUKIO_NEXT');
+                $navi .= " - " . JTEXT::_('COM_MATUKIO_END');
             }
         }
-        $seite = JTEXT::_('PAGE') . "&nbsp;" . $pageone . "/" . ($seiten);
+        $seite = JTEXT::_('COM_MATUKIO_PAGE') . "&nbsp;" . $pageone . "/" . ($seiten);
         return "\n" . MatukioHelperUtilsEvents::getTableHeader(4) . "<tr>" . MatukioHelperUtilsEvents::getTableCell($seite, 'd', 'l', '', 'sem_nav')
             . MatukioHelperUtilsEvents::getTableCell($navi, 'd', 'c', '', 'sem_nav')
             . MatukioHelperUtilsEvents::getTableCell($kurse, 'd', 'r', '', 'sem_nav') . "</tr>" . MatukioHelperUtilsEvents::getTableHeader('e');
@@ -906,7 +911,7 @@ class MatukioHelperUtilsEvents
             $freieplaetze = 0;
         }
         $body = "<p>\n<table cellpadding=\"2\" border=\"0\" width=\"100%\">";
-        $body .= "\n<tr><td><b>" . JTEXT::_('COM_MATUKIO_NAME') . "</b>: </td><td>" . $user->name . "</td></tr>";
+        $body .= "\n<tr><td><b>" . JTEXT::_('COM_MATUKIO_NAME') . "</b>: </td><td>" . $buchung->name . " (" . $user->name . ")" . "</td></tr>";
         $body .= "\n<tr><td><b>" . JTEXT::_('COM_MATUKIO_EMAIL') . "</b>: </td><td>" . $user->email . "</td></tr>";
         if (count($buchung) > 0) {
             $body .= "\n<tr><td><b>" . JTEXT::_('COM_MATUKIO_BOOKING_ID') . "</b>: </td><td>" . MatukioHelperUtilsBooking::getBookingId($buchung->id) . "</td></tr>";
@@ -955,9 +960,9 @@ class MatukioHelperUtilsEvents
             $body .= "\n<tr><td>" . JTEXT::_('COM_MATUKIO_BOOKABLE') . ": </td><td>" . $freieplaetze . "</td></tr>";
         }
         if ($row->fees > 0) {
-            $body .= "\n<tr><td>" . JTEXT::_('COM_MATUKIO_FEES') . ": </td><td>" . MatukioHelperSettings::getSettings('currency_symbol', '$') . " " . $row->fees;
+            $body .= "\n<tr><td>" . JTEXT::_('COM_MATUKIO_FEES') . ": </td><td>" . MatukioHelperSettings::getSettings('currency_symbol', '$') . " " . $buchung->payment_brutto;
             if (MatukioHelperSettings::getSettings('frontend_usermehrereplaetze', 1) > 0) {
-                $body .= " " . JTEXT::_('COM_MATUKIO_PRO_PERSON');
+                // $body .= " " . JTEXT::_('COM_MATUKIO_PRO_PERSON');
             }
             $body .= "</td></tr>";
         }

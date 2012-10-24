@@ -16,7 +16,9 @@ class MatukioViewUpcomingEvents extends JView {
 
     public function display() {
 
-        $catid = JRequest::getInt('catid', 0);
+        $jinput = JFactory::getApplication()->input;
+
+        $catid = JRequest::getVar('catid', array(), '', 'array');
         $user = JFactory::getUser();
         $ue_title="COM_MATUKIO_UPCOMING_EVENTS";
 
@@ -33,6 +35,8 @@ class MatukioViewUpcomingEvents extends JView {
         if(empty($catid)){
             $catid = $params->get('catid', 0);
         }
+
+        //var_dump($catid);
 
         $ue_title = $params->get('title', 'COM_MATUKIO_UPCOMING_EVENTS');
         $number = $params->get('number', 10);

@@ -15,13 +15,13 @@ defined('_JEXEC') or die();
 
 class ControlCenterConfig {
 
-    var $version                = "2.1.1";
+    var $version                = "2.1.3";
     var $copyright              = "Copyright (C) 2012 Yves Hoppe - compojoom.com";
     var $license                = "GPL v2 or later";
     var $translation            = "English: compojoom.com <br />German: compojoom.com";
     var $description            = "COM_MATUKIO_XML_DESCRIPTION";
     var $thankyou               = "<li><a href='http://seminar.vollmar.ws'>Dirk Vollmar</a> - for writing the extension Seminar for Joomla 1.5,
-                                   on which this extension is originally based</li>";
+                                   on which Version 1.0 of this extension was originally based</li>";
 
     var $_extensionTitle        = "com_matukio";
     var $extensionPosition     = "matukio"; // e.G. ccc_extensionPostion_left

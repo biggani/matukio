@@ -42,7 +42,7 @@ class MatukioViewEditBookingfield extends JView {
             JHTML::_('select.option', '3', JText::_('COM_MATUKIO_PAGE_THREE') )
         );
 
-        $select_pages = JHTML::_('select.genericlist', $pages, 'pages', null, 'value', 'text', $bookingfield->page);
+        $select_pages = JHTML::_('select.genericlist', $pages, 'page', null, 'value', 'text', $bookingfield->page);
 
         $required = JHTML::_('select.booleanlist', 'required', 'class="inputbox"', $bookingfield->required);
 

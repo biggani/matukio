@@ -98,7 +98,7 @@ JHTML::_('behavior.tooltip');
                         </td>
                         <td>
                             <input class="text_area" type="text" name="coupon_code"
-                                   id="coupon_code" value="" size="50"
+                                   id="coupon_code"  size="50"
                                    maxlength="255" style="width: 150px"
                                    title="<?php echo JText::_('COM_MATUKIO_FIELD_COUPON_DESC') ?>"
                                    value="<?php echo $this->booking->coupon_code; ?>"
