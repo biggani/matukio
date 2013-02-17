@@ -352,7 +352,6 @@ class HTML_matukio
                 //
                 // -------------------------- END dirty hack -------------------------------------
 
-                $temp[] = "<a href=\"mailto:" . $row->email . "\">" . $row->email . "</a>";
                 //var_dump($row->bookingdate);
 
                 $temp[] = JHTML::_('date', $row->bookingdate, MatukioHelperSettings::getSettings('date_format_without_time', 'd-m-Y')) .
