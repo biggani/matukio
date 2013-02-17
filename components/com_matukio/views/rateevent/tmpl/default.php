@@ -12,7 +12,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 JHTML::_('behavior.modal');
-JHTML::_('stylesheet', 'matukio.css', 'media/com_matukio/css/');
+JHTML::_('stylesheet', 'media/com_matukio/css/matukio.css');
 
 $htxt = str_replace("SEM_TITLE", $this->event->title, JTEXT::_('COM_MATUKIO_PLEASE_RATE_THIS_EVENT'));
 
@@ -38,7 +38,7 @@ $html .= "</table></center>";
 $html .= "<br /><div class=\"sem_shortdesc\">" . JTEXT::_('COM_MATUKIO_COMMENT') . ":</div>";
 $html .= "<br /><center><input type=\"text\" name=\"text\" size=\"70\" maxlength=\"200\" value=\""
     . $this->booking->comment . "\"></center><br />";
-$html .= "<input type=\"hidden\" name=\"option\" value=\"" . JRequest::getCmd('option') . "\">
+$html .= "<input type=\"hidden\" name=\"option\" value=\"" . JFactory::getApplication()->input->get('option') . "\">
         <input type=\"hidden\" name=\"view\" value=\"rateevent\" />
         <input type=\"hidden\" name=\"controller\" value=\"rateevent\" />
         <input type=\"hidden\" name=\"cid\" value=\"" . $this->event->id . "\">

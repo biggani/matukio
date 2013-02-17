@@ -13,6 +13,9 @@ defined('_JEXEC') or die('Restricted access');
 
 JHTML::_('behavior.tooltip');
 jimport('joomla.filter.output');
+
+//JHtmlBehavior::framework();
+
 ?>
 <script type="text/javascript">
     <?php
@@ -33,7 +36,7 @@ jimport('joomla.filter.output');
         Joomla.submitform(button);
     }
 </script>
-<form action="index.php" method="post" name="adminForm">
+<form action="index.php" method="post" name="adminForm" id="adminForm">
     <table>
         <tr>
             <td align="left" width="100%"><?php echo JText::_('JSEARCH_FILTER_LABEL'); ?>:
@@ -59,7 +62,7 @@ jimport('joomla.filter.output');
                 <th width="5"><?php echo JText::_('JGRID_HEADING_ROW_NUMBER'); ?></th>
                 <th width="5">
                     <input type="checkbox" name="toggle" value=""
-                           onclick="checkAll(<?php echo count($this->list); ?>);"/>
+                           onclick="Joomla.checkAll(this);"/>
                 </th>
                 <th class="title"><?php echo JHTML::_('grid.sort', 'COM_MATUKIO_COUPON_CODE', 'cc.$code', $this->filter['order_Dir'],
                                             $this->filter['order']); ?></th>

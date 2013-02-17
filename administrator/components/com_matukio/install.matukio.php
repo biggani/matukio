@@ -16,7 +16,7 @@ defined( '_JEXEC' ) or die ( 'Restricted access' );
 
 function com_install()
 {
-    $database = &JFactory::getDBO();
+    $database = JFactory::getDBO();
     if (file_exists(JPATH_ADMINISTRATOR . "/components/com_joomfish/config.joomfish.php")) {
         rename(JPATH_ADMINISTRATOR . "/components/com_matukio/joomfish/jf_matukio.xml", JPATH_ADMINISTRATOR . "/components/com_joomfish/contentelements/matukio.xml");
     }

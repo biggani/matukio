@@ -13,11 +13,11 @@ defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.application.component.view');
 
-class MatukioViewPayPalPayment extends JView {
+class MatukioViewPayPalPayment extends JViewLegacy {
 
-    public function display() {
+    public function display($tpl = NULL) {
 
-        $booking_id = JRequest::getVar('booking_id', 0); // UUID
+        $booking_id = JFactory::getApplication()->input->get('booking_id', 0); // UUID
 
         // 00f800eb-0a2b-4c23-9534-3a2d51e9c7ab
 
@@ -56,17 +56,17 @@ class MatukioViewPayPalPayment extends JView {
         //echo $cancelreturn . "<br>";
         //die($successurl);
 
-        $this->assignRef('event', $event);
-        $this->assignRef('user', $user);
-        $this->assignRef('booking', $booking);
-        $this->assignRef('merchant_address', MatukioHelperSettings::getSettings("paypal_address", 'paypal@compjoom.com'));
-        $this->assignRef('currency', MatukioHelperSettings::getSettings("paypal_currency", 'EUR'));
-        $this->assignRef('success_url', $successurl);
-        $this->assignRef('cancel_url', $cancelreturn);
-        $this->assignRef('item_number', $item_number);
-        $this->assignRef('net_amount', $net_amount);
-        $this->assignRef('tax_amount', $tax_amount);
+        $this->event = $event;
+        $this->user = $user;
+        $this->booking = $booking;
+        $this->merchant_address = MatukioHelperSettings::getSettings("paypal_address", 'paypal@compjoom.com');
+        $this->currency = MatukioHelperSettings::getSettings("paypal_currency", 'EUR');
+        $this->success_url = $successurl;
+        $this->cancel_url = $cancelreturn;
+        $this->item_number = $item_number;
+        $this->net_amount = $net_amount;
+        $this->tax_amount = $tax_amount;
 
-        parent::display();
+        parent::display($tpl);
     }
 }

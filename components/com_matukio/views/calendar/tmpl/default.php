@@ -12,16 +12,21 @@
 defined('_JEXEC') or die('Restricted access');
 
 JHTML::_('behavior.modal');
-JHtml::_('behavior.mootools');
 
-JHTML::_('stylesheet', 'matukio.css', 'media/com_matukio/css/');
-JHTML::_('stylesheet', 'calendar.css', 'media/com_matukio/css/');
-JHTML::_('stylesheet', 'mooECal.css', 'media/com_matukio/css/');
-//JHTML::_('stylesheet', 'mooECalLarge.css', 'media/com_matukio/css/');
-//JHTML::_('stylesheet', 'mooECalSmall.css', 'media/com_matukio/css/');
+if(CJOOMLA_VERSION == 3)
+    JHtmlBehavior::framework();
+else
+    JHTML::_('behavior.mootools');
 
-JHTML::_('script', 'mooECal.js', 'media/com_matukio/js/');
-JHTML::_('script', 'mecPHPPlugin.js', 'media/com_matukio/js/');
+
+JHTML::_('stylesheet', 'media/com_matukio/css/matukio.css');
+JHTML::_('stylesheet', 'media/com_matukio/css/calendar.css');
+JHTML::_('stylesheet', 'media/com_matukio/css/mooECal.css');
+//JHTML::_('stylesheet', 'media/com_matukio/css/mooECalLarge.css');
+//JHTML::_('stylesheet', 'media/com_matukio/css/mooECalSmall.css');
+
+JHTML::_('script', 'media/com_matukio/js/mooECal.js');
+JHTML::_('script', 'media/com_matukio/js/mecPHPPlugin.js');
 //$usermail = $this->user->email;
 ?>
 <!-- Start Matukio by compojoom.com -->

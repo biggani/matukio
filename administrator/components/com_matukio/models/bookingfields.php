@@ -174,7 +174,7 @@ class MatukioModelBookingfields extends JModelAdmin {
             // Prime some default values.
             if ($this->getState('bookingfields.id') == 0) {
                 $app = JFactory::getApplication();
-                $data->set('id', JRequest::getInt('id', $app->getUserState('com_matukio.bookingfields.filter.id')));
+                $data->set('id', JFactory::getApplication()->input->getInt('id', $app->getUserState('com_matukio.bookingfields.filter.id')));
             }
         }
 

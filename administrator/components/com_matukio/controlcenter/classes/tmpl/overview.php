@@ -19,9 +19,9 @@ $modules_slider = JModuleHelper::getModules('ccc_'. $this->config->extensionPosi
 $modules_promotion = JModuleHelper::getModules('ccc_'. $this->config->extensionPosition . '_promotion');
 
 JHTML::_('behavior.tooltip');
-JHTML::_('stylesheet', 'ccc.css', 'media/com_matukio/ccc/css/');
-JHTML::_('script', 'ccc.js', 'media/com_matukio/ccc/js/');
-JHTML::_('stylesheet', 'matukio.css', 'media/com_matukio/backend/css/');
+JHTML::_('stylesheet', 'media/com_matukio/ccc/css/ccc.css');
+JHTML::_('script',  'media/com_matukio/ccc/js/ccc.js');
+JHTML::_('stylesheet', 'media/com_matukio/backend/css/matukio.css');
 
 ?>
 

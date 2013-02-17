@@ -89,7 +89,7 @@ class com_matukioInstallerScript
     {
         $this->parent = $parent;
 
-        if(!$this->newInstall())   {
+        if (!$this->newInstall()) {
 
             $db = JFactory::getDbo();
 
@@ -100,7 +100,7 @@ class com_matukioInstallerScript
             $update = $db->loadObject();
 
             // Version < 2.0.0
-            if(empty($update)) {
+            if (empty($update)) {
 
                 $query = "ALTER TABLE  `#__matukio` ADD  `created_by` INT( 10 ) NOT NULL DEFAULT  '0',
                 ADD  `created_by_alias` VARCHAR( 255 ) NOT NULL DEFAULT  '',
@@ -112,7 +112,7 @@ class com_matukioInstallerScript
                 ";
 
                 $db->setQuery($query);
-                $db->query();
+                $db->execute();
 
                 // DB 2.0.0
                 $query = "ALTER TABLE  #__matukio_bookings ADD  `newfields` TEXT NULL,
@@ -127,7 +127,7 @@ class com_matukioInstallerScript
                 ";
 
                 $db->setQuery($query);
-                $db->query();
+                $db->execute();
 
                 $query = "CREATE TABLE IF NOT EXISTS `#__matukio_booking_coupons` (
                               `id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY ,
@@ -141,7 +141,7 @@ class com_matukioInstallerScript
                 ";
 
                 $db->setQuery($query);
-                $db->query();
+                $db->execute();
 
                 $query = "CREATE TABLE IF NOT EXISTS `#__matukio_booking_fields` (
                               `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -160,12 +160,12 @@ class com_matukioInstallerScript
                 ";
 
                 $db->setQuery($query);
-                $db->query();
+                $db->execute();
 
                 // Settings Reset for version 2.0 and 2.0.1
                 $query = "TRUNCATE #__matukio_settings";
                 $db->setQuery($query);
-                $db->query();
+                $db->execute();
 
                 // Settings Reset for version 2.0
                 $this->dummyContent();
@@ -173,85 +173,119 @@ class com_matukioInstallerScript
                 // Settings Reset for version 2.0 and 2.0.1
                 $query = "TRUNCATE #__matukio_settings";
                 $db->setQuery($query);
-                $db->query();
+                $db->execute();
 
                 $this->settingsContent();
 
-           } else if ($update->value == "2.0.1") {
+            } else if ($update->value == "2.0.1") {
                 $query = "INSERT INTO " . $db->nameQuote('#__matukio_settings') . " (`id`, `title`, `value`, `values`, `type`, `catdisp`) VALUES
                           (66, 'banktransfer_iban', '','', 'text', 'payment'),
                           (67, 'banktransfer_bic', '','', 'text', 'payment');";
 
                 $db->setQuery($query);
-                $db->query();
+                $db->execute();
 
                 $query = "INSERT INTO " . $db->nameQuote('#__matukio_settings') . " (`title`, `value`, `values`, `type`, `catdisp`) VALUES
                           ('oldbooking_redirect_after', 'bookingpage', '{bookingpage=BOOKINGPAGE}{eventpage=EVENTPAGE}{eventlist=EVENTLIST}', 'select', 'advanced');";
 
                 $db->setQuery($query);
-                $db->query();
+                $db->execute();
 
-                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.3" WHERE title = ' . $db->Quote('db_version');
+                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.10" WHERE title = ' . $db->Quote('db_version');
 
                 $db->setQuery($query);
-                $db->query();
+                $db->execute();
             } else if ($update->value == "2.0.2") {
-               $query = "ALTER TABLE  " . $db->nameQuote('#__matukio') . " ADD `language` VARCHAR( 255 ) NOT NULL DEFAULT '*'";
+                $query = "ALTER TABLE  " . $db->nameQuote('#__matukio') . " ADD `language` VARCHAR( 255 ) NOT NULL DEFAULT '*'";
 
                 $db->setQuery($query);
-                $db->query();
+                $db->execute();
 
                 $query = "INSERT INTO " . $db->nameQuote('#__matukio_settings') . " (`title`, `value`, `values`, `type`, `catdisp`) VALUES
                           ('oldbooking_redirect_after', 'bookingpage', '{bookingpage=BOOKINGPAGE}{eventpage=EVENTPAGE}{eventlist=EVENTLIST}', 'select', 'advanced');";
 
                 $db->setQuery($query);
-                $db->query();
+                $db->execute();
 
-                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.3" WHERE title = ' . $db->Quote('db_version');
-
-                $db->setQuery($query);
-                $db->query();
-           } else if ($update->value == "2.1.0") {
-                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.3" WHERE title = ' . $db->Quote('db_version');
+                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.10" WHERE title = ' . $db->Quote('db_version');
 
                 $db->setQuery($query);
-                $db->query();
+                $db->execute();
+            } else if ($update->value == "2.1.0") {
+                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.10" WHERE title = ' . $db->Quote('db_version');
+
+                $db->setQuery($query);
+                $db->execute();
 
                 $query = "INSERT INTO " . $db->nameQuote('#__matukio_settings') . " (`title`, `value`, `values`, `type`, `catdisp`) VALUES
                           ('oldbooking_redirect_after', 'bookingpage', '{bookingpage=BOOKINGPAGE}{eventpage=EVENTPAGE}{eventlist=EVENTLIST}', 'select', 'advanced');";
 
                 $db->setQuery($query);
-                $db->query();
-           } else if ($update->value == "2.1.1") {
-                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.3" WHERE title = ' . $db->Quote('db_version');
+                $db->execute();
+            } else if ($update->value == "2.1.1") {
+                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.10" WHERE title = ' . $db->Quote('db_version');
 
                 $db->setQuery($query);
-                $db->query();
+                $db->execute();
 
                 $query = "INSERT INTO " . $db->nameQuote('#__matukio_settings') . " (`title`, `value`, `values`, `type`, `catdisp`) VALUES
                           ('oldbooking_redirect_after', 'bookingpage', '{bookingpage=BOOKINGPAGE}{eventpage=EVENTPAGE}{eventlist=EVENTLIST}', 'select', 'advanced');";
 
                 $db->setQuery($query);
-                $db->query();
-           } else if ($update->value == "2.1.2") {
-                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.3" WHERE title = ' . $db->Quote('db_version');
+                $db->execute();
+            } else if ($update->value == "2.1.2") {
+                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.10" WHERE title = ' . $db->Quote('db_version');
 
                 $db->setQuery($query);
-                $db->query();
+                $db->execute();
 
                 $query = "INSERT INTO " . $db->nameQuote('#__matukio_settings') . " (`title`, `value`, `values`, `type`, `catdisp`) VALUES
                           ('oldbooking_redirect_after', 'bookingpage', '{bookingpage=BOOKINGPAGE}{eventpage=EVENTPAGE}{eventlist=EVENTLIST}', 'select', 'advanced');";
 
                 $db->setQuery($query);
-                $db->query();
-           } else if ($update->value == "2.1.3") {
+                $db->execute();
+            } else if ($update->value == "2.1.3") {
+                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.10" WHERE title = ' . $db->Quote('db_version');
+
+                $db->setQuery($query);
+                $db->execute();
+            } else if ($update->value == "2.1.4") {
+                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.10" WHERE title = ' . $db->Quote('db_version');
+
+                $db->setQuery($query);
+                $db->execute();
+            }  else if ($update->value == "2.1.5") {
+                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.10" WHERE title = ' . $db->Quote('db_version');
+
+                $db->setQuery($query);
+                $db->execute();
+            } else if ($update->value == "2.1.6") {
+                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.10" WHERE title = ' . $db->Quote('db_version');
+
+                $db->setQuery($query);
+                $db->execute();
+            } else if ($update->value == "2.1.7") {
+                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.10" WHERE title = ' . $db->Quote('db_version');
+
+                $db->setQuery($query);
+                $db->execute();
+            } else if ($update->value == "2.1.8") {
+                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.10" WHERE title = ' . $db->Quote('db_version');
+
+                $db->setQuery($query);
+                $db->execute();
+            } else if ($update->value == "2.1.9") {
+                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.10" WHERE title = ' . $db->Quote('db_version');
+
+                $db->setQuery($query);
+                $db->execute();
+            } else if ($update->value == "2.1.10") {
+            // Current release
 
             }else {
                 // Reinsert settings
                 $this->settingsContent();
-           }
-
-
+            }
         }
     }
 
@@ -299,7 +333,7 @@ class com_matukioInstallerScript
     public function postflight($type, $parent)
     {
 
-        $jlang =& JFactory::getLanguage();
+        $jlang = JFactory::getLanguage();
         $path = $parent->getParent()->getPath('source') . '/administrator';
         $jlang->load('com_matukio.sys', $path, 'en-GB', true);
         $jlang->load('com_matukio.sys', $path, $jlang->getDefault(), true);
@@ -376,17 +410,17 @@ class com_matukioInstallerScript
                             $sql .= ', params = ' . $db->quote($installer->getParams());
                             $sql .= ' WHERE `module`=' . $db->Quote($module);
                             $db->setQuery($sql);
-                            $db->query();
+                            $db->execute();
 
 //	                        get module id
                             $db->setQuery('SELECT id FROM #__modules WHERE module = ' . $db->quote($module));
                             $moduleId = $db->loadObject()->id;
 
                             // insert the module on all pages, otherwise we can't use it
-                            $query = 'INSERT INTO #__modules_menu(moduleid, menuid) VALUES ('.$db->quote($moduleId) .' ,0 );';
+                            $query = 'INSERT INTO #__modules_menu(moduleid, menuid) VALUES (' . $db->quote($moduleId) . ' ,0 );';
                             $db->setQuery($query);
 
-                            $db->query();
+                            $db->execute();
                         }
                     }
                 }
@@ -414,7 +448,7 @@ class com_matukioInstallerScript
         (13, 'frontend_ratingsystem', '0', '', 'bool', 'basic'),
         (14, 'frontend_certificatesystem', '0', '', 'bool', 'basic'),
         (15, 'frontend_userprintcertificate', '0', '', 'bool', 'advanced'),
-        (16, 'certificate_htmlcode', '".'<div style="position: absolute; top:0; left:0; z-index: 0;"><img src="SEM_IMAGEDIRcertificate.png"></div><div style="position: absolute; top:0; left:0; z-index: 1;"><table cellpadding="0" cellspacing="0" border="0" width="734pt" height="1080pt""><tr><td width="180pt" height="1080pt" rowspan="8">&nbsp;</td><th width="554pt" height="150pt"><span style="color: #330099; font-size: 48pt; font-family: Verdana;">Certificate</span></th></tr><tr><th width="554pt" height="150pt"><span style="color: #000000; font-size: 28pt; font-family: Verdana;">SEM_NAME</span></center></th></tr><tr><td width="554pt" height="100pt"><span style="color: #000000; font-size: 24pt; font-family: Verdana;">has successfully attended the event</span></td></tr><tr><th width="554pt" height="250pt"><span style="color: #000000; font-size: 28pt; font-family: Verdana;">SEM_COURSE</span></th></tr><tr><td width="554pt" height="230pt"><span style="color: #000000; font-size: 18pt; font-family: Verdana; ">Begin: SEM_BEGIN</span><p style="margin-top: 20pt; margin-bottom: 8pt;"><span style="color: #000000; font-size: 18pt; font-family: Verdana; ">End: SEM_END</span><p style="margin-top: 20pt; margin-bottom: 8pt;"><span style="color: #000000; font-size: 18pt; font-family: Verdana; ">Place: SEM_LOCATION</span></td></tr><tr><td width="554pt" height="100pt"><span style="color: #000000; font-size: 18pt; font-family: Verdana; ">Tutor: SEM_TEACHER</span></td></tr><tr><td width="554pt" height="100pt"><span style="color: #000000; font-size: 18pt; font-family: Verdana; ">Date: SEM_TODAY</span></td></tr></table></div>'."', '', 'textarea', 'advanced'),
+        (16, 'certificate_htmlcode', '" . '<div style="position: absolute; top:0; left:0; z-index: 0;"><img src="SEM_IMAGEDIRcertificate.png"></div><div style="position: absolute; top:0; left:0; z-index: 1;"><table cellpadding="0" cellspacing="0" border="0" width="734pt" height="1080pt""><tr><td width="180pt" height="1080pt" rowspan="8">&nbsp;</td><th width="554pt" height="150pt"><span style="color: #330099; font-size: 48pt; font-family: Verdana;">Certificate</span></th></tr><tr><th width="554pt" height="150pt"><span style="color: #000000; font-size: 28pt; font-family: Verdana;">SEM_NAME</span></center></th></tr><tr><td width="554pt" height="100pt"><span style="color: #000000; font-size: 24pt; font-family: Verdana;">has successfully attended the event</span></td></tr><tr><th width="554pt" height="250pt"><span style="color: #000000; font-size: 28pt; font-family: Verdana;">SEM_COURSE</span></th></tr><tr><td width="554pt" height="230pt"><span style="color: #000000; font-size: 18pt; font-family: Verdana; ">Begin: SEM_BEGIN</span><p style="margin-top: 20pt; margin-bottom: 8pt;"><span style="color: #000000; font-size: 18pt; font-family: Verdana; ">End: SEM_END</span><p style="margin-top: 20pt; margin-bottom: 8pt;"><span style="color: #000000; font-size: 18pt; font-family: Verdana; ">Place: SEM_LOCATION</span></td></tr><tr><td width="554pt" height="100pt"><span style="color: #000000; font-size: 18pt; font-family: Verdana; ">Tutor: SEM_TEACHER</span></td></tr><tr><td width="554pt" height="100pt"><span style="color: #000000; font-size: 18pt; font-family: Verdana; ">Date: SEM_TODAY</span></td></tr></table></div>' . "', '', 'textarea', 'advanced'),
         (17, 'sendmail_teilnehmer', '1', '', 'bool', 'basic'),
         (18, 'sendmail_owner', '1', '', 'bool', 'basic'),
         (19, 'sendmail_contact', '1', '', 'bool', 'basic'),
@@ -442,10 +476,10 @@ class com_matukioInstallerScript
         (42, 'csv_export_charset', 'ISO-8859-15', '', 'text', 'advanced'),
         (43, 'frontend_showownerdetails', '1', '', 'bool', 'basic'),
         (44, 'date_format_small', 'd-m-Y, H:i', '', 'text', 'layout'),
-        (45, 'date_format_without_time', 'd-m-y', '', 'text', 'layout'),
+        (45, 'date_format_without_time', 'd-m-Y', '', 'text', 'layout'),
         (46, 'time_format', 'H:i', '', 'text', 'layout'),
         (47, 'date_format', 'l, d. F Y - h:i a', '', 'text', 'layout'),
-        (48, 'db_version', '2.1.3', '', 'text', 'hidden'),
+        (48, 'db_version', '2.1.10', '', 'text', 'hidden'),
         (49, 'oldbookingform', '0', '', 'bool', 'layout'),
         (50, 'paypal_address', '', '', 'text', 'payment'),
         (51, 'paypal_currency', 'USD', '', 'text', 'payment'),
@@ -467,11 +501,14 @@ class com_matukioInstallerScript
         (67, 'banktransfer_bic', '', '', 'text', 'payment'),
         (68, 'frontend_unregisteredshowlogin', '1', '', 'bool', 'layout'),
         (69, 'social_media', '1', '', 'bool', 'layout'),
-        (70, 'oldbooking_redirect_after', 'bookingpage', '{bookingpage=BOOKINGPAGE}{eventpage=EVENTPAGE}{eventlist=EVENTLIST}', 'select', 'advanced');
-        ";
+        (70, 'oldbooking_redirect_after', 'bookingpage', '{bookingpage=BOOKINGPAGE}{eventpage=EVENTPAGE}{eventlist=EVENTLIST}', 'select', 'advanced'),
+        (71, 'frontend_topnavshowmodules', 'SEM_NUMBER SEM_SEARCH SEM_CATEGORIES SEM_RESET', '', 'text', 'advanced'),
+        (72, 'frontend_topnavbookingmodules', 'SEM_NUMBER SEM_SEARCH SEM_TYPES SEM_RESET', '', 'text', 'advanced'),
+        (73, 'frontend_topnavoffermodules', 'SEM_NUMBER SEM_SEARCH SEM_TYPES SEM_RESET', '', 'text', 'advanced')
+        ;";
 
         $db->setQuery($query);
-        $this->status->sql['#__matukio_settings'] = $db->query();
+        $this->status->sql['#__matukio_settings'] = $db->execute();
     }
 
     private function dummyContent()
@@ -497,7 +534,7 @@ class com_matukioInstallerScript
         (15, 'comments', 'COM_MATUKIO_FIELDS_COMMENTS', NULL, NULL, 2, 'textarea', 0, 0, NULL, 1);";
 
         $db->setQuery($query);
-        $this->status->sql['#__matukio_booking_fields'] = $db->query();
+        $this->status->sql['#__matukio_booking_fields'] = $db->execute();
     }
 
     private function displayInfoUninstallation()
@@ -543,7 +580,7 @@ class com_matukioInstallerScript
         $html[] = "<div align=\"center\"><table border=\"0\" width=\"90%\"><tbody>";
         $html[] = "<tr><td width=\"18%\"><b>Autor:</b></td><td width=\"80%\">Compojoom.com (Daniel Dimitrov &amp; Yves Hoppe)</td></tr>";
         $html[] = "<tr><td width=\"18%\"><b>Internet:</b></td><td width=\"80%\"><a target=\"_blank\" href=\"http://compojoom.com\">http://compojoom.com</a></td></tr>";
-        $html[] = "<tr><td width=\"18%\"><b>Version:</b></td><td width=\"80%\">2.1.3</td></tr>";
+        $html[] = "<tr><td width=\"18%\"><b>Version:</b></td><td width=\"80%\">2.1.10</td></tr>";
         switch ($sprache) {
             case "de":
                 $html[] = "<tr><td colspan=\"2\">";

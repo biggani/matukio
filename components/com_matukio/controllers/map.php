@@ -11,12 +11,12 @@ defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.application.component.controller');
 
-class MatukioControllerMap extends JController
+class MatukioControllerMap extends JControllerLegacy
 {
-    public function display()
+    public function display($cachable = false, $urlparams = false)
     {
         $model = $this->getModel('Event', 'MatukioModel');
-        $eventId = JRequest::getInt('event_id');
+        $eventId = JFactory::getApplication()->input->getInt('event_id');
         $event = $model->getItem($eventId);
         $view = $this->getView('Map', 'html', 'MatukioView');
 

@@ -11,7 +11,7 @@
 defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.view');
 
-class MatukioViewEditCoupon extends JView {
+class MatukioViewEditCoupon extends JViewLegacy {
 
     function display($tpl = null) {
 
@@ -25,8 +25,8 @@ class MatukioViewEditCoupon extends JView {
 
         $procent = JHTML::_('select.booleanlist', 'procent', 'class="inputbox"', $coupon->procent);
 
-        $this->assignRef('coupon', $coupon);
-        $this->assignRef('select_procent', $procent);
+        $this->coupon = $coupon;
+        $this->select_procent = $procent;
 
 
         $this->addToolbar();

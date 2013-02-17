@@ -13,27 +13,27 @@ defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.application.component.view');
 
-class MatukioViewParticipants extends JView {
+class MatukioViewParticipants extends JViewLegacy {
 
-    public function display() {
+    public function display($tpl = NULL) {
 
-        $art = JRequest::getInt('art', 0);
-        $cid = JRequest::getInt('cid', 0);
+        $art = JFactory::getApplication()->input->getInt('art', 0);
+        $cid = JFactory::getApplication()->input->getInt('cid', 0);
 
         if(empty($cid)){
             JError::raiseError('404', "COM_MATUKIO_NO_ID");
             return;
         }
 
-        $database = &JFactory::getDBO();
-        $dateid = JRequest::getInt('dateid', 1);
-        $catid = JRequest::getInt('catid', 0);
-        $search = JRequest::getVar('search', '');
-        $limit = JRequest::getInt('limit', 5);
-        $limitstart = JRequest::getInt('limitstart', 0);
-        $cid = JRequest::getInt('cid', 0);
+        $database = JFactory::getDBO();
+        $dateid = JFactory::getApplication()->input->getInt('dateid', 1);
+        $catid = JFactory::getApplication()->input->getInt('catid', 0);
+        $search = JFactory::getApplication()->input->get('search', '');
+        $limit = JFactory::getApplication()->input->getInt('limit', 5);
+        $limitstart = JFactory::getApplication()->input->getInt('limitstart', 0);
+        $cid = JFactory::getApplication()->input->getInt('cid', 0);
 
-        $kurs =& JTable::getInstance('matukio', 'Table');
+        $kurs = JTable::getInstance('matukio', 'Table');
         $kurs->load($cid);
 
         //echo $art;
@@ -60,15 +60,15 @@ class MatukioViewParticipants extends JView {
 
         //HTML_FrontMatukio::sem_g010($art, $rows, $search, $limit, $limitstart, $kurs, $catid, $dateid);
 
-        $this->assignRef('rows', $rows);
-        $this->assignRef('art', $art);
-        $this->assignRef('search', $search);
-        $this->assignRef('limit', $limit);
-        $this->assignRef('limitstart', $limitstart);
-        $this->assignRef('kurs', $kurs);
-        $this->assignRef('catid', $catid);
-        $this->assignRef('dateid', $dateid);
+        $this->rows = $rows;
+        $this->art = $art;
+        $this->search = $search;
+        $this->limit = $limit;
+        $this->limitstart = $limitstart;
+        $this->kurs = $kurs;
+        $this->catid = $catid;
+        $this->dateid = $dateid;
 
-        parent::display();
+        parent::display($tpl);
     }
 }

@@ -12,6 +12,6 @@
 defined('_JEXEC') or die('Restricted access');
 
 
-class MatukioModelEventlist extends JModel {
+class MatukioModelEventlist extends JModelLegacy {
 
 }

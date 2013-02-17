@@ -34,14 +34,14 @@ if(JFolder::exists($imageFilePath)) {
     echo "No images";
 }
 
-$fileContent = JFile::read($_image_links);
+$fileContent = file_get_contents($_image_links);
 $_links = explode(";", $fileContent);
 
 JHTML::_('behavior.tooltip');
 //JHTML::_('stylesheet', 'ccc.css', 'media/compojoomcc/css/');
-JHTML::_('script', 'Loop.js', 'media/mod_ccc_matukio_promotion/js/');
-JHTML::_('script', 'SlideShow.js', 'media/mod_ccc_matukio_promotion/js/');
-JHTML::_('script', 'SlideShow.CSS.js', 'media/mod_ccc_matukio_promotion/js/');
+JHTML::_('script', 'media/mod_ccc_matukio_promotion/js/Loop.js');
+JHTML::_('script', 'media/mod_ccc_matukio_promotion/js/SlideShow.js');
+JHTML::_('script', 'media/mod_ccc_matukio_promotion/js/SlideShow.CSS.js');
 
 ?>
 <script type="text/javascript">

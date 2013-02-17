@@ -12,6 +12,6 @@
 defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.model');
 
-class MatukioModelRSS extends JModel {
+class MatukioModelRSS extends JModelLegacy {
 
 }

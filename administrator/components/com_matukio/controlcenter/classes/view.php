@@ -14,7 +14,7 @@ defined('_JEXEC') or die();
 jimport('joomla.application.component.view');
 jimport('joomla.application.module.helper');
 
-class ControlCenterView extends JView
+class ControlCenterView extends JViewLegacy
 {
 	public function display($tpl = null)
 	{
@@ -25,7 +25,7 @@ class ControlCenterView extends JView
 
         $this->assign('config', $config);
 
-        switch(JRequest::getCmd('task','overview'))
+        switch(JFactory::getApplication()->input->get('task','overview'))
         {
             case 'information':
                 $this->setLayout('information');

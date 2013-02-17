@@ -12,14 +12,14 @@ defined( '_JEXEC' ) or die ( 'Restricted access' );
 
 jimport('joomla.application.component.view');
 
-class MatukioViewRateEvent extends JView {
+class MatukioViewRateEvent extends JViewLegacy {
 
-    public function display() {
+    public function display($tpl = NULL) {
 
-        $my = &JFactory::getuser();
+        $my = JFactory::getuser();
 
-        $art = JRequest::getInt('art', 1);  // should be 1, else it's messages to participants
-        $cid = JRequest::getInt('cid', 0);
+        $art = JFactory::getApplication()->input->getInt('art', 1);  // should be 1, else it's messages to participants
+        $cid = JFactory::getApplication()->input->getInt('cid', 0);
 
         $model = &$this->getModel();
 
@@ -30,8 +30,8 @@ class MatukioViewRateEvent extends JView {
 
         $event = $model->getEvent($cid);
 
-        $database = &JFactory::getDBO();
-//        $cid = JRequest::getInt('cid', 0);
+        $database = JFactory::getDBO();
+//        $cid = JFactory::getApplication()->input->getInt('cid', 0);
 //        $database->setQuery("SELECT * FROM #__matukio WHERE id='$cid'");
 //        $rows = $database->loadObjectList();
 //        $row = &$rows[0];
@@ -40,9 +40,9 @@ class MatukioViewRateEvent extends JView {
         $booking = $database->loadObject();
         //HTML_FrontMatukio::sem_g014($row, $buchung);
 
-        $this->assignRef('event', $event);
-        $this->assignRef('booking', $booking);
+        $this->event = $event;
+        $this->booking = $booking;
 
-        parent::display();
+        parent::display($tpl);
     }
 }

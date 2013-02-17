@@ -13,14 +13,14 @@ defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.application.component.controller');
 
-class MatukioControllerCalendar extends JController
+class MatukioControllerCalendar extends JControllerLegacy
 {
-    public function display()
+    public function display($cachable = false, $urlparams = false)
     {
         MatukioHelperUtilsBasic::loginUser();
 
         $document = JFactory::getDocument();
-        $viewName = JRequest::getVar('view', 'Calendar');
+        $viewName = JFactory::getApplication()->input->get('view', 'Calendar');
         $viewType = $document->getType();
         $view = $this->getView($viewName, $viewType);
         $model = $this->getModel('Calendar', 'MatukioModel');

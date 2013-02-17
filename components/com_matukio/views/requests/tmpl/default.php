@@ -9,7 +9,7 @@
  * @version $Revision: 2.0.0 Stable $
  **/
 defined('_JEXEC') or die('Restricted access');
-$task = JRequest::GetVar('task', null);
+$task = JFactory::getApplication()->input->get('task', null);
 
 // checking if task is set
 if (!$task) {
@@ -18,7 +18,7 @@ if (!$task) {
 }
 
 if ($task == 'validate_coupon') {
-    $coupon = JRequest::getVar('code', '');
+    $coupon = JFactory::getApplication()->input->get('code', '', 'string');
 
     if(empty($coupon)){
         echo "false";
@@ -46,7 +46,7 @@ if ($task == 'validate_coupon') {
 
     echo "true";
 } else if ($task == 'route_link') {
-   $link = JRequest::getVar('link', '');
+   $link = JFactory::getApplication()->input->get('link', '', 'string');
 
    if(empty($link)){
        return;
@@ -57,8 +57,8 @@ if ($task == 'validate_coupon') {
 //       $link .= '&Itemid=' . $item->id;
 //   }
 
-    $db   =& JFactory::getDBO();
-    //$lang =& JFactory::getLanguage()->getTag();
+    $db   = JFactory::getDBO();
+    //$lang = JFactory::getLanguage()->getTag();
     $uri  = 'index.php?option=com_matukio&view=eventlist';
 
     //echo $lang;
@@ -84,10 +84,10 @@ if ($task == 'validate_coupon') {
    // Output the JSON data.
    echo json_encode($url);
 } else if ($task == 'getcalendar') {
-    $start = JRequest::getVar('startDate','');
-    $end = JRequest::getVar('endDate','');
+    $start =JFactory::getApplication()->input->get('startDate','');
+    $end = JFactory::getApplication()->input->get('endDate','');
 
-    $db   =& JFactory::getDBO();
+    $db   = JFactory::getDBO();
 
     $db->setQuery('SELECT * FROM #__matukio WHERE begin > '. $db->Quote( $start ) .' AND begin < '
                 . $db->Quote( $end ) .' AND published = 1 ORDER BY begin asc' );

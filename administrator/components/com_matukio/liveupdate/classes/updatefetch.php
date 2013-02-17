@@ -23,9 +23,9 @@ class LiveUpdateFetch extends JObject
 	 * 
 	 * @return int 0 = no updates, 1 = updates available, -1 = updates not supported, -2 = fetching updates crashes the server
 	 */
-	public function hasUpdates()
+	public function hasUpdates($force = false)
 	{
-		$updateInfo = $this->getUpdateInformation();
+		$updateInfo = $this->getUpdateInformation($force);
 		
 		if($updateInfo->stuck) return -2;
 		
@@ -60,6 +60,8 @@ class LiveUpdateFetch extends JObject
 				break;
 		}
 		
+		if(empty($updateInfo->version) && empty($updateInfo->date)) return 0;
+		
 		// Use the version strategy to determine the availability of an update
 		switch($config->getVersionStrategy()) {
 			case 'newest':
@@ -67,7 +69,11 @@ class LiveUpdateFetch extends JObject
 				if(empty($extInfo)) {
 					$mine = new JDate('2000-01-01 00:00:00');
 				} else {
-					$mine = new JDate($extInfo['date']);
+					try {
+						$mine = new JDate($extInfo['date']);
+					} catch(Exception $e) {
+						$mine = new JDate('2000-01-01 00:00:00');
+					}
 				}
 				
 				$theirs = new JDate($updateInfo->date);
@@ -126,14 +132,9 @@ class LiveUpdateFetch extends JObject
 		}
 		
 		// Fetch information from the cache
-		if(version_compare(JVERSION, '1.6.0', 'ge')) {
-			$registry = $storage->getRegistry();
-			$lastCheck = $registry->get('lastcheck', 0);
-			$cachedData = $registry->get('updatedata', null);
-		} else {
-			$lastCheck = $storage->get('lastcheck', 0);
-			$cachedData = $storage->get('updatedata', null);
-		}
+		$registry = $storage->getRegistry();
+		$lastCheck = $registry->get('lastcheck', 0);
+		$cachedData = $registry->get('updatedata', null);
 		
 		if(is_string($cachedData)) {
 			$cachedData = trim($cachedData,'"');
@@ -256,7 +257,7 @@ class LiveUpdateFetch extends JObject
 		$extInfo = $config->getExtensionInformation();
 		$url = $extInfo['updateurl'];
 		
-		return @file_get_contents($urls);
+		return @file_get_contents($url);
 	}
 	
 	/**
@@ -290,10 +291,37 @@ class LiveUpdateFetch extends JObject
 		require_once dirname(__FILE__).'/inihelper.php';
 		$iniData = LiveUpdateINIHelper::parse_ini_file($rawData, false, true);
 		
-		$ret['version'] = $iniData['version'];
-		$ret['date'] = $iniData['date'];
+		// Get the supported platforms
+		$supportedPlatform = false;
+		$versionParts = explode('.',JVERSION);
+		$currentPlatform = $versionParts[0].'.'.$versionParts[1];
+		
+		if(array_key_exists('platforms', $iniData)) {
+			$rawPlatforms = explode(',', $iniData['platforms']);
+			foreach($rawPlatforms as $platform) {
+				$platform = trim($platform);
+				if(substr($platform,0,7) != 'joomla/') {
+					continue;
+				}
+				$platform = substr($platform, 7);
+				if($currentPlatform == $platform) {
+					$supportedPlatform = true;
+				}
+			}
+		} else {
+			// Lies, damn lies
+			$supportedPlatform = true;
+		}
+		
+		if(!$supportedPlatform) {
+			return $ret;
+		}
+		
+		$ret['version'] = array_key_exists('version', $iniData) ? $iniData['version'] : '';
+		$ret['date'] = array_key_exists('date', $iniData) ? $iniData['date'] : '';
 		$config = LiveUpdateConfig::getInstance();
 		$auth = $config->getAuthorization();
+		if(!array_key_exists('link', $iniData)) $iniData['link'] = '';
 		$glue = strpos($iniData['link'],'?') === false ? '?' : '&';
 		$ret['downloadURL'] = $iniData['link'] . (empty($auth) ? '' : $glue.$auth);
 		if(array_key_exists('stability', $iniData)) {

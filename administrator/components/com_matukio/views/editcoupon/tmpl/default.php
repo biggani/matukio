@@ -13,7 +13,11 @@ defined('_JEXEC') or die('Restricted access');
 
 $editor = JFactory::getEditor();
 
-JHTML::_('behavior.mootools');
+if(CJOOMLA_VERSION == 3)
+    JHtmlBehavior::framework();
+else
+    JHTML::_('behavior.mootools');
+
 JHTML::_('behavior.calendar');
 JHTML::_('behavior.tooltip');
 

@@ -16,7 +16,7 @@ defined( '_JEXEC' ) or die ( 'Restricted access' );
 // Global imports
 
 
-class MatukioController extends JController
+class MatukioController extends JControllerLegacy
 {
 
 }

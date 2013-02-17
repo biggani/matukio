@@ -12,25 +12,26 @@ defined( '_JEXEC' ) or die ( 'Restricted access' );
 
 jimport('joomla.application.component.view');
 
-class MatukioViewPrintEventlist extends JView {
+class MatukioViewPrintEventlist extends JViewLegacy {
 
-    public function display() {
+    public function display($tpl = NULL) {
 
-        $database = &JFactory::getDBO();
-        $my = &JFactory::getuser();
-        $dateid = JRequest::getInt('dateid', 1);
-        $catid = JRequest::getInt('catid', 0);
-        $search = JRequest::getVar('search', '');
-        $limit = JRequest::getInt('limit', 5);
-        $limitstart = JRequest::getInt('limitstart', 0);
-        $cid = JRequest::getInt('cid', 0);
-        $uid = JRequest::getInt('uid', 0);
-
-
-        $todo = JRequest::getVar('todo', 'print_eventlist'); // print_eventlist, print_booking, print_myevents, print
+        $database = JFactory::getDBO();
+        $my = JFactory::getuser();
+        $dateid = JFactory::getApplication()->input->getInt('dateid', 1);
+        $catid = JFactory::getApplication()->input->getInt('catid', 0);
+        $search = JFactory::getApplication()->input->get('search', '', 'string');
+        $limit = JFactory::getApplication()->input->getInt('limit', 5);
+        $limitstart = JFactory::getApplication()->input->getInt('limitstart', 0);
+        $cid = JFactory::getApplication()->input->getInt('cid', 0);
+        $uid = JFactory::getApplication()->input->getInt('uid', 0);
 
 
-        //
+        $todo = JFactory::getApplication()->input->get('todo', 'print_eventlist'); // print_eventlist, print_booking, print_myevents, print
+        $rows = null;
+        $status = null;
+        $headertext = null;
+
         // Did comment this
         // echo "TODO: " . $todo;
 
@@ -246,8 +247,8 @@ class MatukioViewPrintEventlist extends JView {
             case "print_teilnehmerliste":
                 // TODO implement userchecking
 
-                $art = JRequest::getInt('art', 0);
-                $this->assignRef('art', $art);
+                $art = JFactory::getApplication()->input->getInt('art', 0);
+                $this->art = $art;
 
                 $this->setLayout("participants");
                 break;
@@ -255,20 +256,20 @@ class MatukioViewPrintEventlist extends JView {
 
             case "csvlist":
                 // TODO implement userchecking
-                $art = JRequest::getInt('art', 0);
-                $this->assignRef('art', $art);
-                $this->assignRef('cid', $cid);
+                $art = JFactory::getApplication()->input->getInt('art', 0);
+                $this->art = $art;
+                $this->cid = $cid;
 
                 $this->setLayout("csv");
                 break;
 
             case "certificate":
                 // TODO implement userchecking
-                $art = JRequest::getInt('art', 0);
-                $uid = JRequest::getInt('uid', 0);
+                $art = JFactory::getApplication()->input->getInt('art', 0);
+                $uid = JFactory::getApplication()->input->getInt('uid', 0);
 
-                $this->assignRef('art', $art);
-                $this->assignRef('uid', $uid);
+                $this->art = $art;
+                $this->uid = $uid;
 
                 $this->setLayout("certificate");
                 //sem_f051($cid);
@@ -278,11 +279,11 @@ class MatukioViewPrintEventlist extends JView {
         //sem_f056($rows, $status, $headertext);
 
 
-        $this->assignRef('rows', $rows);
-        $this->assignRef('status', $status);
-        $this->assignRef('headertext', $headertext);
+        $this->rows = $rows;
+        $this->status = $status;
+        $this->headertext = $headertext;
 
 
-        parent::display();
+        parent::display($tpl);
     }
 }

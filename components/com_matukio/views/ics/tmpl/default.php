@@ -11,13 +11,13 @@
 
 defined('_JEXEC') or die('Restricted access');
 
-$mainconfig =& JFactory::getConfig();
+$mainconfig = JFactory::getConfig();
 $filename = $this->events[0]->title;
 
 //var_dump($this->events);
 
 if(count($this->events) > 1) {
-    $filename = $mainconfig->getValue('config.sitename') . "- Events";
+    $filename = $mainconfig->get('config.sitename') . "- Events";
 }
 
 $icsdata = "BEGIN:VCALENDAR\n";
@@ -26,7 +26,7 @@ $icsdata .= "PRODID:" . MatukioHelperUtilsBasic::getSitePath() . "\n";
 $icsdata .= "METHOD:PUBLISH\n";
 
 foreach($this->events as $event) {
-    $user = &JFactory::getuser($event->publisher);
+    $user = JFactory::getuser($event->publisher);
     $icsdata .= "BEGIN:VEVENT\n";
     $icsdata .= "UID:" . MatukioHelperUtilsBooking::getBookingId($event->id) . "\n";
     $icsdata .= "ORGANIZER;CN=\"" . $user->name . "\":MAILTO:" . $user->email . "\n";

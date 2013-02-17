@@ -36,11 +36,16 @@ class MatukioHelperRoute
 
     public static function _findItem($needles)
     {
-        $component = & JComponentHelper::getComponent('com_matukio');
+        $component = JComponentHelper::getComponent('com_matukio');
 
         $componentId = 'component_id';
 
-        $menus = & JApplication::getMenu('site', array());
+        $site = new JSite();
+
+        //$menus = JApplication::getMenu('site', array());
+        $menus = $site->getMenu('site', array());
+
+
         $items = $menus->getItems($componentId, $component->id);
 
         $match = null;

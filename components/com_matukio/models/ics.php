@@ -12,6 +12,6 @@
 defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.model');
 
-class MatukioModelICS extends JModel {
+class MatukioModelICS extends JModelLegacy {
 
 }

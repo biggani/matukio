@@ -33,7 +33,7 @@ class MatukioHelperSettings
      *
      * @return JObject - loads a singleton object with all settings
      */
-    private function _loadSettings()
+    private static function _loadSettings()
     {
         $db = JFactory::getDBO();
         $settings = new JObject();
@@ -49,8 +49,8 @@ class MatukioHelperSettings
         }
 
         // grab the settings from the menu and merge them in the object
-        $app = &JFactory::getApplication();
-        $menu = &$app->getMenu();
+        $app = JFactory::getApplication();
+        $menu = $app->getMenu();
         if (is_object($menu)) {
             if ($item = $menu->getActive()) {
                 $menuParams = $menu->getParams($item->id);
@@ -67,6 +67,10 @@ class MatukioHelperSettings
     }
 
 
+    /**
+     * @param $value
+     * @return string
+     */
     public static function getSettingField($value){
         switch ($value->type) {
             case 'textarea':
@@ -153,7 +157,7 @@ class MatukioHelperSettings
      * @param <type> $style
      * @return string
      */
-    function getSelectSettings($id, $title, $value, $values, $class = 'inputbox', $size = 50, $maxlength = 255, $style = 'width:300px')
+    public static function getSelectSettings($id, $title, $value, $values, $class = 'inputbox', $size = 50, $maxlength = 255, $style = 'width:300px')
     {
 
         $valuesArray = MatukioHelperSettings::getSettingsValues($values);
@@ -190,7 +194,7 @@ class MatukioHelperSettings
      * @param <type> $style
      * @return <type>
      */
-    function getTextSettings($id, $title, $value, $class = 'text_area', $size = 50, $maxlength = 255, $style = 'width:300px')
+    public static function getTextSettings($id, $title, $value, $class = 'text_area', $size = 50, $maxlength = 255, $style = 'width:300px')
     {
 
         return '<input class="' . $class . '" type="text" name="matukioset[' . $id . ']"
@@ -204,7 +208,7 @@ class MatukioHelperSettings
      * @param <type> $params
      * @return <type>
      */
-    function getSettingsValues($params)
+    public static function getSettingsValues($params)
     {
 
         $regex_one = '/({\s*)(.*?)(})/si';

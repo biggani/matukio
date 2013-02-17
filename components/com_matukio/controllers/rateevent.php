@@ -14,12 +14,12 @@ defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.controller');
 
 
-class MatukioControllerRateEvent extends JController
+class MatukioControllerRateEvent extends JControllerLegacy
 {
-    public function display()
+    public function display($cachable = false, $urlparams = false)
     {
         $document = JFactory::getDocument();
-        $viewName = JRequest::getVar('view', 'RateEvent');
+        $viewName = JFactory::getApplication()->input->get('view', 'RateEvent');
         $viewType = $document->getType();
         $view = $this->getView($viewName, $viewType);
         $model = $this->getModel('RateEvent', 'MatukioModel');
@@ -35,17 +35,17 @@ class MatukioControllerRateEvent extends JController
         $msg = "COM_MATUKIO_RATING_SUCCESSFULL";
         $mainframe = JFactory::getApplication();
         jimport('joomla.mail.helper');
-        $my = &JFactory::getuser();
-        $database = &JFactory::getDBO();
-        $cid = JRequest::getInt('cid', 0);
-        $grade = JRequest::getInt('grade', 0);
-        $text = JRequest::getVar('text', '');
+        $my = JFactory::getuser();
+        $database = JFactory::getDBO();
+        $cid = JFactory::getApplication()->input->getInt('cid', 0);
+        $grade = JFactory::getApplication()->input->getInt('grade', 0);
+        $text = JFactory::getApplication()->input->get('text', '');
         $text = str_replace(array("\"", "\'"), "", $text);
         $text = JMailHelper::cleanBody($text);
         $database->setQuery("UPDATE #__matukio_bookings SET grade='" .$grade . "', comment='" .$text . "' WHERE semid='"
                             . $cid . "' AND userid='" . $my->id . "'");
 
-        if (!$database->query()) {
+        if (!$database->execute()) {
             JError::raiseError(500, $database->getError());
             exit();
         }
@@ -65,7 +65,7 @@ class MatukioControllerRateEvent extends JController
             $geswert = 0;
         }
         $database->setQuery("UPDATE #__matukio SET grade='$geswert' WHERE id='$cid'");
-        if (!$database->query()) {
+        if (!$database->execute()) {
             JError::raiseError(500, $database->getError());
             $msg = "COM_MATUKIO_RATING_FAILED " . $database->getError();
         }
@@ -76,7 +76,7 @@ class MatukioControllerRateEvent extends JController
             $database->setQuery("SELECT * FROM #__matukio WHERE id='$cid'");
             $rows = $database->loadObjectList();
             $row = &$rows[0];
-            $publisher = &JFactory::getuser($row->publisher);
+            $publisher = JFactory::getuser($row->publisher);
             $body = "\n<head>\n<style type=\"text/css\">\n<!--\nbody {\nfont-family: Verdana, Tahoma, Arial;\nfont-size:12pt;\n}\n-->\n</style></head><body>";
             $body .= "<p><div style=\"font-size: 10pt\">" . JTEXT::_('COM_MATUKIO_RECEIVED_RATING') . "</div>";
             $body .= "<p><div style=\"font-size: 10pt\">" . JTEXT::_('COM_MATUKIO_RATING') . ":</div>";
@@ -99,7 +99,9 @@ class MatukioControllerRateEvent extends JController
             }
             $subject .= ": " . $row->title;
             $subject = JMailHelper::cleanSubject($subject);
-            JUtility::sendMail($from, $sender, $email, $subject, $body, 1, null, null, null, $replyto, $replyname);
+            $mailer = JFactory::getMailer();
+
+            $mailer->sendMail($from, $sender, $email, $subject, $body, 1, null, null, null, $replyto, $replyname);
         }
 
         $link = JRoute::_("index.php?option=com_matukio&tmpl=component&view=rateevent&cid=" . $cid);

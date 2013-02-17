@@ -13,27 +13,32 @@ defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.application.component.view');
 
-class MatukioViewEventlist extends JView {
+class MatukioViewEventlist extends JViewLegacy {
 
-    public function display() {
+    /**
+     * @param null $tpl
+     * @return mixed|object
+     */
+    public function display($tpl = NULL) {
 
         //    function sem_g001($art, $rows, $pageNav, $search, $limit, $limitstart, $total, $datelist, $dateid, $clist, $catid)
 
-        $params = &JComponentHelper::getParams( 'com_matukio' );
-        $menuitemid = JRequest::getInt( 'Itemid' );
+        $params = JComponentHelper::getParams( 'com_matukio' );
+        $menuitemid = JFactory::getApplication()->input->get( 'Itemid' );
         if ($menuitemid)
         {
-            $menu = JSite::getMenu();
+            $site = new JSite();
+            $menu = $site->getMenu();
             $menuparams = $menu->getParams( $menuitemid );
             $params->merge( $menuparams );
         }
 
-        $art = JRequest::getInt('art', 0); // Hardcoed in Dirk's matukio.php task
+        $art = JFactory::getApplication()->input->getInt('art', 0); // Hardcoed in Dirk's matukio-mvc.php task
 
-        $database =& JFactory::getDBO();
-        $dateid = JRequest::getInt('dateid', 1);
-        $catid = JRequest::getInt('catid', 0);
-        $uuid = JRequest::getVar('uuid', '');
+        $database = JFactory::getDBO();
+        $dateid = JFactory::getApplication()->input->getInt('dateid', 1);
+        $catid = JFactory::getApplication()->input->getInt('catid', 0);
+        $uuid = JFactory::getApplication()->input->get('uuid', '', 'string');
 
 //        echo "dateid: " . $dateid;
 //        echo "<br />catid: " . $catid;
@@ -44,14 +49,14 @@ class MatukioViewEventlist extends JView {
 
         //echo $catid;
 
-        $search = JRequest::getString('search', '');
+        $search = JFactory::getApplication()->input->get('search', '', 'string');
         $search = str_replace("'", "", $search);
         $search = str_replace("\"", "", $search);
 
         //echo "Search: " . $search;
 
-        $limit = JRequest::getInt('limit', MatukioHelperSettings::getSettings('event_showanzahl', 10));
-        $limitstart = JRequest::getInt('limitstart', 0);
+        $limit = JFactory::getApplication()->input->getInt('limit', MatukioHelperSettings::getSettings('event_showanzahl', 10));
+        $limitstart = JFactory::getApplication()->input->getInt('limitstart', 0);
         $my = JFactory::getuser();
         $neudatum = MatukioHelperUtilsDate::getCurrentDate();
         $where = array();
@@ -89,7 +94,7 @@ class MatukioViewEventlist extends JView {
             $accesslvl = 2;
         }
 
-        $database->setQuery("SELECT id, access FROM #__categories WHERE extension = '" . JRequest::getCmd('option') . "' AND published = 1");
+        $database->setQuery("SELECT id, access FROM #__categories WHERE extension = '" . JFactory::getApplication()->input->get('option') . "' AND published = 1");
         $cats = $database->loadObjectList();
 
         //var_dump($cats);
@@ -98,7 +103,7 @@ class MatukioViewEventlist extends JView {
         $allowedcat = array();
 
         foreach ((array)$cats AS $cat) {
-            if ($cat->access < $accesslvl) {
+            if ($cat->access <= $accesslvl) {
                 $allowedcat[] = $cat->id;
             }
         }
@@ -264,7 +269,7 @@ class MatukioViewEventlist extends JView {
         }
         $categories[] = JHTML::_('select.option', '0', JTEXT::_('COM_MATUKIO_ALL_CATS'));
 
-        $database->setQuery("SELECT id AS value, title AS text FROM #__categories WHERE extension='" . JRequest::getCmd('option') . "' AND published = 1");
+        $database->setQuery("SELECT id AS value, title AS text FROM #__categories WHERE extension='" . JFactory::getApplication()->input->get('option') . "' AND published = 1");
         $categs = array_merge($categories, (array)$database->loadObjectList());
         $clist = JHTML::_('select.genericlist', $categs, "catid", "class=\"sem_inputbox\" size=\"1\"
                 onchange=\"changeCategoryEventlist();\"", "value", "text", $catid);
@@ -273,18 +278,18 @@ class MatukioViewEventlist extends JView {
         // Navigationspfad erweitern
         MatukioHelperUtilsBasic::expandPathway($anztyp[0], JRoute::_("index.php?option=com_matukio&view=eventlist"));
 
-        $this->assignRef('art', $art);
-        $this->assignRef('rows', $rows);
-        $this->assignRef('pageNav', $pageNav);
-        $this->assignRef('search', $search);
-        $this->assignRef('limit', $limit);
-        $this->assignRef('limitstart', $limitstart);
-        $this->assignRef('total', $total);
-        $this->assignRef('datelist', $datelist);
-        $this->assignRef('dateid', $dateid);
-        $this->assignRef('clist', $clist);
-        $this->assignRef('catid', $catid);
+        $this->art = $art;
+        $this->rows = $rows;
+        $this->pageNav = $pageNav;
+        $this->search = $search;
+        $this->limit = $limit;
+        $this->limitstart = $limitstart;
+        $this->total = $total;
+        $this->datelist = $datelist;
+        $this->dateid = $dateid;
+        $this->clist = $clist;
+        $this->catid = $catid;
 
-        parent::display();
+        parent::display($tpl);
     }
 }

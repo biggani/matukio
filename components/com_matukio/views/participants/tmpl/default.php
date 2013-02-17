@@ -12,12 +12,12 @@
 defined('_JEXEC') or die('Restricted access');
 
 JHTML::_('behavior.modal');
-JHTML::_('stylesheet', 'matukio.css', 'media/com_matukio/css/');
-JHTML::_('script', 'matukio.js', 'media/com_matukio/js/');
+JHTML::_('stylesheet', 'media/com_matukio/css/matukio.css');
+JHTML::_('script', 'media/com_matukio/js/matukio.js');
 
 
-$document = &JFactory::getDocument();
-$my = &JFactory::getuser();
+$document = JFactory::getDocument();
+$my = JFactory::getuser();
 
 JHTML::_('behavior.modal');
 JHTML::_('behavior.tooltip');
@@ -62,9 +62,9 @@ if (count($this->rows) > 0 AND $this->art > 1) {
     $knopfunten .= " " . MatukioHelperUtilsEvents::getPrintWindow(7, $this->kurs->id, '', 'b');
     $knopfunten .= " " . MatukioHelperUtilsEvents::getPrintWindow(5, $this->kurs->id, '', 'b');
 
-    $knopfunten .= " <a href=\"" . $csvlink . "\" target=\"_blank\"><button class=\"mat_button\" style=\"cursor:pointer;\" type=\"button\"><img src=\""
+    $knopfunten .= " <a href=\"" . $csvlink . "\" target=\"_blank\"><span class=\"mat_button\" style=\"cursor:pointer;\"><img src=\""
         . MatukioHelperUtilsBasic::getComponentImagePath() . "1616.png\" border=\"0\" align=\"absmiddle\">&nbsp;"
-        . JTEXT::_('COM_MATUKIO_DOWNLOAD_CSV_FILE') . "</button></a>";
+        . JTEXT::_('COM_MATUKIO_DOWNLOAD_CSV_FILE') . "</span></a>";
 }
 
 if ($this->art > 1) {
@@ -75,9 +75,9 @@ if ($this->art > 1) {
     $knopfoben .= "<a title=\"" . JTEXT::_('COM_MATUKIO_BOOK') . "\" href=\"" .$booklink . "\"><img src=\""
         . MatukioHelperUtilsBasic::getComponentImagePath() . "1132.png\" border=\"0\" align=\"absmiddle\"></a>";
 
-    $knopfunten .= " <a href=\"" . $booklink . "\"><button class=\"mat_button\" style=\"cursor:pointer;\" type=\"button\"><img src=\""
+    $knopfunten .= " <a href=\"" . $booklink . "\"><span class=\"mat_button\" style=\"cursor:pointer;\"><img src=\""
         . MatukioHelperUtilsBasic::getComponentImagePath() . "1116.png\" border=\"0\" align=\"absmiddle\">&nbsp;"
-        . JTEXT::_('COM_MATUKIO_BOOK') . "</button></a>";
+        . JTEXT::_('COM_MATUKIO_BOOK') . "</span></a>";
 }
 if (MatukioHelperSettings::getSettings('event_buttonposition', 2) == 0 OR MatukioHelperSettings::getSettings('event_buttonposition', 2) == 2) {
     echo $knopfoben;
@@ -193,11 +193,11 @@ if ($n > 0) {
             $eventid_l = $this->kurs->id.':'.JFilterOutput::stringURLSafe($this->kurs->title);
             $catid_l = $this->kurs->catid.':'.JFilterOutput::stringURLSafe(MatukioHelperCategories::getCategoryAlias($this->kurs->catid));
 
-            if (MatukioHelperSettings::getSettings('oldbookingform', 0) == 1) {
-                $dlink = MatukioHelperRoute::getEventRoute($eventid_l, $catid_l, 3, $row->sid);
-            } else {
+//            if (MatukioHelperSettings::getSettings('oldbookingform', 0) == 1) {
+//                $dlink = MatukioHelperRoute::getEventRoute($eventid_l, $catid_l, 3, $row->sid);
+//            } else {
                 $dlink = "index.php?option=com_matukio&view=editbooking&booking_id=" . $row->uuid;
-            }
+            //}
             //echo $dlink;
             $detaillink = JRoute::_($dlink);
 

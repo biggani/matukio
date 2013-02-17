@@ -11,7 +11,7 @@
 
 defined('_JEXEC') or die('Restricted access');
 
-$database = &JFactory::getDBO();
+$database = JFactory::getDBO();
 
 $kurs = JTable::getInstance('Matukio', 'Table');
 $kurs->load($this->cid);

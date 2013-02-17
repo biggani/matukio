@@ -12,7 +12,7 @@
 defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.controller');
 
-class MatukioControllerBookingfields extends JController {
+class MatukioControllerBookingfields extends JControllerLegacy {
 
     public function __construct() {
         parent::__construct();
@@ -25,7 +25,7 @@ class MatukioControllerBookingfields extends JController {
 
     public function display($cachable = false, $urlparams = false) {
         $document = JFactory::getDocument();
-        $viewName = JRequest::getVar('view', 'bookingfields');
+        $viewName = JFactory::getApplication()->input->get('view', 'bookingfields');
         $viewType = $document->getType();
         $view = $this->getView($viewName, $viewType);
         $model = $this->getModel('Bookingfields', 'MatukioModel');
@@ -35,13 +35,15 @@ class MatukioControllerBookingfields extends JController {
     }
 
     public function remove() {
-        $cid = JRequest::getVar('cid', array(), '', 'array');
+        $cid = JFactory::getApplication()->input->get('cid', array(), '', 'array');
+
+        // $input->get('cid', array(), 'array');
         $db = JFactory::getDBO();
         if (count($cid)) {
             $cids = implode(',', $cid);
             $query = "DELETE FROM #__matukio_booking_fields where id IN ( $cids )";
             $db->setQuery($query);
-            if (!$db->query()) {
+            if (!$db->execute()) {
                 echo "<script> alert('" . $db->getErrorMsg() . "'); window.history.go (-1); </script>\n";
             }
         }
@@ -50,7 +52,7 @@ class MatukioControllerBookingfields extends JController {
 
 
     public function publish() {
-        $cid = JRequest::getVar('cid', array(), '', 'array');
+        $cid = JFactory::getApplication()->input->get('cid', array(), '', 'array');
 
         if ($this->task == 'publish') {
             $publish = 1;
@@ -85,8 +87,7 @@ class MatukioControllerBookingfields extends JController {
         $row = JTable::getInstance('bookingfields', 'Table');
         $postgal = JRequest::get('post');
 
-        $id = JRequest::GetVar('id', 0);
-
+        $id = JFactory::getApplication()->input->getInt('id', 0);
 
         if (!$row->bind($postgal)) {
             echo "<script> alert('" . $row->getError() . "'); window.history.go (-1); </script>\n";

@@ -12,22 +12,23 @@ defined( '_JEXEC' ) or die ( 'Restricted access' );
 
 jimport('joomla.application.component.view');
 
-class MatukioViewUpcomingEvents extends JView {
+class MatukioViewUpcomingEvents extends JViewLegacy {
 
-    public function display() {
+    public function display($tpl = NULL) {
 
         $jinput = JFactory::getApplication()->input;
 
-        $catid = JRequest::getVar('catid', array(), '', 'array');
+        $catid = JFactory::getApplication()->input->get('catid', array(), '', 'array');
         $user = JFactory::getUser();
         $ue_title="COM_MATUKIO_UPCOMING_EVENTS";
 
-        $params = &JComponentHelper::getParams( 'com_matukio' );
+        $params = JComponentHelper::getParams( 'com_matukio' );
 
-        $menuitemid = JRequest::getInt( 'Itemid' );
+        $menuitemid = JFactory::getApplication()->input->get( 'Itemid' );
         if ($menuitemid)
         {
-            $menu = JSite::getMenu();
+            $site = new JSite();
+            $menu = $site->getMenu();
             $menuparams = $menu->getParams( $menuitemid );
             $params->merge( $menuparams );
         }
@@ -47,12 +48,11 @@ class MatukioViewUpcomingEvents extends JView {
 
         MatukioHelperUtilsBasic::expandPathway(JTEXT::_('COM_MATUKIO_UPCOMING_EVENTS'), "");
 
-        $this->assignRef('catid', $catid);
-        $this->assignRef('events', $events);
-        $this->assignRef('user', $user);
-        $this->assignRef('title', $ue_title);
+        $this->catid = $catid;
+        $this->events = $events;
+        $this->user = $user;
+        $this->title = $ue_title;
 
-
-        parent::display();
+        parent::display($tpl);
     }
 }

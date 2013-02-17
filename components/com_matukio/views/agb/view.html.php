@@ -13,12 +13,12 @@ defined( '_JEXEC' ) or die ( 'Restricted access' );
 
 jimport('joomla.application.component.view');
 
-class MatukioViewAGB extends JView {
+class MatukioViewAGB extends JViewLegacy {
 
-    public function display() {
+    public function display($tpl = NULL) {
 
-        $this->assignRef('agb', nl2br(MatukioHelperSettings::getSettings('agb_text', '')));
+        $this->agb = nl2br(MatukioHelperSettings::getSettings('agb_text', ''));
 
-        parent::display();
+        parent::display($tpl);
     }
 }

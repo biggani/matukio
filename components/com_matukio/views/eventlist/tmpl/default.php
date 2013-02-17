@@ -11,13 +11,13 @@
 
 defined('_JEXEC') or die('Restricted access');
 
-$document = &JFactory::getDocument();
-$database = &JFactory::getDBO();
-$my = &JFactory::getuser();
+$document = JFactory::getDocument();
+$database = JFactory::getDBO();
+$my = JFactory::getuser();
 $neudatum = MatukioHelperUtilsDate::getCurrentDate();
 JHTML::_('behavior.modal');
-JHTML::_('stylesheet', 'matukio.css', 'media/com_matukio/css/');
-JHTML::_('script', 'matukio.js', 'media/com_matukio/js/');
+JHTML::_('stylesheet', 'media/com_matukio/css/matukio.css');
+JHTML::_('script', 'media/com_matukio/js/matukio.js');
 
 //$script = "window.addEvent('domready', function () {
 //                $(\"search_field\").addEvent('keyup', function (e) {
@@ -42,11 +42,13 @@ JHTML::_('script', 'matukio.js', 'media/com_matukio/js/');
 
 //$document->addScriptDeclaration($script);
 
-$params = &JComponentHelper::getParams( 'com_matukio' );
-$menuitemid = JRequest::getInt( 'Itemid' );
+$params = JComponentHelper::getParams( 'com_matukio' );
+$menuitemid = JFactory::getApplication()->input->get( 'Itemid' );
 if ($menuitemid)
 {
-    $menu = JSite::getMenu();
+    $site = new JSite();
+    $menu = $site->getMenu();
+
     $menuparams = $menu->getParams( $menuitemid );
     $params->merge( $menuparams );
 }
@@ -81,7 +83,7 @@ if ($this->art == 2) {
 if (count($this->rows) > 0) {
     if ($this->art == 0 AND MatukioHelperSettings::getSettings('rss_feed', 1) == 1) {
 
-        $href = JURI::ROOT() . "index.php?tmpl=component&option=" . JRequest::getCmd('option') . "&view=rss&format=raw";
+        $href = JURI::ROOT() . "index.php?tmpl=component&option=" . JFactory::getApplication()->input->get('option') . "&view=rss&format=raw";
 
         $knopfoben .= "<a href=\"" . $href . "\" target=\"_new\" title=\"" . JTEXT::_('COM_MATUKIO_RSS_FEED') . "\" border=\"0\">" . JHTML::_('image',
             MatukioHelperUtilsBasic::getComponentImagePath() . '3132.png', null, array('border' => '0', 'align' => 'absmiddle')) . "</a>";
@@ -91,7 +93,7 @@ if (count($this->rows) > 0) {
 
     if ($this->art == 0 AND MatukioHelperSettings::getSettings('frontend_usericsdownload', 1) == 1) {
 
-        $href = JURI::ROOT() . "index.php?tmpl=component&option=" . JRequest::getCmd('option') . "&view=ics&format=raw";
+        $href = JURI::ROOT() . "index.php?tmpl=component&option=" . JFactory::getApplication()->input->get('option') . "&view=ics&format=raw";
 
         $knopfoben .= "<a href=\"" . $href . "\" target=\"_new\" title=\"" . JTEXT::_('COM_MATUKIO_DOWNLOAD_CALENDER_FILE') . "\" border=\"0\">" . JHTML::_('image',
             MatukioHelperUtilsBasic::getComponentImagePath() . '3316.png', null, array('border' => '0', 'align' => 'absmiddle')) . "</a>";
@@ -345,8 +347,13 @@ if ($n > 0) {
         // Zertifikatdruck erlauben
         if (MatukioHelperSettings::getSettings('frontend_certificatesystem', 0) > 0 AND $this->art == 1) {
             if ($buchopt[2][0]->certificated == 1 AND $row->nrbooked > 0) {
-                $htxt = MatukioHelperUtilsEvents::getPrintWindow(1, $row->sid, '', '');
-                $htbr = 30;
+
+//                var_dump($buchopt);
+
+                if(JFactory::getUser()->id > 0) {
+                    $htxt = MatukioHelperUtilsEvents::getPrintWindow(1, $row->sid, $buchopt[2][0]->id, '');
+                    $htbr = 30;
+                }
             } else {
                 $htxt = "&nbsp;";
                 $htbr = "";

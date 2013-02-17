@@ -16,8 +16,6 @@ function changeLimitEventlist() {
 
 }
 
-
-
 function searchEventlist() {
    var search = document.id('search_field').get('value');
    var lim = document.id('limit').get('value');
@@ -25,11 +23,10 @@ function searchEventlist() {
    var catid = document.id('catid').get('value');
    //var dateid = document.id('dateid').get('value');
 
-
-    var jsonRequest = new Request.JSON({url: 'index.php?option=com_matukio&view=requests&task=route_link',
-        onSuccess: function(url){
-            window.location= url.link;
-    }}).get({'link': "index.php?option=com_matukio&view=eventlist&art=" + art + "&catid=" + catid + "&search=" +search + "&limit=" + lim});
+   var jsonRequest = new Request.JSON({url: 'index.php?option=com_matukio&view=requests&task=route_link',
+       onSuccess: function(url){
+           window.location= url.link;
+   }}).get({'link': "index.php?option=com_matukio&view=eventlist&art=" + art + "&catid=" + catid + "&search=" +search + "&limit=" + lim});
 
     return false;
 }

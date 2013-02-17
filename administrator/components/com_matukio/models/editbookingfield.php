@@ -12,17 +12,16 @@
 defined('_JEXEC') or die();
 jimport('joomla.application.component.model');
 
-class MatukioModelEditBookingfield extends JModel {
+class MatukioModelEditBookingfield extends JModelLegacy {
 
     public function __construct() {
         parent::__construct();
-        $array = JRequest::getVar('id', 0, '', 'array');
-        $this->setId = (int) $array[0];
+        //$array = JFactory::getApplication()->input->get('id', 0, '', 'array');
+        $this->setId = JFactory::getApplication()->input->getInt('id', 0);
     }
 
     public function getBookingfield() {
-        $array2 = JRequest::getVar('id', 0, '', 'array');
-        $this->setId2 = (int) $array2[0];
+        $this->setId2 = JFactory::getApplication()->input->getInt('id', 0);
         $id = $this->setId2;
 
         if (empty($this->_data)) {

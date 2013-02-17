@@ -13,12 +13,12 @@ defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.application.component.controller');
 
-class MatukioControllerParticipants extends JController
+class MatukioControllerParticipants extends JControllerLegacy
 {
-    public function display()
+    public function display($cachable = false, $urlparams = false)
     {
         $document = JFactory::getDocument();
-        $viewName = JRequest::getVar('view', 'participants');
+        $viewName = JFactory::getApplication()->input->get('view', 'participants');
         $viewType = $document->getType();
         $view = $this->getView($viewName, $viewType);
         $model = $this->getModel('participants', 'MatukioModel');
@@ -38,9 +38,9 @@ class MatukioControllerParticipants extends JController
             return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
         }
 
-        $database = &JFactory::getDBO();
-        $uid = JRequest::getInt('uid', 0);
-        $cid = JRequest::getInt('cid', 0);
+        $database = JFactory::getDBO();
+        $uid = JFactory::getApplication()->input->getInt('uid', 0);
+        $cid = JFactory::getApplication()->input->getInt('cid', 0);
 
         $database->setQuery("SELECT * FROM #__matukio_bookings WHERE id='" . $uid . "'");
         $row = $database->loadObject();
@@ -52,7 +52,7 @@ class MatukioControllerParticipants extends JController
         }
 
         $database->setQuery("UPDATE #__matukio_bookings SET paid='" . $paid . "' WHERE id='" . $uid . "'");
-        if (!$database->query()) {
+        if (!$database->execute()) {
             JError::raiseError(500, $row->getError());
             exit();
         }
@@ -71,9 +71,9 @@ class MatukioControllerParticipants extends JController
     {
         $msg = JTEXT::_("COM_MATUKIO_SEND_USER_CERTIFICATE");
 
-        $database = &JFactory::getDBO();
-        $cid = JRequest::getInt('cid', 0);
-        $uid = JRequest::getInt('uid', 0);
+        $database = JFactory::getDBO();
+        $cid = JFactory::getApplication()->input->getInt('cid', 0);
+        $uid = JFactory::getApplication()->input->getInt('uid', 0);
         $database->setQuery("SELECT * FROM #__matukio_bookings WHERE id='" . $uid . "'");
 
         $rows = $database->loadObjectList();
@@ -85,7 +85,7 @@ class MatukioControllerParticipants extends JController
             $certmail = 7;
         }
         $database->setQuery("UPDATE #__matukio_bookings SET certificated='$cert' WHERE id='" . $uid . "'");
-        if (!$database->query()) {
+        if (!$database->execute()) {
             JError::raiseError(500, $database->getError());
             $msg = JTEXT::_("COM_MATUKIO_SAVE_USER_CERTIFICATE_FAILED");
         }
@@ -104,9 +104,9 @@ class MatukioControllerParticipants extends JController
             return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
         }
 
-        $database = &JFactory::getDBO();
-        $uid = JRequest::getInt('uid', 0);
-        $eventid = JRequest::getInt('cid', 0);
+        $database = JFactory::getDBO();
+        $uid = JFactory::getApplication()->input->getInt('uid', 0);
+        $eventid = JFactory::getApplication()->input->getInt('cid', 0);
 
         $link = JRoute::_("index.php?option=com_matukio&view=participants&cid=" . $eventid . "&art=2");
 
@@ -117,7 +117,7 @@ class MatukioControllerParticipants extends JController
         }
 
         $database->setQuery("DELETE FROM #__matukio_bookings WHERE id='" . $uid . "'");
-        if (!$database->query()) {
+        if (!$database->execute()) {
             JError::raiseError(500, $database->getError());
         }
 
@@ -137,10 +137,10 @@ class MatukioControllerParticipants extends JController
 
         MatukioHelperUtilsBasic::checkUserLevel(2);
 
-        $art = JRequest::getInt('art', 3);
-        $cid = JRequest::getInt('cid', 0);
+        $art = JFactory::getApplication()->input->getInt('art', 3);
+        $cid = JFactory::getApplication()->input->getInt('cid', 0);
 
-        $database = &JFactory::getDBO();
+        $database = JFactory::getDBO();
         $neu = JTable::getInstance("bookings", "Table");
 
         //var_dump(JRequest::get( 'post' ));
@@ -149,7 +149,7 @@ class MatukioControllerParticipants extends JController
             return JError::raiseError(500, $database->stderr());
         }
 
-        $uid = JRequest::getInt('uid', 0);
+        $uid = JFactory::getApplication()->input->getInt('uid', 0);
 
         if ($uid < 0) { // wtf.. DIRK!?!?! Any Sense?!
             $uid *= -1;

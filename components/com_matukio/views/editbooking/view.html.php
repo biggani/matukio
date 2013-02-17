@@ -11,9 +11,9 @@
 defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.view');
 
-class MatukioViewEditBooking extends JView {
+class MatukioViewEditBooking extends JViewLegacy {
 
-    function display($tpl = null) {
+    function display($tpl = NULL) {
 
         $model = $this->getModel();
 
@@ -22,7 +22,7 @@ class MatukioViewEditBooking extends JView {
         if (!$booking) {
             $booking = JTable::getInstance('bookings', 'Table');
             $booking->id = 0;
-            $booking->semid = JRequest::getVar("cid", 0);
+            $booking->semid = JFactory::getApplication()->input->getInt("cid", 0);
             // echo $booking->semid;
             $booking->userid = 0;
             $booking->uuid = MatukioHelperPayment::getUuid(true);
@@ -56,8 +56,8 @@ class MatukioViewEditBooking extends JView {
             $payment[] = array("name" => "payment_invoice", "title" => "COM_MATUKIO_PAYMENT_INVOICE");
         }
 
-        $this->assignRef('booking', $booking);
-        $this->assignRef('payment', $payment);
+        $this->booking = $booking;
+        $this->payment = $payment;
 
         parent::display($tpl);
     }
