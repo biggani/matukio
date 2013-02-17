@@ -12,7 +12,7 @@
 defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.model');
 
-class MatukioModelPayPalPayment extends JModel {
+class MatukioModelPayPalPayment extends JModelLegacy {
 
     public function getEvent($id) {
         $db = JFactory::getDbo();

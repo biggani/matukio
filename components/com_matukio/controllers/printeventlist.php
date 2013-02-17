@@ -14,14 +14,14 @@ defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.controller');
 
 
-class MatukioControllerPrintEventlist extends JController
+class MatukioControllerPrintEventlist extends JControllerLegacy
 {
-    public function display()
+    public function display($cachable = false, $urlparams = false)
     {
         MatukioHelperUtilsBasic::loginUser();
 
         $document = JFactory::getDocument();
-        $viewName = JRequest::getVar('view', 'printeventlist');
+        $viewName = JFactory::getApplication()->input->get('view', 'printeventlist');
         $viewType = $document->getType();
         $view = $this->getView($viewName, $viewType);
         $model = $this->getModel('PrintEventlist', 'MatukioModel');

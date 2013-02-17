@@ -12,12 +12,12 @@ defined( '_JEXEC' ) or die ( 'Restricted access' );
 
 jimport('joomla.application.component.view');
 
-class MatukioViewPrintEventlist extends JView {
+class MatukioViewPrintEventlist extends JViewLegacy {
 
-    public function display() {
+    public function display($tpl = NULL) {
 
-        $cid = JRequest::getInt('cid', 0);
-        $todo = JRequest::getVar('todo', '');
+        $cid = JFactory::getApplication()->input->getInt('cid', 0);
+        $todo = JFactory::getApplication()->input->get('todo', '');
 
         if(empty($cid)){
             JError::_raiseError("COM_MATUKIO_NO_ID");
@@ -28,15 +28,15 @@ class MatukioViewPrintEventlist extends JView {
             default:
             case "csvlist":
                 // TODO implement userchecking
-                $art = JRequest::getInt('art', 0);
+                $art = JFactory::getApplication()->input->getInt('art', 0);
 
-                $this->assignRef('art', $art);
-                $this->assignRef('cid', $cid);
+                $this->art = $art;
+                $this->cid = $cid;
 
                 $this->setLayout("csv");
                 break;
         }
 
-        parent::display();
+        parent::display($tpl);
     }
 }

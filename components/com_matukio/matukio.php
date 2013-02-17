@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Matukio - Frontend
  * @package Joomla!
@@ -13,6 +12,18 @@
  **/
 
 defined('_JEXEC') or die('Restricted access');
+
+if(!defined('DS')){
+    define('DS',DIRECTORY_SEPARATOR);
+}
+
+if(!defined('CJOOMLA_VERSION')) {
+    if(substr(JVERSION, 0, 1) == 3) {
+        define('CJOOMLA_VERSION', 3);
+    } else {
+        define('CJOOMLA_VERSION', 2);
+    }
+}
 
 require_once( JPATH_COMPONENT_ADMINISTRATOR .  '/helper/defines.php');
 
@@ -28,7 +39,7 @@ JLoader::register('MatukioHelperPayment', JPATH_COMPONENT_ADMINISTRATOR . '/help
 
 // thank you for this black magic Nickolas :)
 // Magic: merge the eventlist translation with the current translation
-$jlang =& JFactory::getLanguage();
+$jlang = JFactory::getLanguage();
 $jlang->load('com_matukio', JPATH_ADMINISTRATOR, 'en-GB', true);
 $jlang->load('com_matukio', JPATH_ADMINISTRATOR, $jlang->getDefault(), true);
 $jlang->load('com_matukio', JPATH_ADMINISTRATOR, null, true);
@@ -36,13 +47,16 @@ $jlang->load('com_matukio', JPATH_SITE, 'en-GB', true);
 $jlang->load('com_matukio', JPATH_SITE, $jlang->getDefault(), true);
 $jlang->load('com_matukio', JPATH_SITE, null, true);
 
+$input=JFactory::getApplication()->input;
+
+
 JTable::addIncludePath(JPATH_ADMINISTRATOR .  '/components/com_matukio/tables');
 
 // Get the view and controller from the request, or set to eventlist if they weren't set
-JRequest::setVar('controller', JRequest::getCmd('view','eventlist')); // Black magic: Get controller based on the selected view
+$input->set('controller', $input->get('view','eventlist')); // Black magic: Get controller based on the selected view
 
 // Require specific controller if requested
-if ($controller = JRequest::getCmd('controller')) {
+if ($controller = $input->get('controller')) {
     $path = JPATH_COMPONENT . '/controllers/' .  $controller . '.php';
 
     if (file_exists($path)) {
@@ -60,7 +74,7 @@ if ($controller == '') {
 // Create the controller
 $classname = 'MatukioController' . $controller;
 $controller = new $classname( );
-$controller->execute(JRequest::getCmd('task'));
+$controller->execute($input->get('task'));
 $controller->redirect();
 
 
@@ -69,7 +83,7 @@ return;
 // Old stuff - not used anymore!!111  PARTY!11
 require_once(JApplicationHelper::getPath('front_html'));
 require_once(JApplicationHelper::getPath('class'));
-$task = trim(JRequest::getInt('task', 0));
+$task = trim($input->getInt('task', 0));
 jimport('joomla.database.table');
 jimport('joomla.methods');
 
@@ -80,7 +94,7 @@ if ($task != 25 AND $task != 31 AND $task != 33) {
 if (($task > 14 AND $task < 23) OR $task == 27 OR $task == 30) {
     echo sem_f031();
 } elseif ($task != 25 AND $task != 31 AND $task != 33) {
-    $document = &JFactory::getDocument();
+    $document = JFactory::getDocument();
     $document->addCustomTag(sem_f030());
 }
 
@@ -308,7 +322,7 @@ echo "\n</td></tr></table><br />" . showCopyright() . "</form>";
 //
 //function sem_g001($art)
 //{
-//    $database =& JFactory::getDBO();
+//    $database = JFactory::getDBO();
 //    $dateid = JRequest::getInt('dateid', 1);
 //    $catid = JRequest::getInt('catid', 0);
 //    $search = JRequest::getString('search', '');
@@ -570,7 +584,7 @@ echo "\n</td></tr></table><br />" . showCopyright() . "</form>";
 
 function sem_g003($art)
 {
-//    $database = &JFactory::getDBO();
+//    $database = JFactory::getDBO();
 //    $neu = new mossembookings($database);
 //    if (!$neu->bind($_POST)) {
 //        JError::raiseError(500, $database->stderr());
@@ -621,8 +635,8 @@ function sem_g003($art)
 
 function sem_g004()
 {
-//    $database = &JFactory::getDBO();
-//    $my = &JFactory::getuser();
+//    $database = JFactory::getDBO();
+//    $my = JFactory::getuser();
 //    $dateid = JRequest::getInt('dateid', 1);
 //    $cid = JRequest::getInt('cid', 0);
 //    $uid = JRequest::getInt('uid', 0);
@@ -749,8 +763,8 @@ function sem_g004()
 
 function sem_g005()
 {
-//    $database = &JFactory::getDBO();
-//    $my = &JFactory::getuser();
+//    $database = JFactory::getDBO();
+//    $my = JFactory::getuser();
 //    $cid = JRequest::getInt('cid', 0);
 //    $database->setQuery("SELECT * FROM #__matukio_bookings WHERE id='$cid'");
 //    $rows = $database->loadObjectList();
@@ -772,8 +786,8 @@ function sem_g005()
 function sem_g006()
 {
 //{
-//    $database = &JFactory::getDBO();
-//    $my = &JFactory::getuser();
+//    $database = JFactory::getDBO();
+//    $my = JFactory::getuser();
 //
 //    $dateid = JRequest::getInt('dateid', 1);
 //    $catid = JRequest::getInt('catid', 0);
@@ -853,8 +867,8 @@ function sem_g006()
 
 function sem_g007()
 {
-//    $database = &JFactory::getDBO();
-//    $my = &JFactory::getuser();
+//    $database = JFactory::getDBO();
+//    $my = JFactory::getuser();
 //    $cid = JRequest::getInt('cid', 0);
 //    $caid = JRequest::getInt('caid', 0);
 //    $cancel = JRequest::getInt('cancel', 0);
@@ -1144,8 +1158,8 @@ function sem_g007()
 
 function sem_g008()
 {
-//    $database = &JFactory::getDBO();
-//    $my = &JFactory::getuser();
+//    $database = JFactory::getDBO();
+//    $my = JFactory::getuser();
 //    $cid = JRequest::getInt('cid', 0);
 //    $vorlage = JRequest::getInt('vorlage', 0);
 //    $database->setQuery("SELECT * FROM #__matukio WHERE id='$cid'");
@@ -1177,7 +1191,7 @@ function sem_g008()
 
 function sem_g009()
 {
-//    $database = &JFactory::getDBO();
+//    $database = JFactory::getDBO();
 //    $cid = JRequest::getInt('cid', 0);
 //    $database->setQuery("SELECT * FROM #__matukio WHERE id='$cid'");
 //    $rows = $database->loadObjectList();
@@ -1215,7 +1229,7 @@ function sem_g009()
 
 function sem_g010($arte)
 {
-//    $database = &JFactory::getDBO();
+//    $database = JFactory::getDBO();
 //    $dateid = JRequest::getInt('dateid', 1);
 //    $catid = JRequest::getInt('catid', 0);
 //    $search = JRequest::getVar('search', '');
@@ -1258,7 +1272,7 @@ function sem_g010($arte)
 
 function sem_g011()
 {
-//    $database = &JFactory::getDBO();
+//    $database = JFactory::getDBO();
 //    $cid = JRequest::getInt('cid', 0);
 //    $database->setQuery("SELECT * FROM #__matukio_bookings WHERE id='$cid'");
 //    $rows = $database->loadObjectList();
@@ -1279,8 +1293,8 @@ function sem_g011()
 
 function sem_g012()
 {
-    $database = &JFactory::getDBO();
-    $cid = JRequest::getInt('cid', 0);
+    $database = JFactory::getDBO();
+    $cid = JFactory::getApplication()->input->getInt('cid', 0);
     $database->setQuery("SELECT * FROM #__matukio_bookings WHERE id='$cid'");
     $rows = $database->loadObjectList();
     if ($rows[0]->paid == 0) {
@@ -1289,8 +1303,8 @@ function sem_g012()
         $paid = 0;
     }
     $database->setQuery("UPDATE #__matukio_bookings SET paid='$paid' WHERE id='$cid'");
-    if (!$database->query()) {
-        JError::raiseError(500, $row->getError());
+    if (!$database->execute()) {
+        JError::raiseError(500, $database->getError());
         exit();
     }
 
@@ -1303,7 +1317,7 @@ function sem_g012()
 
 function sem_g013()
 {
-//    $database = &JFactory::getDBO();
+//    $database = JFactory::getDBO();
 //    $cid = JRequest::getInt('cid', 0);
 //    $database->setQuery("SELECT * FROM #__matukio_bookings WHERE id='$cid'");
 //    $rows = $database->loadObjectList();
@@ -1329,8 +1343,8 @@ function sem_g013()
 
 function sem_g014()
 {
-//    $my = &JFactory::getuser();
-//    $database = &JFactory::getDBO();
+//    $my = JFactory::getuser();
+//    $database = JFactory::getDBO();
 //    $cid = JRequest::getInt('cid', 0);
 //    $database->setQuery("SELECT * FROM #__matukio WHERE id='$cid'");
 //    $rows = $database->loadObjectList();
@@ -1349,8 +1363,8 @@ function sem_g015()
 {
 //    $mainframe = JFactory::getApplication();
 //    jimport('joomla.mail.helper');
-//    $my = &JFactory::getuser();
-//    $database = &JFactory::getDBO();
+//    $my = JFactory::getuser();
+//    $database = JFactory::getDBO();
 //    $cid = JRequest::getInt('cid', 0);
 //    $grade = JRequest::getInt('grade', 0);
 //    $text = JRequest::getVar('text', '');
@@ -1388,7 +1402,7 @@ function sem_g015()
 //        $database->setQuery("SELECT * FROM #__matukio WHERE id='$cid'");
 //        $rows = $database->loadObjectList();
 //        $row = &$rows[0];
-//        $publisher = &JFactory::getuser($row->publisher);
+//        $publisher = JFactory::getuser($row->publisher);
 //        $body = "\n<head>\n<style type=\"text/css\">\n<!--\nbody {\nfont-family: Verdana, Tahoma, Arial;\nfont-size:12pt;\n}\n-->\n</style></head><body>";
 //        $body .= "<p><div style=\"font-size: 10pt\">" . JTEXT::_('COM_MATUKIO_RECEIVED_RATING') . "</div>";
 //        $body .= "<p><div style=\"font-size: 10pt\">" . JTEXT::_('COM_MATUKIO_RATING') . ":</div>";
@@ -1422,7 +1436,7 @@ function sem_g015()
 
 //function sem_g016($art)
 //{
-//    $database = &JFactory::getDBO();
+//    $database = JFactory::getDBO();
 //    $cid = JRequest::getInt('cid', 0);
 //    $database->setQuery("SELECT * FROM #__matukio WHERE id='$cid'");
 //    $rows = $database->loadObjectList();
@@ -1438,8 +1452,8 @@ function sem_g017()
 {
 //    $mainframe = JFactory::getApplication();
 //    jimport('joomla.mail.helper');
-//    $my = &JFactory::getuser();
-//    $database = &JFactory::getDBO();
+//    $my = JFactory::getuser();
+//    $database = JFactory::getDBO();
 //    $cid = JRequest::getInt('cid', 0);
 //    $uid = JRequest::getInt('uid', 0);
 //    $text = JMailHelper::cleanBody(nl2br(Request::getVar('text', '')));
@@ -1470,7 +1484,7 @@ function sem_g017()
 //        $temp = array();
 //        if ($uid == 1) {
 //            $body .= sem_f049($kurs, $temp, $my);
-//            $publisher = &JFactory::getuser($kurs->publisher);
+//            $publisher = JFactory::getuser($kurs->publisher);
 //            $email = $publisher->email;
 //            JUtility::sendMail($from, $sender, $email, $subject, $body, 1, null, null, null, $replyto, $replyname);
 //        } else {
@@ -1481,7 +1495,7 @@ function sem_g017()
 //                    $user->email = $row->email;
 //                    $user->name = $row->name;
 //                } else {
-//                    $user = &JFactory::getuser($row->userid);
+//                    $user = JFactory::getuser($row->userid);
 //                }
 //                $text = $body . sem_f049($kurs, $row, $user);
 //                JUtility::sendMail($from, $sender, $user->email, $subject, $text, 1, null, null, null, $replyto, $replyname);
@@ -1499,8 +1513,8 @@ function sem_g017()
 
 function sem_g018()
 {
-//    $database = &JFactory::getDBO();
-//    $my = &JFactory::getuser();
+//    $database = JFactory::getDBO();
+//    $my = JFactory::getuser();
 //    $dateid = JRequest::getInt('dateid', 1);
 //    $catid = JRequest::getInt('catid', 0);
 //    $search = JRequest::getVar('search', '');
@@ -1707,8 +1721,8 @@ function sem_g018()
 
 function sem_g019()
 {
-    $cid = JRequest::getInt('cid', 5);
-    $OIO = JRequest::getVar('OIO', '');
+    $cid = JFactory::getApplication()->input->getInt('cid', 5);
+    $OIO = JFactory::getApplication()->input->get('OIO', '');
     if ($OIO != "764576O987985") {
         JError::raiseError(403, JText::_("ALERTNOTAUTH"));
         exit;

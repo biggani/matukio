@@ -306,6 +306,7 @@
 }
 
 .mat_button img {
+    vertical-align: middle;
     margin-top: -5px; /* position correction, not ideal */
 }
 

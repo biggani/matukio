@@ -12,18 +12,18 @@
 defined('_JEXEC') or die();
 jimport('joomla.application.component.model');
 
-class MatukioModelEditBooking extends JModel {
+class MatukioModelEditBooking extends JModelLegacy {
 
     public function __construct() {
         parent::__construct();
-        $uuid = JRequest::getVar('booking_id', '');
+        $uuid = JFactory::getApplication()->input->get('booking_id', '');
         $this->setUuid = $uuid;
     }
 
     public function getBooking() {
         //                 $dlink = "index.php?option=com_matukio&view=editbooking&booking_id=" . $row->uuid;
 
-        $uuid = JRequest::getVar('booking_id', 0);
+        $uuid = JFactory::getApplication()->input->get('booking_id', 0);
 
         if (empty($this->_data)) {
             $query = $this->_buildQuery($uuid);

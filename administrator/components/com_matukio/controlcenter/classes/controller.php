@@ -13,7 +13,7 @@ defined('_JEXEC') or die();
 
 jimport('joomla.application.component.controller');
 
-class ControlCenterController extends JController {
+class ControlCenterController extends JControllerLegacy {
     private $jversion = '15';
 
     /**
@@ -53,9 +53,8 @@ class ControlCenterController extends JController {
      * Displays the current view
      * @param bool $cachable Ignored!
      */
-    public final function display($cachable = false)
-    {
-        $viewLayout	= JRequest::getCmd( 'layout', 'overview' );
+    public function display($cachable = false, $urlparams = false) {
+        $viewLayout	= JFactory::getApplication()->input->get( 'layout', 'overview' );
 
         $view = $this->getThisView();
 
@@ -66,7 +65,7 @@ class ControlCenterController extends JController {
         // Assign the FTP credentials from the request, or return TRUE if they are required
         // jimport('joomla.client.helper');
         // $ftp	= $this->setCredentialsFromRequest('ftp');
-        // $view->assignRef('ftp', $ftp);
+        // $view->ftp = $ftp;
 
         // Set the layout
         $view->setLayout($viewLayout);

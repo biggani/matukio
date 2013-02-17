@@ -13,12 +13,12 @@ defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.application.component.controller');
 
-class MatukioControllerICS extends JController
+class MatukioControllerICS extends JControllerLegacy
 {
-    public function display()
+    public function display($cachable = false, $urlparams = false)
     {
         $document = JFactory::getDocument();
-        $viewName = JRequest::getVar('view', 'ics');
+        $viewName = JFactory::getApplication()->input->get('view', 'ics');
         $viewType = $document->getType();
         $view = $this->getView($viewName, $viewType);
         $model = $this->getModel('ics', 'MatukioModel');

@@ -12,8 +12,8 @@
 defined('_JEXEC') or die('Restricted access');
 
 JHTML::_('behavior.modal');
-JHTML::_('stylesheet', 'matukio.css', 'media/com_matukio/css/');
-JHTML::_('stylesheet', 'upcoming.css', 'media/com_matukio/css/');
+JHTML::_('stylesheet', 'media/com_matukio/css/matukio.css');
+JHTML::_('stylesheet', 'media/com_matukio/css/upcoming.css');
 
 //$usermail = $this->user->email;
 ?>
@@ -109,7 +109,7 @@ window.addEvent('domready', function () {
 
                             // Seminarleiter anzeigen
                             if ($event->teacher != "") {
-                                echo " | " . $this->event->teacher;
+                                echo " | " . $event->teacher;
                             }
 
                             // Fees

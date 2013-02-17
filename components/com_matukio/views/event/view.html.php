@@ -13,20 +13,22 @@ defined( '_JEXEC' ) or die ( 'Restricted access' );
 
 jimport('joomla.application.component.view');
 
-class MatukioViewEvent extends JView {
+class MatukioViewEvent extends JViewLegacy {
 
-    public function display($tmpl = null) {
+    public function display($tpl = NULL) {
 
         $model = $this->getModel();
 
-        $art = JRequest::getint('art', 0);
+        $art = JFactory::getApplication()->input->getInt('art', 0);
 
         $database = JFactory::getDBO();
-        $dateid = JRequest::getInt('dateid', 1);
-        $cid = JRequest::getInt('id', 0);      // Event id
-        $uid = JRequest::getInt('uid', 0);     // Booking id!!   Dirk.. WTF?!?!?!?!?!
+        $dateid = JFactory::getApplication()->input->getInt('dateid', 1);
+        $cid = JFactory::getApplication()->input->getInt('id', 0);      // Event id
+        $uid = JFactory::getApplication()->input->getInt('uid', 0);     // Booking id!!   Dirk.. WTF?!?!?!?!?!
 
         $booking = "";
+
+        $user = JFactory::getUser();
 
         if($art == 1){
             $booking = MatukioHelperUtilsBooking::getBooking($uid);
@@ -37,17 +39,18 @@ class MatukioViewEvent extends JView {
 
         //die("asdf");
 
-        $catid = JRequest::getInt('catid', 0);  // category id
-        $search = JRequest::getVar('search', '');
-        $limit = JRequest::getInt('limit', 5);
-        $limitstart = JRequest::getInt('limitstart', 0);      // pagination should be updated to JOomla Framework
+        $catid = JFactory::getApplication()->input->getInt('catid', 0);  // category id
+        $search = JFactory::getApplication()->input->get('search', '', 'string');
+        $limit = JFactory::getApplication()->input->getInt('limit', 5);
+        $limitstart = JFactory::getApplication()->input->getInt('limitstart', 0);      // pagination should be updated to JOomla Framework
 
-        $params = &JComponentHelper::getParams( 'com_matukio' );
-        $menuitemid = JRequest::getInt( 'Itemid' );
+        $params = JComponentHelper::getParams( 'com_matukio' );
+        $menuitemid = JFactory::getApplication()->input->get( 'Itemid' );
 
         if ($menuitemid)
         {
-            $menu = JSite::getMenu();
+            $site = new JSite();
+            $menu = $site->getMenu();
             $menuparams = $menu->getParams( $menuitemid );
             $params->merge( $menuparams );
         }
@@ -90,15 +93,17 @@ class MatukioViewEvent extends JView {
         if ($art == 0) {
             // Hits erhoehen
             $database->setQuery("UPDATE #__matukio SET hits=hits+1 WHERE id='$cid'");
-            if (!$database->query()) {
+            if (!$database->execute()) {
                 JError::raiseError(500, $row->getError());
                 exit();
             }
 
             // Ausgabe des Kurses
             MatukioHelperUtilsBasic::expandPathway(JTEXT::_('COM_MATUKIO_EVENTS'), JRoute::_("index.php?option=com_matukio"));
-        } elseif ($art == 1 OR $art == 2) {
-            MatukioHelperUtilsBasic::expandPathway(JTEXT::_('COM_MATUKIO_MY_BOOKINGS'), JRoute::_("index.php?option=com_matukio&art=1"));
+        } elseif ($art == 1 OR $art == 2)  {
+            if ($user->id > 0) {
+                MatukioHelperUtilsBasic::expandPathway(JTEXT::_('COM_MATUKIO_MY_BOOKINGS'), JRoute::_("index.php?option=com_matukio&art=1"));
+            }
         } else {
             MatukioHelperUtilsBasic::expandPathway(JTEXT::_('COM_MATUKIO_MY_OFFERS'), JRoute::_("index.php?option=com_matukio&art=2"));
         }
@@ -113,21 +118,20 @@ class MatukioViewEvent extends JView {
             return;
         }
 
-        $user = JFactory::getUser();
 
-        $this->assignRef('id', $cid);
-        $this->assignRef('art', $art);
-        $this->assignRef('event', $row);
-        $this->assignRef('uid', $uid);
-        $this->assignRef('search', $search);
-        $this->assignRef('catid', $catid);
-        $this->assignRef('limit', $limit);
-        $this->assignRef('limitstart', $limitstart);
-        $this->assignRef('dateid', $dateid);
-        $this->assignRef('ueberschrift', $ueberschrift);
-        $this->assignRef('booking', $booking);
-        $this->assignRef('user', $user);
+        $this->id = $cid;
+        $this->art = $art;
+        $this->event = $row;
+        $this->uid = $uid;
+        $this->search = $search;
+        $this->catid = $catid;
+        $this->limit = $limit;
+        $this->limitstart = $limitstart;
+        $this->dateid = $dateid;
+        $this->ueberschrift = $ueberschrift;
+        $this->booking = $booking;
+        $this->user = $user;
 
-        parent::display($tmpl);
+        parent::display($tpl);
     }
 }

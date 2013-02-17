@@ -15,7 +15,7 @@ $language = JFactory::getLanguage();
 $language->load('com_matukio.sys', JPATH_ADMINISTRATOR, null, true);
 
 
-$view = JRequest::getCmd('task');
+$view = JFactory::getApplication()->input->get('task');
 
 $active2 = ($view == 'controlcenter');
 JSubMenuHelper::addEntry(JText::_('COM_MATUKIO_CONTROLCENTER'), 'index.php?option=com_matukio&view=controlcenter', $active2);

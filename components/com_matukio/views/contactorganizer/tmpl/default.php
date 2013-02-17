@@ -12,7 +12,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 JHTML::_('behavior.modal');
-JHTML::_('stylesheet', 'matukio.css', 'media/com_matukio/css/');
+JHTML::_('stylesheet', 'media/com_matukio/css/matukio.css');
 $user = JFactory::getUser();
 
 

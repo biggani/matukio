@@ -11,11 +11,11 @@
 
 defined('_JEXEC') or die('Restricted access');
 
-JHTML::_('stylesheet', 'matukio.css', 'media/com_matukio/css/');
-$database = &JFactory::getDBO();
+JHTML::_('stylesheet', 'media/com_matukio/css/matukio.css');
+$database = JFactory::getDBO();
 
 $neudatum = MatukioHelperUtilsDate::getCurrentDate();
-$cid = trim(JRequest::getVar('cid', ''));
+$cid = JFactory::getApplication()->input->getInt('cid', 0);
 $kurs = JTable::getInstance('Matukio', 'Table');
 $kurs->load($cid);
 $database->setQuery("SELECT a.*, cc.*, a.id AS sid, a.name AS aname, a.email AS aemail FROM #__matukio_bookings AS a " .

@@ -14,12 +14,17 @@ defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.controller');
 
 
-class MatukioControllerCreateEvent extends JController
+class MatukioControllerCreateEvent extends JControllerLegacy
 {
-    public function display()
+    /**
+     * @param bool $cachable
+     * @param bool $urlparams
+     * @return JControllerLegacy|void
+     */
+    public function display($cachable = false, $urlparams = false)
     {
         $document = JFactory::getDocument();
-        $viewName = JRequest::getVar('view', 'createevent');
+        $viewName = JFactory::getApplication()->input->get('view', 'createevent');
         $viewType = $document->getType();
         $view = $this->getView($viewName, $viewType);
         $model = $this->getModel('Createevent', 'MatukioModel');
@@ -28,17 +33,20 @@ class MatukioControllerCreateEvent extends JController
         $view->display();
     }
 
+    /**
+     * @return object
+     */
     public function unpublishEvent() {
 
         $msg = "COM_MATUKIO_EVENT_UNPUBLISH_SUCCESS";
 
-        $database = &JFactory::getDBO();
-        $my = &JFactory::getuser();
-        $cid = JRequest::getInt('cid', 0);
+        $database = JFactory::getDBO();
+        $my = JFactory::getuser();
+        $cid = JFactory::getApplication()->input->getInt('cid', 0);
         if (!JFactory::getUser()->authorise('core.edit', 'com_matukio.frontend.', $cid)) {
             return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
         }
-        $vorlage = JRequest::getInt('vorlage', 0);
+        $vorlage = JFactory::getApplication()->input->getInt('vorlage', 0);
         $database->setQuery("SELECT * FROM #__matukio WHERE id='$cid'");
         $rows = $database->loadObjectList();
         $aktsem = &$rows[0];
@@ -52,7 +60,7 @@ class MatukioControllerCreateEvent extends JController
         }
         $database->setQuery("UPDATE #__matukio SET published=0 WHERE id='" . $cid . "'");
 
-        if (!$database->query()) {
+        if (!$database->execute()) {
             JError::raiseError(500, $database->getError());
             $msg = "COM_MATUKIO_EVENT_UNPUBLISH_FAILURE_" . $database->getError();
             exit();
@@ -63,11 +71,14 @@ class MatukioControllerCreateEvent extends JController
         $this->setRedirect($link, $msg);
     }
 
+    /**
+     * @return object
+     */
     public function duplicateEvent() {
         $msg = "COM_MATUKIO_EVENT_DUPLICATE_SUCCESS";
 
-        $database = &JFactory::getDBO();
-        $cid = JRequest::getInt('cid', 0);
+        $database = JFactory::getDBO();
+        $cid = JFactory::getApplication()->input->getInt('cid', 0);
 
         // Check authorise
         if (!JFactory::getUser()->authorise('core.edit', 'com_matukio.frontend.', $cid)) {
@@ -83,7 +94,7 @@ class MatukioControllerCreateEvent extends JController
 
         $item->id = null;
 
-        $row =& JTable::getInstance('matukio', 'Table');
+        $row = JTable::getInstance('matukio', 'Table');
 
         if (!$row->bind($item)) {
             JError::raiseError(500, $row->getError());
@@ -111,11 +122,14 @@ class MatukioControllerCreateEvent extends JController
         $this->setRedirect($link, $msg);
     }
 
+    /**
+     * @return bool|object
+     */
     public function saveEvent() {
 
-        $database = &JFactory::getDBO();
-        $my = &JFactory::getuser();
-        $cid = JRequest::getInt('cid', 0);
+        $database = JFactory::getDBO();
+        $my = JFactory::getuser();
+        $cid = JFactory::getApplication()->input->getInt('cid', 0);
 
 
         $msg = JTEXT::_("COM_MATUKIO_EVENT_SAVED");
@@ -129,39 +143,39 @@ class MatukioControllerCreateEvent extends JController
             }
         }
 
-        $caid = JRequest::getInt('caid', 0);
-        $cancel = JRequest::getInt('cancel', 0);
-        $inform = JRequest::getInt('inform', 0);
-        $infotext = MatukioHelperUtilsBasic::cleanHTMLfromText(JRequest::getVar('infotext', ''));
-        $deldatei1 = JRequest::getInt('deldatei1', 0);
-        $deldatei2 = JRequest::getInt('deldatei2', 0);
-        $deldatei3 = JRequest::getInt('deldatei3', 0);
-        $deldatei4 = JRequest::getInt('deldatei4', 0);
-        $deldatei5 = JRequest::getInt('deldatei5', 0);
-        $vorlage = JRequest::getInt('vorlage', 0);
+        $caid = JFactory::getApplication()->input->getInt('caid', 0);
+        $cancel = JFactory::getApplication()->input->getInt('cancel', 0);
+        $inform = JFactory::getApplication()->input->getInt('inform', 0);
+        $infotext = MatukioHelperUtilsBasic::cleanHTMLfromText(JFactory::getApplication()->input->get('infotext', '', 'string'));
+        $deldatei1 = JFactory::getApplication()->input->getInt('deldatei1', 0);
+        $deldatei2 = JFactory::getApplication()->input->getInt('deldatei2', 0);
+        $deldatei3 = JFactory::getApplication()->input->getInt('deldatei3', 0);
+        $deldatei4 = JFactory::getApplication()->input->getInt('deldatei4', 0);
+        $deldatei5 = JFactory::getApplication()->input->getInt('deldatei5', 0);
+        $vorlage = JFactory::getApplication()->input->getInt('vorlage', 0);
         $neudatum = MatukioHelperUtilsDate::getCurrentDate();
 
         // Zeit formatieren
 
-        $_begin_date = JRequest::getVar('_begin_date', '0000-00-00 00:00:00');
-        $_end_date = JRequest::getVar('_end_date', '0000-00-00 00:00:00');
-        $_booked_date = JRequest::getVar('_booked_date', '0000-00-00 00:00:00');
+        $_begin_date = JFactory::getApplication()->input->get('_begin_date', '0000-00-00 00:00:00', 'string');
+        $_end_date = JFactory::getApplication()->input->get('_end_date', '0000-00-00 00:00:00', 'string');
+        $_booked_date = JFactory::getApplication()->input->get('_booked_date', '0000-00-00 00:00:00', 'string');
 
-        // $row =& JTable::getInstance('matukio', 'Table');
+        // $row = JTable::getInstance('matukio', 'Table');
         // $row->load($id);
 
         if ($cid > 0) {
-            $kurs =& JTable::getInstance('matukio', 'Table');
+            $kurs = JTable::getInstance('matukio', 'Table');
             $kurs->load($cid);
         }
         if ($vorlage > 0) {
-            $kurs =& JTable::getInstance('matukio', 'Table');
+            $kurs = JTable::getInstance('matukio', 'Table');
             $kurs->load($vorlage);
         }
         $post = JRequest::get('post');
         $post['description'] = JRequest::getVar('description', '', 'post', 'string', JREQUEST_ALLOWHTML);
 
-        $row =& JTable::getInstance('matukio', 'Table');
+        $row = JTable::getInstance('matukio', 'Table');
         $row->load($cid);
 
         if (!$row->bind($post)) {
@@ -198,7 +212,6 @@ class MatukioControllerCreateEvent extends JController
             $row->publishdate = $kurs->publishdate;
         }
         $row->updated = $neudatum;
-
 
         // neue Daten eintragen
         $row->description = str_replace('<br>', '<br />', $row->description);
@@ -283,9 +296,11 @@ class MatukioControllerCreateEvent extends JController
         if ($cid > 0) {
             $row->hits = $kurs->hits;
         }
+
         $fileext = explode(' ', strtolower(MatukioHelperSettings::getSettings('file_endings', 'txt zip pdf')));
         $filesize = MatukioHelperSettings::getSettings('file_maxsize', 500) * 1024;
         $fehler = array('', '', '', '', '', '', '', '', '', '');
+
         if (is_file($_FILES['datei1']['tmp_name']) AND $_FILES['datei1']['size'] > 0) {
             if ($_FILES['datei1']['size'] > $filesize) {
                 $fehler[0] = str_replace("SEM_FILE", $_FILES['datei1']['name'], JTEXT::_('COM_MATUKIO_UPLOAD_FAILED_MAX_SIZE'));
@@ -299,6 +314,7 @@ class MatukioControllerCreateEvent extends JController
                 $row->file1code = base64_encode(file_get_contents($_FILES['datei1']['tmp_name']));
             }
         }
+
         if (is_file($_FILES['datei2']['tmp_name']) AND $_FILES['datei2']['size'] > 0) {
             if ($_FILES['datei2']['size'] > $filesize) {
                 $fehler[2] = str_replace("SEM_FILE", $_FILES['datei2']['name'], JTEXT::_('COM_MATUKIO_UPLOAD_FAILED_MAX_SIZE'));
@@ -312,6 +328,7 @@ class MatukioControllerCreateEvent extends JController
                 $row->file2code = base64_encode(file_get_contents($_FILES['datei2']['tmp_name']));
             }
         }
+
         if (is_file($_FILES['datei3']['tmp_name']) AND $_FILES['datei3']['size'] > 0) {
             if ($_FILES['datei3']['size'] > $filesize) {
                 $fehler[4] = str_replace("SEM_FILE", $_FILES['datei3']['name'], JTEXT::_('COM_MATUKIO_UPLOAD_FAILED_MAX_SIZE'));
@@ -325,6 +342,7 @@ class MatukioControllerCreateEvent extends JController
                 $row->file3code = base64_encode(file_get_contents($_FILES['datei3']['tmp_name']));
             }
         }
+
         if (is_file($_FILES['datei4']['tmp_name']) AND $_FILES['datei4']['size'] > 0) {
             if ($_FILES['datei4']['size'] > $filesize) {
                 $fehler[6] = str_replace("SEM_FILE", $_FILES['datei4']['name'], JTEXT::_('COM_MATUKIO_UPLOAD_FAILED_MAX_SIZE'));
@@ -338,6 +356,7 @@ class MatukioControllerCreateEvent extends JController
                 $row->file4code = base64_encode(file_get_contents($_FILES['datei4']['tmp_name']));
             }
         }
+
         if (is_file($_FILES['datei5']['tmp_name']) AND $_FILES['datei5']['size'] > 0) {
             if ($_FILES['datei5']['size'] > $filesize) {
                 $fehler[8] = str_replace("SEM_FILE", $_FILES['datei5']['name'], JTEXT::_('COM_MATUKIO_UPLOAD_FAILED_MAX_SIZE'));
@@ -390,8 +409,16 @@ class MatukioControllerCreateEvent extends JController
         $link = JRoute::_("index.php?option=com_matukio&art=2");
         $link2 = JRoute::_("index.php?option=com_matukio&view=createevent&cid=" .$row->id);
         if(!empty($fehler)){
-             $msg = implode(",", $fehler);
+            $tempmsg = implode(",", $fehler);
+            $tempmsg = str_replace(",", "", $tempmsg); // hack for dirks empty array
+            if(!empty($tempmsg)){
+                $msg = implode(",", $fehler);
+            }
         }
+
+//        var_dump($msg);
+//
+//        die();
 
         // Ausgabe der Kurse
         $fehlerzahl = array_unique($fehler);

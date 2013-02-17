@@ -11,9 +11,9 @@ defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.application.component.view');
 
-class MatukioViewMap extends JView {
-    public function display() {
+class MatukioViewMap extends JViewLegacy {
+    public function display($tpl = NULL) {
 
-        parent::display();
+        parent::display($tpl);
     }
 }

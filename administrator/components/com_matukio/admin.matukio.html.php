@@ -25,7 +25,7 @@ class HTML_matukio
 // + Ausgabe der Kursuebersicht                           +
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    function sem_g027($rows, $listen, $search, $pageNav, $limitstart, $limit)
+    public static function sem_g027($rows, $listen, $search, $pageNav, $limitstart, $limit)
     {
         JHTML::_('behavior.modal');
         $html = MatukioHelperUtilsBasic::printFormstart(2) . "\n<script type=\"text/javascript\">";
@@ -56,8 +56,12 @@ class HTML_matukio
         // ---------------------------------------
 
         $html .= "\n<table class=\"adminlist\"><thead>";
-        $temp3 = "<input type=\"checkbox\" name=\"toggle\" value=\"\" onclick=\"checkAll(" . count($rows) . ");\" />";
-        $temp = array(($temp3), JTEXT::_('COM_MATUKIO_TITLE'), JTEXT::_('COM_MATUKIO_NR'), JTEXT::_('COM_MATUKIO_CATEGORY'), JTEXT::_('COM_MATUKIO_BEGIN'), JTEXT::_('COM_MATUKIO_END'), JTEXT::_('COM_MATUKIO_PUBLISHED'), JTEXT::_('COM_MATUKIO_CANCELLED'), JTEXT::_('COM_MATUKIO_BOOKINGS'), JTEXT::_('COM_MATUKIO_RATING'), JTEXT::_('COM_MATUKIO_HITS'), JTEXT::_('COM_MATUKIO_STATUS'), JTEXT::_('COM_MATUKIO_AVAILABILITY'), JTEXT::_('COM_MATUKIO_BOOK'), JTEXT::_('COM_MATUKIO_ID'));
+        $temp3 = "<input type=\"checkbox\" name=\"toggle\" value=\"\" onclick=\"Joomla.checkAll(this);\" />";
+        $temp = array(($temp3), JTEXT::_('COM_MATUKIO_TITLE'), JTEXT::_('COM_MATUKIO_NR'), JTEXT::_('COM_MATUKIO_CATEGORY'),
+            JTEXT::_('COM_MATUKIO_BEGIN'), JTEXT::_('COM_MATUKIO_END'), JTEXT::_('COM_MATUKIO_PUBLISHED'),
+            JTEXT::_('COM_MATUKIO_CANCELLED'), JTEXT::_('COM_MATUKIO_BOOKINGS'), JTEXT::_('COM_MATUKIO_RATING'),
+            JTEXT::_('COM_MATUKIO_HITS'), JTEXT::_('COM_MATUKIO_STATUS'), JTEXT::_('COM_MATUKIO_AVAILABILITY'),
+            JTEXT::_('COM_MATUKIO_BOOK'), JTEXT::_('COM_MATUKIO_ID'));
         $tempa = array("", "nw", "nw", "nw", "nw", "nw", "nw", "nw", "nw", "nw", "nw", "nw", "nw", "nw", "nw");
         $html .= "\n" . MatukioHelperUtilsAdmin::getTableLine("th", $tempa, "", $temp, "");
         $html .= "</thead>";
@@ -94,12 +98,13 @@ class HTML_matukio
                     $bbild = "2500.png";
                     $altbbild = JTEXT::_('COM_MATUKIO_EXCEEDED');
                 }
-                $temp1 = "<input type=\"checkbox\" id=\"cb" . $i . "\" name=\"cid[]\" value=\"" . $row->id . "\" onclick=\"isChecked(this.checked);\" />";
-                $temp2 = "<a href=\"index.php?tmpl=component&option=com_matukio\" onclick=\"return listItemTask('cb" . $i . "','12')\">";
-                if (strlen($row->title) < 30) {
+                //$temp1 = "<input type=\"checkbox\" id=\"cb" . $i . "\" name=\"cid[]\" value=\"" . $row->id . "\" onclick=\"Joomla.isChecked(this.checked);\" />";
+                $temp1 = JHTML::_('grid.id', $i, $row->id);
+                $temp2 = "<a href=\"index.php?option=com_matukio&task=12&cid=" . $row->id . "\">"; // onclick=\"return listItemTask('cb" . $i . "','12')\">";
+                if (strlen($row->title) < 70) {
                     $temp2 .= $row->title;
                 } else {
-                    $temp2 .= substr($row->title, 0, 27) . "...";
+                    $temp2 .= substr($row->title, 0, 67) . "...";
                 }
                 $temp2 .= "</a>";
                 if (strlen($row->category) < 25) {
@@ -109,11 +114,16 @@ class HTML_matukio
                 }
                 $task = $row->published ? "20" : "18";
                 $img = $row->published ? "2201.png" : "2200.png";
-                $temp4 = "<a href=\"javascript: void(0);\" onclick=\"return listItemTask('cb" . $i . "','" . $task . "')\"><img src=\"" . MatukioHelperUtilsBasic::getComponentImagePath() . $img . "\" border=\"0\" alt=\"\" /></a>";
+                $temp4 = "<a href=\"javascript: void(0);\" onclick=\"return listItemTask('cb" . $i . "','" . $task . "')\"><img src=\""
+                    . MatukioHelperUtilsBasic::getComponentImagePath() . $img . "\" border=\"0\" alt=\"\" /></a>";
                 $task = $row->cancelled ? "25" : "24";
                 $img = $row->cancelled ? "2201.png" : "2200.png";
-                $temp12 = "<a href=\"javascript: void(0);\" onclick=\"return listItemTask('cb" . $i . "','" . $task . "')\"><img src=\"" . MatukioHelperUtilsBasic::getComponentImagePath() . $img . "\" border=\"0\" alt=\"\" /></a>";
-                $temp5 = "<button type=\"button\" onclick=\"semauf('29','" . $row->id . "');\" value=\"" . $gebucht . "\">" . $gebucht . "</button>";
+                $temp12 = "<a href=\"javascript: void(0);\" onclick=\"return listItemTask('cb" . $i . "','" . $task . "')\"><img src=\""
+                    . MatukioHelperUtilsBasic::getComponentImagePath() . $img . "\" border=\"0\" alt=\"\" /></a>";
+
+                //$temp5 = "<button type=\"button\" onclick=\"semauf('29','" . $row->id . "');\" value=\"" . $gebucht . "\">" . $gebucht . "</button>";
+                $temp5 = '<a href="index.php?option=com_matukio&task=29&uid=' . $row->id . '" value="' . $gebucht .'">' . $gebucht . "</a>";
+
                 $temp6 = "<img src=\"" . MatukioHelperUtilsBasic::getComponentImagePath() . $bild . "\" border=\"0\" alt=\"" . $altbild . "\">";
                 $temp7 = "<img src=\"" . MatukioHelperUtilsBasic::getComponentImagePath() . $abild . "\" border=\"0\" alt=\"" . $altabild . "\">";
                 $temp8 = "<img src=\"" . MatukioHelperUtilsBasic::getComponentImagePath() . $bbild . "\" border=\"0\" alt=\"" . $altbbild . "\">";
@@ -187,7 +197,7 @@ class HTML_matukio
         // Anlegen der zusaetzliche Variablen und HTML-Ausgabe
         // --------------------------------------------------------
 
-        $html .= "\n<input type=\"hidden\" name=\"option\" value=\"" . JRequest::getCmd('option') . "\" />";
+        $html .= "\n<input type=\"hidden\" name=\"option\" value=\"" . JFactory::getApplication()->input->get('option') . "\" />";
         $html .= "<input type=\"hidden\" name=\"task\" value=\"\" />";
         $html .= "<input type=\"hidden\" name=\"uid\" value=\"\" />";
         $html .= "<input type=\"hidden\" name=\"boxchecked\" value=\"0\" />";
@@ -200,12 +210,12 @@ class HTML_matukio
 // +++ Editierformular anzeigen        +++
 // +++++++++++++++++++++++++++++++++++++++
 
-    function sem_g006($row, $art)
+    public static function sem_g006($row, $art)
     {
-        JRequest::setVar('hidemainmenu', 1);
+        JFactory::getApplication()->input->set('hidemainmenu', 1);
         JFilterOutput::objectHTMLSafe($row);
 
-        $document = &JFactory::getDocument();
+        $document = JFactory::getDocument();
         $htxt = 5;
         if ($art == 3) {
             $htxt = 7;
@@ -224,7 +234,7 @@ class HTML_matukio
         }
         $html .= "\n<input type=\"hidden\" name=\"published\" value=\"" . $row->published . "\" />";
         $html .= "\n<input type=\"hidden\" name=\"id\" value=\"" . $row->id . "\" />";
-        $html .= "\n<input type=\"hidden\" name=\"option\" value=\"" . JRequest::getCmd('option') . "\" />";
+        $html .= "\n<input type=\"hidden\" name=\"option\" value=\"" . JFactory::getApplication()->input->get('option') . "\" />";
         $html .= "\n<input type=\"hidden\" name=\"task\" value=\"\" /></form>";
         echo $html;
         echo JHTML::_('behavior.keepalive');
@@ -234,8 +244,10 @@ class HTML_matukio
 // +++ Buchung fuer Kurs anzeigen      +++
 // +++++++++++++++++++++++++++++++++++++++
 
-    function sem_g029($kurs, $rows, $uid)
+    public static function sem_g029($kurs, $rows, $uid)
     {
+//        var_dump($uid);
+//        die();
         global $my;
         JHTML::_('behavior.modal');
 
@@ -243,15 +255,18 @@ class HTML_matukio
         // Ueberschrift
         // ---------------------------------------
 
-        $html = MatukioHelperUtilsBasic::printFormstart(2) . "\n<table width=\"100%\"><tr><th width=\"90%\" style=\"text-align:left\">" . JTEXT::_('COM_MATUKIO_EVENT') . ": " . $kurs->title . "</th>";
-        $html .= "<td style=\"text-align: right; white-space: nowrap\">" . MatukioHelperUtilsAdmin::getBackendPrintWindow(2, $kurs->id) . MatukioHelperUtilsAdmin::getBackendPrintWindow(4, $kurs->id) . MatukioHelperUtilsAdmin::getBackendPrintWindow(5, $kurs->id) . "</td></tr></table>";
+        $html = MatukioHelperUtilsBasic::printFormstart(2) . "\n<table width=\"100%\"><tr><th width=\"90%\" style=\"text-align:left\">"
+                . JTEXT::_('COM_MATUKIO_EVENT') . ": " . $kurs->title . "</th>";
+        $html .= "<td style=\"text-align: right; white-space: nowrap\">" . MatukioHelperUtilsAdmin::getBackendPrintWindow(2, $kurs->id)
+                . MatukioHelperUtilsAdmin::getBackendPrintWindow(4, $kurs->id) . MatukioHelperUtilsAdmin::getBackendPrintWindow(5, $kurs->id)
+                . "</td></tr></table>";
 
         // ---------------------------------------
         // Ausgabe der Kurstabelle
         // ---------------------------------------
 
         $html .= "\n<table class=\"adminlist\"><thead>";
-        $temp3 = "<input type=\"checkbox\" name=\"toggle\" value=\"\" onclick=\"checkAll(" . count($rows) . ");\" />";
+        $temp3 = "<input type=\"checkbox\" name=\"toggle\" value=\"\" onclick=\"Joomla.checkAll(this);\" />";
         $temp = array($temp3, JTEXT::_('COM_MATUKIO_NAME'), JTEXT::_('COM_MATUKIO_EMAIL'), JTEXT::_('COM_MATUKIO_DATE_OF_BOOKING'), JTEXT::_('COM_MATUKIO_BOOKED_PLACES'));
         if ($kurs->fees > 0) {
             $temp[] = JTEXT::_('COM_MATUKIO_PAID');
@@ -263,6 +278,9 @@ class HTML_matukio
         // Schleife fuer die einzelnen Kurse
 
         $n = count($rows);
+
+//       var_dump($rows);
+
         if ($n > 0) {
             $k = 0;
             $neudatum = MatukioHelperUtilsDate::getCurrentDate();
@@ -286,13 +304,23 @@ class HTML_matukio
                     }
                 }
                 $temp = array();
-                $temp[] = "<input type=\"checkbox\" id=\"cb" . $i . "\" name=\"cid[]\" value=\"" . $row->sid . "\" onclick=\"isChecked(this.checked);\" />";
+                $temp[] = "<input type=\"checkbox\" id=\"cb" . $i . "\" name=\"cid[]\" value=\"" . $row->sid . "\" onclick=\"Joomla.isChecked(this.checked);\" />";
+                //$temp[] = JHTML::_('grid.id', $i, $row->id);
+
+                // uninteressant
+                /*
+                <input id="cb0" type="checkbox" title="**Auswahlfeld für Spalte 1**" onclick="Joomla.isChecked(this.checked);" value="8" name="cid[]">
+                <input id="cb0" type="checkbox" onclick="Joomla.isChecked(this.checked);" value="1" name="cid[]">
+                */
+
 
                 $link = "index.php?option=com_matukio&controller=bookings&task=editBooking&booking_id=" . $row->sid;
 
                 $temp[] = '<a href="'. $link . '">' . $row->name . '</a>';
 
                 $temp[] = "<a href=\"mailto:" . $row->email . "\">" . $row->email . "</a>";
+                //var_dump($row->bookingdate);
+
                 $temp[] = JHTML::_('date', $row->bookingdate, MatukioHelperSettings::getSettings('date_format_without_time', 'd-m-Y')) .
                     ", " . JHTML::_('date', $row->bookingdate, MatukioHelperSettings::getSettings('time_format', 'H:i'));
                 $temp[] = $row->nrbooked;
@@ -306,8 +334,12 @@ class HTML_matukio
                             $paidbild = "2201.png";
                             $paidtitel = JTEXT::_('COM_MATUKIO_MARK_AS_NOT_PAID');
                         }
-                        $htxt = "<a title=\"" . $paidtitel . "\" href=\"javascript: void(0);\" onclick=\"return listItemTask('cb" . $i
-                            . "','27')\"><img src=\"" . MatukioHelperUtilsBasic::getComponentImagePath() . $paidbild . "\" border=\"0\" alt=\""
+//                        $htxt = "<a title=\"" . $paidtitel . "\" href=\"javascript: void(0);\" onclick=\"return listItemTask('cb" . $i
+//                            . "','27')\"><img src=\"" . MatukioHelperUtilsBasic::getComponentImagePath() . $paidbild . "\" border=\"0\" alt=\""
+//                            . JTEXT::_('COM_MATUKIO_PAID') . "\"></a>";
+
+                        $htxt = "<a title=\"" . $paidtitel . "\" href=\"index.php?option=com_matukio&task=27&uid=" . $row->sid . "&cid=" . $row->semid
+                            . "\"><img src=\"" . MatukioHelperUtilsBasic::getComponentImagePath() . $paidbild . "\" border=\"0\" alt=\""
                             . JTEXT::_('COM_MATUKIO_PAID') . "\"></a>";
                     }
                     $temp[] = $htxt;
@@ -320,11 +352,17 @@ class HTML_matukio
                     $certtitel = JTEXT::_('COM_MATUKIO_CERTIFICATE');
                     if ($row->certificated == 1) {
                         $certbild = "2201.png";
-                        $certtemp = " " . MatukioHelperUtilsAdmin::getBackendPrintWindow(3, $row->sid);
+                        // index.php?tmpl=component&s=0&option=com_matukio&view=printeventlist&search=0&limit=0&limitstart=0&cid=1&uid=1&todo=certificate&cid=1
+                        $certtemp = " " . MatukioHelperUtilsAdmin::getBackendPrintWindow(3, $row->semid, $row->sid);
                         $certtitel = JTEXT::_('COM_MATUKIO_WITHDREW_CERTIFICATE');
                     }
-                    $htxt = "<a title=\"" . $certtitel . "\" href=\"javascript: void(0);\" onclick=\"return listItemTask('cb" . $i
-                        . "','26')\"><img src=\"" . MatukioHelperUtilsBasic::getComponentImagePath() . $certbild . "\" border=\"0\" alt=\""
+//                    $htxt = "<a title=\"" . $certtitel . "\" href=\"javascript: void(0);\" onclick=\"return listItemTask('cb" . $i
+//                        . "','26')\"><img src=\"" . MatukioHelperUtilsBasic::getComponentImagePath() . $certbild . "\" border=\"0\" alt=\""
+//                        . JTEXT::_('COM_MATUKIO_CERTIFICATES') . "\"></a>" . $certtemp;
+
+
+                    $htxt = "<a title=\"" . $certtitel . "\" href=\"index.php?option=com_matukio&task=26&uid=" . $row->sid . "&cid=" . $row->semid
+                        . "\"><img src=\"" . MatukioHelperUtilsBasic::getComponentImagePath() . $certbild . "\" border=\"0\" alt=\""
                         . JTEXT::_('COM_MATUKIO_CERTIFICATES') . "\"></a>" . $certtemp;
                 }
                 $temp[] = $htxt;
@@ -361,8 +399,8 @@ class HTML_matukio
         // ---------------------------------------
 
         $html .= sem_f015();
-        $html .= "\n<input type=\"hidden\" name=\"uid\" value=\"" . $uid . "\" />";
-        $html .= "\n<input type=\"hidden\" name=\"option\" value=\"" . JRequest::getCmd('option') . "\" />";
+        $html .= "\n<input type=\"hidden\" name=\"uid\" value=\"" .  /*$uid .*/ "\" />";     // uid = kurs id?! WTF
+        $html .= "\n<input type=\"hidden\" name=\"option\" value=\"" . JFactory::getApplication()->input->get('option') . "\" />";
         $html .= "\n<input type=\"hidden\" name=\"task\" value=\"\" />";
         $html .= "\n<input type=\"hidden\" name=\"event_id\" value=\"" . $kurs->id . "\" />";
         $html .= "\n<input type=\"hidden\" name=\"boxchecked\" value=\"0\" />";
@@ -374,15 +412,15 @@ class HTML_matukio
 // + Statistikuebersicht anzeigen                         +
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    function sem_g030($stats, $mstats)
+    public static function sem_g030($stats, $mstats)
     {
-        $database = &JFactory::getDBO();
+        $database = JFactory::getDBO();
         $html = MatukioHelperUtilsBasic::printFormstart(2) . "\n<script type=\"text/javascript\">";
         $html .= "function semauf(semy, semm) {";
         $html .= "document.adminForm.year.value = semy;";
         $html .= "document.adminForm.month.value = semm;";
         $html .= "document.adminForm.submit();}</script>";
-        JHTML::_('stylesheet', 'matukio.css', 'media/com_matukio/backend/css/');
+        JHTML::_('stylesheet', 'media/com_matukio/backend/css/matukio.css');
 
 
         // --------------------------------------------------------
@@ -591,7 +629,7 @@ class HTML_matukio
         if ($n > 0) {
             $html .= JTEXT::_('COM_MATUKIO_INFO_RELATED_TO_EVENTS') . "<br />";
         }
-        $html .= "\n<input type=\"hidden\" name=\"option\" value=\"" . JRequest::getCmd('option') . "\" />";
+        $html .= "\n<input type=\"hidden\" name=\"option\" value=\"" . JFactory::getApplication()->input->get('option') . "\" />";
         $html .= "<input type=\"hidden\" name=\"task\" value=\"30\" />";
         $html .= "<input type=\"hidden\" name=\"year\" value=\"\" />";
         $html .= "<input type=\"hidden\" name=\"month\" value=\"\" />";
@@ -604,9 +642,9 @@ class HTML_matukio
 // + Statistik pro Monat - Jahr anzeigen                  +
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    function sem_g031($rows, $mon, $yea)
+    public static function sem_g031($rows, $mon, $yea)
     {
-        $database = &JFactory::getDBO();
+        $database = JFactory::getDBO();
 
         // --------------------------------------------------------
         // Anlegen des Monats und des Jahrs
@@ -664,7 +702,7 @@ class HTML_matukio
         // --------------------------------------------------------
 
         $html .= "\n</table>";
-        $html .= "\n<input type=\"hidden\" name=\"option\" value=\"" . JRequest::getCmd('option') . "\" />";
+        $html .= "\n<input type=\"hidden\" name=\"option\" value=\"" . JFactory::getApplication()->input->get('option') . "\" />";
         $html .= "<input type=\"hidden\" name=\"task\" value=\"\" />";
         $html .= "\n</form>";
         echo $html;
@@ -674,7 +712,7 @@ class HTML_matukio
 // + Ausgabe der Vorlagenuebersicht                       +
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    function sem_g032($rows, $clist, $search, $pageNav, $limitstart, $limit)
+    public static function sem_g032($rows, $clist, $search, $pageNav, $limitstart, $limit)
     {
         $html = MatukioHelperUtilsBasic::printFormstart(2) . "\n<script type=\"text/javascript\">";
         $html .= "function semauf(stask, suid) {";
@@ -699,7 +737,7 @@ class HTML_matukio
         // ---------------------------------------
 
         $html .= "\n<table class=\"adminlist\"><thead>";
-        $temp3 = "<input type=\"checkbox\" name=\"toggle\" value=\"\" onclick=\"checkAll(" . count($rows) . ");\" />";
+        $temp3 = "<input type=\"checkbox\" name=\"toggle\" value=\"\" onclick=\"Joomla.checkAll(this);\" />";
         $temp = array(($temp3), JTEXT::_('COM_MATUKIO_TEMPLATE'), JTEXT::_('COM_MATUKIO_CATEGORY'), JTEXT::_('COM_MATUKIO_OWNER'), JTEXT::_('COM_MATUKIO_CREATED_ON'), JTEXT::_('COM_MATUKIO_CHANGED_ON'), JTEXT::_('COM_MATUKIO_PUBLISHED'), JTEXT::_('COM_MATUKIO_ID'));
         $tempa = array("", "nw", "nw", "nw", "nw", "nw", "nw");
         $html .= "\n" . MatukioHelperUtilsAdmin::getTableLine("th", $tempa, "", $temp, "");
@@ -737,7 +775,9 @@ class HTML_matukio
                     $bbild = "2500.png";
                     $altbbild = JTEXT::_('COM_MATUKIO_EXCEEDED');
                 }
-                $temp1 = "<input type=\"checkbox\" id=\"cb" . $i . "\" name=\"cid[]\" value=\"" . $row->id . "\" onclick=\"isChecked(this.checked);\" />";
+                $temp1 = "<input type=\"checkbox\" id=\"cb" . $i . "\" name=\"cid[]\" value=\"" . $row->id . "\" onclick=\"Joomla.isChecked(this.checked);\" />";
+                //$temp1 = JHTML::_('grid.id', $i, $row->id);
+
                 $temp2 = "<a href=\"index.php?tmpl=component&option=com_matukio\" onclick=\"return listItemTask('cb" . $i . "','13')\">";
                 if (strlen($row->pattern) < 30) {
                     $temp2 .= $row->pattern;
@@ -776,7 +816,7 @@ class HTML_matukio
         // Anlegen der zusaetzliche Variablen und HTML-Ausgabe
         // --------------------------------------------------------
 
-        $html .= "\n<input type=\"hidden\" name=\"option\" value=\"" . JRequest::getCmd('option') . "\" />";
+        $html .= "\n<input type=\"hidden\" name=\"option\" value=\"" . JFactory::getApplication()->input->get('option') . "\" />";
         $html .= "<input type=\"hidden\" name=\"task\" value=\"1\" />";
         $html .= "<input type=\"hidden\" name=\"uid\" value=\"\" />";
         $html .= "<input type=\"hidden\" name=\"boxchecked\" value=\"0\" />";
@@ -789,12 +829,12 @@ class HTML_matukio
 // + Ausgabe der Einstellungen  +
 // ++++++++++++++++++++++++++++++
 
-    function showSettings($items_basic, $items_layout, $items_advanced, $items_security, $items_payment)
+    public static function showSettings($items_basic, $items_layout, $items_advanced, $items_security, $items_payment)
     {
         JHTML::_('behavior.tooltip');
         jimport('joomla.html.pane');
 
-        $doc =& JFactory::getDocument();
+        $doc = JFactory::getDocument();
         $doc->addStyleSheet( '../media/com_matukio/backend/css/settings.css' );
         $doc->addScript( '../media/com_matukio/backend/js/Form.Check.js' );
         $doc->addScript( '../media/com_matukio/backend/js/Form.CheckGroup.js' );
@@ -809,17 +849,22 @@ class HTML_matukio
 //
 //        $doc->addScriptDeclaration($script);
 
-        echo '<form action="index.php" method="post" name="adminForm">';
-        $pane =& JPane::getInstance('tabs', array('startOffset' => 0));
-        echo $pane->startPane('pane');
-        echo $pane->startPanel(JText::_('COM_MATUKIO_BASIC'), 'basic');
+        echo '<form action="index.php" method="post" name="adminForm" id="adminForm">';
+        //$pane =& JPane::getInstance('tabs', array('startOffset' => 0));
+
+        $options = array(
+            'startOffset' => 0,  // 0 starts on the first tab, 1 starts the second, etc$
+            'useCookie' => true, // this must not be a string. Don't use quotes.
+        );
+
+        echo JHtml::_('tabs.start', $options);
+        echo JHtml::_('tabs.panel', JText::_( 'COM_MATUKIO_BASIC' ), 'basic' );
         ?>
 
     <div class="col60">
         <div id="matsettings">
         <fieldset class="adminform">
             <legend><?php echo JText::_('COM_MATUKIO_BASIC'); ?></legend>
-
             <table class="admintable">
                 <?php
                 foreach ($items_basic as $value) {
@@ -845,9 +890,9 @@ class HTML_matukio
     </div>
     <div class="clr"></div>
     <?php
-        echo $pane->endPanel();
+        echo JHtml::_('tabs.panel', JText::_( 'COM_MATUKIO_LAYOUT' ), 'layout' );
 
-        echo $pane->startPanel(JText::_('COM_MATUKIO_LAYOUT'), 'layout');
+        //echo $pane->startPanel(JText::_('COM_MATUKIO_LAYOUT'), 'layout');
         ?>
     <div class="col60">
         <fieldset class="adminform">
@@ -878,9 +923,11 @@ class HTML_matukio
     </div>
     <div class="clr"></div>
     <?php
+        echo JHtml::_('tabs.panel', JText::_( 'COM_MATUKIO_PAYMENT' ), 'payment' );
 
-        echo $pane->endPanel();
-        echo $pane->startPanel(JText::_('COM_MATUKIO_PAYMENT'), 'layout');
+
+//        echo $pane->endPanel();
+//        echo $pane->startPanel(JText::_('COM_MATUKIO_PAYMENT'), 'layout');
         ?>
     <div class="col60">
         <fieldset class="adminform">
@@ -912,8 +959,11 @@ class HTML_matukio
     <div class="clr"></div>
     <?php
 
-        echo $pane->endPanel();
-        echo $pane->startPanel(JText::_('COM_MATUKIO_ADVANCED'), 'layout');
+//        echo $pane->endPanel();
+//        echo $pane->startPanel(JText::_('COM_MATUKIO_ADVANCED'), 'layout');
+
+        echo JHtml::_('tabs.panel', JText::_( 'COM_MATUKIO_ADVANCED' ), 'advanced' );
+
         ?>
     <div class="col60">
         <fieldset class="adminform">
@@ -945,8 +995,11 @@ class HTML_matukio
     <div class="clr"></div>
     <?php
 
-        echo $pane->endPanel();
-        echo $pane->startPanel(JText::_('COM_MATUKIO_SECURITY'), 'layout');
+//        echo $pane->endPanel();
+//        echo $pane->startPanel(JText::_('COM_MATUKIO_SECURITY'), 'layout');
+
+        echo JHtml::_('tabs.panel', JText::_( 'COM_MATUKIO_SECURITY' ), 'security' );
+
         ?>
     <div class="col60">
         <fieldset class="adminform">
@@ -993,9 +1046,10 @@ class HTML_matukio
     <div class="clr"></div>
     <?php
 
-        echo $pane->endPanel();
-        echo $pane->endPane();
-        ?>
+//        echo $pane->endPanel();
+//        echo $pane->endPane();
+        echo JHtml::_('tabs.end');
+    ?>
 
     <input type="hidden" name="option" value="com_matukio"/>
     <input type="hidden" name="type" value="config"/>
@@ -1010,7 +1064,7 @@ class HTML_matukio
     /**
      * Über Matukio Seite
      */
-    function showAboutMatukio()
+    public static function showAboutMatukio()
     {
         ?>
     <div style="float:right;margin:10px;">
@@ -1033,7 +1087,6 @@ class HTML_matukio
         <h3><?php echo JText::_('COM_MATUKIO_LICENSE'); ?></h3>
 
         <p><a href="http://www.gnu.org/licenses/gpl-2.0.html" target="_blank">GPLv2</a></p>
-        <br/>
 
         <h3>Thank you</h3>
         <div>
@@ -1044,12 +1097,12 @@ class HTML_matukio
             <li>
                 <em>Dirk Vollmar</em> (<a href="http://seminar.vollmar.ws/"
                                           target="_blank">http://seminar.vollmar.ws/</a>)
-                - for creating com_seminar for Joomla 1.5 (on which this extension is based)
+                - for creating com_seminar for Joomla 1.5 (on which this the first version of this extension was originally based)
             </li>
             <li>
-                <em>Daniel Dimitrov</em> (<a href="http://compojoom.com" target="_blank">http://seminar.vollmar.ws</a>)
+                <em>Daniel Dimitrov</em> (<a href="http://compojoom.com" target="_blank">compojoom.com</a>)
                 -
-                for his continous help, giving ideas and for compojoom ofc :)
+                for his continous help and giving ideas
             </li>
 
         </ul>

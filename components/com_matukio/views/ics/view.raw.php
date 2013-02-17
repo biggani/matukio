@@ -12,18 +12,18 @@ defined( '_JEXEC' ) or die ( 'Restricted access' );
 
 jimport('joomla.application.component.view');
 
-class MatukioViewICS extends JView {
+class MatukioViewICS extends JViewLegacy {
 
-    public function display() {
+    public function display($tpl = NULL) {
 
-        //$this->assignRef('agb', nl2br(MatukioHelperSettings::getSettings('agb_text', '')));
+        //$this->agb', nl2br(MatukioHelperSettings::getSettings('agb_text = ''));
 
         if (MatukioHelperSettings::getSettings('frontend_usericsdownload', 1) == 0) {
             JError::raiseError(403, JText::_("ALERTNOTAUTH"));
             return;
         }
 
-        $cid = trim(JRequest::getVar('cid', 0));
+        $cid = JFactory::getApplication()->input->getInt('cid', 0);
 
         $events = array();
 
@@ -36,7 +36,7 @@ class MatukioViewICS extends JView {
             $neudatum = MatukioHelperUtilsDate::getCurrentDate();
             // ICS File with all Events
             $where = array();
-            $database->setQuery("SELECT id, access FROM #__categories WHERE extension = '" . JRequest::getCmd('option') . "'");
+            $database->setQuery("SELECT id, access FROM #__categories WHERE extension = '" . JFactory::getApplication()->input->get('option') . "'");
             $cats = $database->loadObjectList();
             $allowedcat = array();
 
@@ -47,7 +47,7 @@ class MatukioViewICS extends JView {
             }
             if (count($allowedcat) > 0) {
                 $allowedcat = implode(',', $allowedcat);
-                $where[] = "a.catid IN ($allowedcat)";
+                $where[] = "a.catid IN (" . $allowedcat . ")";
             }
 
             $where[] = "a.published = '1'";
@@ -62,8 +62,8 @@ class MatukioViewICS extends JView {
 //        var_dump($events);
 //        die("asf");
 
-        $this->assignRef('events', $events);
+        $this->events = $events;
 
-        parent::display();
+        parent::display($tpl);
     }
 }

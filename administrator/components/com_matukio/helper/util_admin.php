@@ -20,18 +20,20 @@ class MatukioHelperUtilsAdmin
 // +++ Druckfenster im Backend ausgeben       sem_f038    TODO fix
 // ++++++++++++++++++++++++++++++++++++++
 
-    public static function getBackendPrintWindow($art, $cid)
+    public static function getBackendPrintWindow($art, $cid, $uid = 0)
     {
-        $katid = trim(JRequest::getVar('katid', 0));
-        $ordid = trim(JRequest::getVar('ordid', 0));
-        $ricid = trim(JRequest::getVar('ricid', 0));
-        $einid = trim(JRequest::getVar('einid', 0));
-        $search = trim(strtolower(JRequest::getVar('search', '')));
-        $limit = trim(JRequest::getVar('limit', 5));
-        $limitstart = trim(JRequest::getVar('limitstart', 0));
-        $uid = trim(JRequest::getVar('uid', 0));
+        $katid = trim(JFactory::getApplication()->input->getInt('katid', 0));
+        $ordid = trim(JFactory::getApplication()->input->getInt('ordid', 0));
+        $ricid = trim(JFactory::getApplication()->input->getInt('ricid', 0));
+        $einid = trim(JFactory::getApplication()->input->getInt('einid', 0));
+        $search = trim(strtolower(JFactory::getApplication()->input->get('search', '', 'string')));
+        $limit = trim(JFactory::getApplication()->input->getInt('limit', 5));
+        $limitstart = trim(JFactory::getApplication()->input->getInt('limitstart', 0));
 
-//        $href = JURI::ROOT() . "index.php?tmpl=component&s=" . MatukioHelperUtilsBasic::getRandomChar() . "&option=" . JRequest::getCmd('option')
+        if(empty($uid))
+            $uid = trim(JFactory::getApplication()->input->get('uid', 0));
+
+//        $href = JURI::ROOT() . "index.php?tmpl=component&s=" . MatukioHelperUtilsBasic::getRandomChar() . "&option=" . JFactory::getApplication()->input->get('option')
 //            . "&view=printeventlist&dateid=" . $dateid . "&catid=" . $catid . "&search=" . $search . "&amp;limit=" . $limit . "&limitstart="
 //            . $limitstart . "&cid=" . $cid . "&uid=" . $uid . "&todo=";
 
@@ -40,7 +42,7 @@ class MatukioHelperUtilsAdmin
 //            . "&ricid=" . $ricid . "&einid=" . $einid . "&search=" . $search . "&limit=" . $limit . "&limitstart="
 //            . $limitstart . "&uid=" . $uid . "&task=";
 
-        $href = JURI::ROOT() . "index.php?tmpl=component&s=" . 0 . "&option=" . JRequest::getCmd('option')
+        $href = JURI::ROOT() . "index.php?tmpl=component&s=" . 0 . "&option=" . JFactory::getApplication()->input->get('option')
             . "&view=printeventlist&search=" . $search . "&amp;limit=" . $limit . "&limitstart="
             . $limitstart . "&cid=" . $cid . "&uid=" . $uid . "&todo=";
 

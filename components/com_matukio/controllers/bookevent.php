@@ -13,12 +13,11 @@ defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.application.component.controller');
 
-class MatukioControllerBookEvent extends JController
+class MatukioControllerBookEvent extends JControllerLegacy
 {
-    public function display()
-    {
+    public function display($cachable = false, $urlparams = false) {
         $document = JFactory::getDocument();
-        $viewName = JRequest::getVar('view', 'BookEvent');
+        $viewName = JFactory::getApplication()->input->get('view', 'BookEvent');
         $viewType = $document->getType();
         $view = $this->getView($viewName, $viewType);
         $model = $this->getModel('BookEvent', 'MatukioModel');
@@ -33,17 +32,22 @@ class MatukioControllerBookEvent extends JController
      */
     public function book()
     {
-        $database = &JFactory::getDBO();
-        $my = &JFactory::getuser();
+        $database = JFactory::getDBO();
+        $post = JRequest::get( 'post' );
+        $my = JFactory::getuser();
 
-        $event_id = JRequest::getVar('event_id', 0);
-        $uid = JRequest::getInt('uid', 0);
-        $uuid = JRequest::getVar('uuid', 0);
+        $input = JFactory::getApplication()->input;
 
-        $nrbooked = JRequest::getInt('nrbooked', 1);
-        $catid = JRequest::getInt('catid', 0);
-        $payment_method = JRequest::getVar('payment', '');
-        $agb = JRequest::getVar('agb', '');
+        $event_id = $input->getInt('event_id', 0);
+        $uid = $input->getInt('uid', 0);
+        $uuid = $input->get('uuid', 0, 'string');
+
+        $nrbooked = $input->getInt('nrbooked', 1);
+        $catid = $input->getInt('catid', 0);
+        $payment_method = $input->get('payment', '', 'string');
+        $agb = $input->get('agb', '', 'string');
+
+        $dispatcher	= JDispatcher::getInstance();
 
 //        echo $agb;
 //        die("asdf");
@@ -52,7 +56,7 @@ class MatukioControllerBookEvent extends JController
             return;
         }
 
-        $event =& JTable::getInstance('matukio', 'Table');
+        $event = JTable::getInstance('matukio', 'Table');
         $event->load($event_id);
 
         //var_dump($event);
@@ -110,7 +114,7 @@ class MatukioControllerBookEvent extends JController
                 //die(asdf);
                 $res = explode("|", $test);
                 if(trim($res[1]) == "1") {
-                    $value = JRequest::getVar(("zusatz" . ($i + 1)), '');
+                    $value = $input->get(("zusatz" . ($i + 1)), '', 'string');
                     //echo "Val: " . $value;
 
                     if(empty($value)){
@@ -122,8 +126,8 @@ class MatukioControllerBookEvent extends JController
         }
 
         if(MatukioHelperSettings::getSettings("captcha", 0) == 1)  {
-            $ccval = JRequest::getVar("ccval", '');
-            $captcha = JRequest::getVar("captcha", '');
+            $ccval = $input->get("ccval", '', 'string');
+            $captcha = $input->get("captcha", '', 'string');
 
             if (empty($captcha)) {
                 $allesok = 0;
@@ -174,6 +178,10 @@ class MatukioControllerBookEvent extends JController
             $allesok = 1;
             $ueber1 = JTEXT::_('COM_MATUKIO_BOOKING_WAS_SUCCESSFULL');
         }
+
+        $results = $dispatcher->trigger('onValidateBooking', $post, $event, $allesok);
+
+
         //$link = JRoute::_('index.php?option=com_matukio&view=event&catid=' .$catid . '&id=' . $event->id);
         $link = JRoute::_(MatukioHelperRoute::getEventRoute($event->id, $catid), false);
 
@@ -186,17 +194,17 @@ class MatukioControllerBookEvent extends JController
             $booking_id = 0;
 
             // Buchung eintragen
-            $neu =& JTable::getInstance('bookings', 'Table');
+            $neu = JTable::getInstance('bookings', 'Table');
 
             //$neu = new mossembookings($database);
-            if (!$neu->bind(JRequest::get( 'post' ))) {
+            if (!$neu->bind($post)) {
                 return JError::raiseError(500, $database->stderr());
             }
             $neu->semid = $event->id;
             $neu->userid = $userid;
 
-            $firstname = JRequest::getVar('firstname', '');
-            $lastname = JRequest::getVar('lastname', '');
+            $firstname = $input->get('firstname', '', 'string');
+            $lastname = $input->get('lastname', '', 'string');
 
             $neu->bookingdate = MatukioHelperUtilsDate::getCurrentDate();
             $neu->name = MatukioHelperUtilsBasic::cleanHTMLfromText($firstname . " " . $lastname);
@@ -233,7 +241,7 @@ class MatukioControllerBookEvent extends JController
                     $name = $field->field_name;
                     $newfields .= $field->id;
                     $newfields .= "::";
-                    $newfields .= JRequest::getVar($name, '');
+                    $newfields .= $input->get($name, '', 'string');
                     $newfields .= ";";
                 }
 
@@ -275,6 +283,8 @@ class MatukioControllerBookEvent extends JController
                 }
             }
 
+            $results = $dispatcher->trigger('onBeforeSaveBooking', $neu, $event);
+
             if (!$neu->check()) {
                 JError::raiseError(500, $database->stderr());
                 exit();
@@ -284,6 +294,8 @@ class MatukioControllerBookEvent extends JController
                 exit();
             }
             $neu->checkin();
+
+            $results = $dispatcher->trigger('onAfterBooking', $neu, $event);
 
             $ueber1 = JText::_("COM_MATUKIO_BOOKING_WAS_SUCCESSFULL");
 
@@ -332,8 +344,8 @@ class MatukioControllerBookEvent extends JController
      */
     public function cancelBooking()
     {
-        $cid = JRequest::getInt('cid', 0);
-        $uid = JRequest::getInt('booking_id', 0);
+        $cid = JFactory::getApplication()->input->getInt('cid', 0);
+        $uid = JFactory::getApplication()->input->getInt('booking_id', 0);
 
 //        echo $cid;
 //        echo $uid;
@@ -352,8 +364,8 @@ class MatukioControllerBookEvent extends JController
 
         $msg = JText::_("COM_MATUKIO_BOOKING_ANNULATION_SUCESSFULL");
 
-        $database = &JFactory::getDBO();
-        $user =& JFactory::getuser();
+        $database = JFactory::getDBO();
+        $user = JFactory::getuser();
 
         MatukioHelperUtilsEvents::sendBookingConfirmationMail($cid, $user->id, 2, true);
 
@@ -368,7 +380,7 @@ class MatukioControllerBookEvent extends JController
             }
         }
 
-        if (!$database->query()) {
+        if (!$database->execute()) {
             JError::raiseError(500, $database->getError());
             $msg = JText::_("COM_MATUKIO_BOOKING_ANNULATION_FAILED") . " " . $database->getErrror();
         }

@@ -11,7 +11,7 @@
 defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.view');
 
-class MatukioViewEditBookingfield extends JView {
+class MatukioViewEditBookingfield extends JViewLegacy {
 
     function display($tpl = null) {
 
@@ -46,12 +46,10 @@ class MatukioViewEditBookingfield extends JView {
 
         $required = JHTML::_('select.booleanlist', 'required', 'class="inputbox"', $bookingfield->required);
 
-        $this->assignRef('bookingfield', $bookingfield);
-        $this->assignRef('select_type', $select_fieldtype);
-        $this->assignRef('select_page', $select_pages);
-        $this->assignRef('select_required', $required);
-
-
+        $this->bookingfield = $bookingfield;
+        $this->select_type = $select_fieldtype;
+        $this->select_page = $select_pages;
+        $this->select_required = $required;
 
         $this->addToolbar();
         parent::display($tpl);

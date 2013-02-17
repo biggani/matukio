@@ -12,19 +12,20 @@ defined( '_JEXEC' ) or die ( 'Restricted access' );
 
 jimport('joomla.application.component.view');
 
-class MatukioViewCalendar extends JView {
+class MatukioViewCalendar extends JViewLegacy {
 
-    public function display() {
+    public function display($tpl = NULL) {
 
-        $catid = JRequest::getInt('catid', 0);
+        $catid = JFactory::getApplication()->input->getInt('catid', 0);
         $user = JFactory::getUser();
 
-        $params = &JComponentHelper::getParams( 'com_matukio' );
+        $params = JComponentHelper::getParams( 'com_matukio' );
 
-        $menuitemid = JRequest::getInt( 'Itemid' );
+        $menuitemid = JFactory::getApplication()->input->get( 'Itemid' );
         if ($menuitemid)
         {
-            $menu = JSite::getMenu();
+            $site = new JSite();
+            $menu = $site->getMenu();
             $menuparams = $menu->getParams( $menuitemid );
             $params->merge( $menuparams );
         }
@@ -44,13 +45,13 @@ class MatukioViewCalendar extends JView {
 
         MatukioHelperUtilsBasic::expandPathway(JTEXT::_('COM_MATUKIO_UPCOMING_EVENTS'), "");
 
-        $this->assignRef('catid', $catid);
-        //$this->assignRef('events', $events);
-        $this->assignRef('user', $user);
-        $this->assignRef('params', $params);
-        $this->assignRef('title', $ue_title);
+        $this->catid = $catid;
+        //$this->events = $events;
+        $this->user = $user;
+        $this->params = $params;
+        $this->title = $ue_title;
 
 
-        parent::display();
+        parent::display($tpl);
     }
 }

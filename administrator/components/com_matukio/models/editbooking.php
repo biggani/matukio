@@ -12,18 +12,18 @@
 defined('_JEXEC') or die();
 jimport('joomla.application.component.model');
 
-class MatukioModelEditBooking extends JModel {
+class MatukioModelEditBooking extends JModelLegacy {
 
     public function __construct() {
         parent::__construct();
-        $array = JRequest::getVar('booking_id', 0, '', 'array');
-        $this->setId = (int) $array[0];
+        $this->setId = JFactory::getApplication()->input->getInt('booking_id', 0);;
     }
 
     public function getBooking() {
-        $array2 = JRequest::getVar('booking_id', 0, '', 'array');
-        $this->setId2 = (int) $array2[0];
-        $id = $this->setId2;
+        $id = JFactory::getApplication()->input->getInt('booking_id', 0);;
+        //var_dump($id);
+
+        //$id = $this->setId2;
 
         if (empty($this->_data)) {
             $query = $this->_buildQuery($id);
@@ -34,7 +34,8 @@ class MatukioModelEditBooking extends JModel {
     }
 
     private function _buildQuery($id) {
-        $query = "SELECT * FROM #__matukio_bookings WHERE id = '" . $id . "'";
+        $query = "SELECT * FROM #__matukio_bookings WHERE id = " . $id;
+
         return $query;
     }
 

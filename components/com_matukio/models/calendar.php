@@ -10,7 +10,7 @@
 defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.model');
 
-class MatukioModelCalendar extends JModel {
+class MatukioModelCalendar extends JModelLegacy {
 
     public function getEvents($catid, $limit = 100, $orderby = "begin ASC") {
         $db = JFactory::getDbo();

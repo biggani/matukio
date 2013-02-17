@@ -12,9 +12,11 @@ defined('_JEXEC') or die();
 
 require_once dirname(__FILE__).'/config.php';
 
+jimport('joomla.application.component.controller') ;
+
 class CompojoomControlCenter {
 
-    public static $version = '1.0';
+    public static $version = '1.0.1';
 
     /**
      * Loads the translation strings -- this is an internal function, called automatically
@@ -42,10 +44,10 @@ class CompojoomControlCenter {
             // Load the controller and let it run the show
             require_once dirname(__FILE__).'/classes/controller.php';
             $controller = new ControlCenterController();
-            $controller->execute(JRequest::getCmd('task','overview'));
+            $controller->execute(JFactory::getApplication()->input->get('task','overview'));
             $controller->redirect();
         } else {
-            JRequest::setVar('task', $task);
+            JFactory::getApplication()->input->set('task', $task);
             // Load the controller and let it run the show
             require_once dirname(__FILE__).'/classes/controller.php';
             $controller = new ControlCenterController();

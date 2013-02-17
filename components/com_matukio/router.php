@@ -128,8 +128,10 @@ function MatukioBuildRoute(&$query)
  */
 function MatukioParseRoute($segments) {
     $vars = array();
-    $menu =& JSite::getMenu();
-    $item =& $menu->getActive();
+
+    $site = new JSite();
+    $menu = $site->getMenu();
+    $item = $menu->getActive();
 
     // Count route segments
     $count = count($segments);

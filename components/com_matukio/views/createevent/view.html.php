@@ -12,21 +12,22 @@ defined( '_JEXEC' ) or die ( 'Restricted access' );
 
 jimport('joomla.application.component.view');
 
-class MatukioViewCreateEvent extends JView {
+class MatukioViewCreateEvent extends JViewLegacy {
 
-    public function display() {
-        $model = $this->getModel();
-        $my = &JFactory::getuser();
+    public function display($tpl = NULL) {
+//        $model = $this->getModel();
+        $my = JFactory::getuser();
 
-        $dateid = JRequest::getInt('dateid', 1);
-        $catid = JRequest::getInt('catid', 0);
+        $dateid = JFactory::getApplication()->input->getInt('dateid', 1);
+        $catid = JFactory::getApplication()->input->getInt('catid', 0);
 
-        $params = &JComponentHelper::getParams( 'com_matukio' );
+        $params = JComponentHelper::getParams( 'com_matukio' );
 
-        $menuitemid = JRequest::getInt( 'Itemid' );
+        $menuitemid = JFactory::getApplication()->input->get( 'Itemid' );
         if ($menuitemid)
         {
-            $menu = JSite::getMenu();
+            $site = new JSite();
+            $menu = $site->getMenu();
             $menuparams = $menu->getParams( $menuitemid );
             $params->merge( $menuparams );
         }
@@ -35,11 +36,11 @@ class MatukioViewCreateEvent extends JView {
             $catid = $params->get('catid', 0);
         }
 
-        $search = JRequest::getVar('search', '');
-        $limit = JRequest::getInt('limit', 5);
-        $limitstart = JRequest::getInt('limitstart', 0);
-        $vorlage = JRequest::getInt('vorlage', 0);
-        $cid = JRequest::getInt('cid', 0);
+        $search = JFactory::getApplication()->input->get('search', '', 'string');
+        $limit = JFactory::getApplication()->input->getInt('limit', 5);
+        $limitstart = JFactory::getApplication()->input->getInt('limitstart', 0);
+        $vorlage = JFactory::getApplication()->input->getInt('vorlage', 0);
+        $cid = JFactory::getApplication()->input->getInt('cid', 0);
 
 
         if(empty($cid)){
@@ -57,11 +58,11 @@ class MatukioViewCreateEvent extends JView {
         $row = null;
         // Load event
         if(!empty($cid)){
-            $row =& JTable::getInstance('matukio', 'Table');
+            $row = JTable::getInstance('matukio', 'Table');
             $row->load($cid);
         } else {
             // New Event
-            $row =& JTable::getInstance('matukio', 'Table');
+            $row = JTable::getInstance('matukio', 'Table');
         }
 
         // Ist es eine Vorlage
@@ -107,13 +108,13 @@ class MatukioViewCreateEvent extends JView {
 
         //HTML_FrontMatukio::sem_g006($row, $search, $catid, $limit, $limitstart, $dateid);
 
-        $this->assignRef('event', $row);
-        $this->assignRef('search', $search);
-        $this->assignRef('catid', $catid);
-        $this->assignRef('limit', $limit);
-        $this->assignRef('limitstart', $limitstart);
-        $this->assignRef('dateid', $dateid);
+        $this->event = $row;
+        $this->search = $search;
+        $this->catid = $catid;
+        $this->limit = $limit;
+        $this->limitstart = $limitstart;
+        $this->dateid = $dateid;
 
-        parent::display();
+        parent::display($tpl);
     }
 }

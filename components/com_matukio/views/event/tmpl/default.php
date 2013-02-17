@@ -11,11 +11,11 @@
 defined( '_JEXEC' ) or die ( 'Restricted access' );
 
 global $mainframe;
-$document = &JFactory::getDocument();
-$database = &JFactory::getDBO();
-$my = &JFactory::getuser();
-JHTML::_('stylesheet', 'matukio.css', 'media/com_matukio/css/');
-JHTML::_('stylesheet', 'modern.css', 'media/com_matukio/css/');
+$document = JFactory::getDocument();
+$database = JFactory::getDBO();
+$my = JFactory::getuser();
+JHTML::_('stylesheet', 'media/com_matukio/css/matukio.css');
+JHTML::_('stylesheet', 'media/com_matukio/css/modern.css');
 
 
 $neudatum = MatukioHelperUtilsDate::getCurrentDate();
@@ -55,7 +55,7 @@ if ($this->art > 2) {
     if ($usrid == 0) {
         $nametemp = MatukioHelperUtilsBasic::getBookedUserList($this->event);
     } else if ($usrid > 0) {
-        $nametemp = &JFactory::getuser($usrid);
+        $nametemp = JFactory::getuser($usrid);
         $nametemp = $nametemp->name;
     }
     if ($nametemp == "") {
@@ -137,8 +137,13 @@ $gmapicon = "";
 // Knopf fuer ICS-Datei anzeigen
 if (MatukioHelperSettings::getSettings('frontend_usericsdownload', 1) > 0) {
 
-    $config =& JFactory::getConfig();
-    $_suffix = $config->getValue( 'config.sef_suffix' );
+    $config = JFactory::getConfig();
+
+
+    $_suffix = $config->get( 'config.sef_suffix' );
+
+    //$_suffix = JFactory::getApplication()->getCfg( 'config.sef_suffix' );
+
     if ( $_suffix == 0) { // no .html suffix
         $icslink = JRoute::_("index.php?option=com_matukio&tmpl=component&view=ics&format=raw&cid=" . $this->event->id);
     } else {
@@ -147,11 +152,11 @@ if (MatukioHelperSettings::getSettings('frontend_usericsdownload', 1) > 0) {
 
     //http://localhost/joomla25-dev/index.php?tmpl=component&option=com_matukio&view=ics&format=raw
     $knopfoben .= "<a title=\"" . JTEXT::_('COM_MATUKIO_DOWNLOAD_CALENDER_FILE') . "\" href=\"" . $icslink . "\" target=\"_BLANK\"><img src=\""
-        . MatukioHelperUtilsBasic::getComponentImagePath() . "3332.png\" border=\"0\" align=\"absmiddle\"></a>";
+        . MatukioHelperUtilsBasic::getComponentImagePath() . "3332.png\" border=\"0\" align=\"absmiddle\" /></a>";
 
     $knopfunten .= " <a title=\"" . JTEXT::_('COM_MATUKIO_DOWNLOAD_CALENDER_FILE') . "\" href=\"" . $icslink . "\" target=\"_BLANK\">"
         . "<span class=\"mat_button\" style=\"cursor:pointer;\"><img src=\""
-        . MatukioHelperUtilsBasic::getComponentImagePath() . "3316.png\" border=\"0\" align=\"absmiddle\">&nbsp;"
+        . MatukioHelperUtilsBasic::getComponentImagePath() . "3316.png\" border=\"0\" align=\"absmiddle\" />"
         . JTEXT::_('COM_MATUKIO_DOWNLOAD_CALENDER_FILE') . "</span></a>";
 }
 
@@ -188,7 +193,7 @@ if ($this->art != 2 AND $this->art != 4) {
 
 //function semauf(stask,scid,suid) {
 //javascript:semauf('5','" . $this->event->id . "','')
-// do this g005 in matukio.php
+// do this g005 in matukio-mvc.php
 
 if ((($buchopt[0] > 2 AND $this->art == 0) OR ($this->art == 3 AND $usrid == 0 AND ($nametemp != "" OR
     MatukioHelperSettings::getSettings('booking_unregistered', 1) == 1)))
@@ -239,18 +244,24 @@ if ($this->art == 3 And $usrid != 0 AND ($this->event->nrbooked > 1 OR $zfleer =
 //        . $modify . "','" . $this->event->id . "','" . $buchopt[2][0]->id . "');\"><img src=\""
 //        . MatukioHelperUtilsBasic::getComponentImagePath() . "1432.png\" border=\"0\" align=\"absmiddle\"></a>";
 
-
-    $knopfunten .= ' <input type="submit" class="mat_button" value="' . JTEXT::_('COM_MATUKIO_SAVE_CHANGES') . '">';
-//    $knopfunten .= " <button class=\"mat_button\" style=\"cursor:pointer;\" type=\"button\" onclick=\"semauf('"
-//        . $modify . "','" . $this->event->id . "','" . $buchopt[2][0]->id . "');\"><img src=\""
-//        . MatukioHelperUtilsBasic::getComponentImagePath() . "1416.png\" border=\"0\" align=\"absmiddle\">&nbsp;"
-//        . JTEXT::_('COM_MATUKIO_SAVE_CHANGES') . "</button>";
+    if (JFactory::getUser()->authorise('core.edit', 'com_matukio.frontend.')) {
+        if(MatukioHelperSettings::getSettings('oldbookingform', 0) == 1) {
+            $knopfunten .= ' <input type="submit" class="mat_button" value="' . JTEXT::_('COM_MATUKIO_SAVE_CHANGES') . '">';
+        }
+    //    $knopfunten .= " <button class=\"mat_button\" style=\"cursor:pointer;\" type=\"button\" onclick=\"semauf('"
+    //        . $modify . "','" . $this->event->id . "','" . $buchopt[2][0]->id . "');\"><img src=\""
+    //        . MatukioHelperUtilsBasic::getComponentImagePath() . "1416.png\" border=\"0\" align=\"absmiddle\">&nbsp;"
+    //        . JTEXT::_('COM_MATUKIO_SAVE_CHANGES') . "</button>";
+    }
 }
 
 if($this->art == 1 && MatukioHelperSettings::getSettings('booking_edit', 1)) {
-
-    if($buchopt[0] == 2 && $buchopt[2][0]->paid == 0) {
-        $knopfunten .= ' <input type="submit" class="mat_button" value="' . JTEXT::_('COM_MATUKIO_SAVE_CHANGES') . '">';
+    if($this->user->id > 0) {
+        if($buchopt[0] == 2 && $buchopt[2][0]->paid == 0) {
+            if(MatukioHelperSettings::getSettings('oldbookingform', 0) == 1) {
+                $knopfunten .= ' <input type="submit" class="mat_button" value="' . JTEXT::_('COM_MATUKIO_SAVE_CHANGES') . '">';
+            }
+        }
     }
 }
 
@@ -526,7 +537,7 @@ for ($i = 0; $i < count($datfeld[0]); $i++) {
         AND $datfeld[2][$i] == 2) OR ($buchopt[2][0]->paid == 1 AND $datfeld[2][$i] == 3))
     ) {
         // TODO improve security.. dirks way is a joke.. security by obscurity in opensource!!1
-        // index.php?s=" . MatukioHelperUtilsBasic::getRandomChar() . "&amp;option=" . JRequest::getCmd('option') . "&amp;task=34&amp;a6d5dgdee4cu7eho8e7fc6ed4e76z="
+        // index.php?s=" . MatukioHelperUtilsBasic::getRandomChar() . "&amp;option=" . JFactory::getApplication()->input->get('option') . "&amp;task=34&amp;a6d5dgdee4cu7eho8e7fc6ed4e76z="
         // . sha1(md5($datfeld[0][$i])) . $this->event->id .
         $filelink = JRoute::_("index.php?option=com_matukio&view=matukio&task=downloadfile&a6d5dgdee4cu7eho8e7fc6ed4e76z="
             . sha1(md5($datfeld[0][$i])) . $this->event->id);
@@ -556,8 +567,7 @@ if (MatukioHelperSettings::getSettings('oldbookingform', false)) {
         // Name und E-Mail, falls Buchung fuer nichtregistrierte User erlaubt
         $hidden = "";
         if (MatukioHelperSettings::getSettings('booking_unregistered', 1) > 0 AND $usrid < 1 AND (($buchopt[0] > 2
-            AND $this->art == 0) OR $this->art == 3 OR $this->art == 2) AND $this->event->cancelled == 0
-        ) {
+            AND $this->art == 0) OR $this->art == 3 OR $this->art == 2) AND $this->event->cancelled == 0) {
             $zusname = "";
             $zusemail = "";
             if (count($buchopt[2]) > 0) {
@@ -668,7 +678,7 @@ if (MatukioHelperSettings::getSettings('oldbookingform', false)) {
                 }
             }
             $htx1 .= ">" . $reqfield;
-            $htxt = JURI::ROOT() . "index.php?tmpl=component&s=" . MatukioHelperUtilsBasic::getRandomChar() . "&option=" . JRequest::getCmd('option') . "&view=agb";
+            $htxt = JURI::ROOT() . "index.php?tmpl=component&s=" . MatukioHelperUtilsBasic::getRandomChar() . "&option=" . JFactory::getApplication()->input->get('option') . "&view=agb";
             $htxt = "<a href=\"" . $htxt . "\" class=\"modal\" rel=\"{handler: 'iframe', size: {x:500, y:350}}\">" . JTEXT::_('COM_MATUKIO_TERMS_AND_CONDITIONS') . "</a>";
             //$htxt = str_replace("SEM_AGB", $htxt, JTEXT::_('COM_MATUKIO_I_AGREE_WITH'));
             $html .= "\n<tr>" . MatukioHelperUtilsEvents::getTableCell($htx1, 'd', 'r', '20%', 'sem_rowd') . MatukioHelperUtilsEvents::getTableCell($htxt, 'd', 'l', '80%', 'sem_rowd') . "</tr>";
@@ -737,7 +747,9 @@ if ($this->art != 3) {
     <input type="hidden" name="view" value="event"/>
     <input type="hidden" name="controller" value="event"/>
     <input type="hidden" name="task" value="bookevent"/>
-    <?php
+    <input type="hidden" name="uuid" value="<?php echo MatukioHelperPayment::getUuid(true); ?>"/>
+        <?php
+        // we need the uuid here for the new form
     }
 } else {
 // $savechangeslink = JRoute::_("index.php?option=com_matukio&view=participants&task=changeBookingOrganizer&uid="

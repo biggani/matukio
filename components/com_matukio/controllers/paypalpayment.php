@@ -13,12 +13,12 @@ defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.application.component.controller');
 
-class MatukioControllerPayPalPayment extends JController
+class MatukioControllerPayPalPayment extends JControllerLegacy
 {
-    public function display()
+    public function display($cachable = false, $urlparams = false)
     {
         $document = JFactory::getDocument();
-        $viewName = JRequest::getVar('view', 'PayPalPayment');
+        $viewName = JFactory::getApplication()->input->get('view', 'PayPalPayment');
         $viewType = $document->getType();
         $view = $this->getView($viewName, $viewType);
         $model = $this->getModel('PayPalPayment', 'MatukioModel');

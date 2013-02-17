@@ -95,8 +95,8 @@ require_once(JPATH_COMPONENT_ADMINISTRATOR . '/helper/util_events.php');
 //{
 //    jimport('joomla.database.table');
 //    jimport('joomla.html.pane');
-//    $database = &JFactory::getDBO();
-//    $editor = &JFactory::getEditor();
+//    $database = JFactory::getDBO();
+//    $editor = JFactory::getEditor();
 //    $catlist = sem_f010($row->catid);
 //    $reglevel = MatukioHelperUtilsBasic::getUserLevel();
 //    $reqfield = " <span class=\"sem_reqfield\">*</span>";
@@ -383,7 +383,7 @@ require_once(JPATH_COMPONENT_ADMINISTRATOR . '/helper/util_events.php');
 //function sem_f009($pub)
 //{
 //    $publevel = MatukioHelperSettings::getSettings('frontend_createevents', 0); //SettingsHelper::getSettings('frontend_createevents', 0);
-//    $database = &JFactory::getDBO();
+//    $database = JFactory::getDBO();
 //    $where = array();
 //    $where [] = "usertype<>'Registered'";
 //    if ($publevel > 3) {
@@ -448,7 +448,7 @@ require_once(JPATH_COMPONENT_ADMINISTRATOR . '/helper/util_events.php');
 //
 //function sem_f011($row)
 //{
-//    $database = &JFactory::getDBO();
+//    $database = JFactory::getDBO();
 //    //  $database->setQuery( "SELECT a.*, cc.*, a.id AS sid FROM #__matukio_bookings AS a LEFT JOIN #__users AS cc ON cc.id = a.userid WHERE a.semid = '$row->id' ORDER BY a.id");
 //    $database->setQuery("SELECT userid AS id FROM #__matukio_bookings WHERE semid = '$row->id'");
 //    $users = $database->loadObjectList();
@@ -492,7 +492,7 @@ require_once(JPATH_COMPONENT_ADMINISTRATOR . '/helper/util_events.php');
 //
 //function sem_f012($catid)
 //{
-//    $database = &JFactory::getDBO();
+//    $database = JFactory::getDBO();
 //    $database->setQuery("Select * FROM #__categories WHERE extension='com_matukio' AND id = '$catid'");
 //    $rows = $database->loadObjectList();
 //    return array($rows[0]->title, $rows[0]->description);
@@ -559,13 +559,13 @@ function sem_f013($max, $frei, $art)
 
 function sem_f015()
 {
-    $html = "<input type=\"hidden\" name=\"katid\" value=\"" . trim(JRequest::getVar('katid', 0)) . "\">";
-    $html .= "<input type=\"hidden\" name=\"ordid\" value=\"" . trim(JRequest::getVar('ordid', 0)) . "\">";
-    $html .= "<input type=\"hidden\" name=\"ricid\" value=\"" . trim(JRequest::getVar('ricid', 0)) . "\">";
-    $html .= "<input type=\"hidden\" name=\"einid\" value=\"" . trim(JRequest::getVar('einid', 0)) . "\">";
-    $html .= "<input type=\"hidden\" name=\"limit\" value=\"" . trim(JRequest::getVar('limit', 0)) . "\">";
-    $html .= "<input type=\"hidden\" name=\"limitstart\" value=\"" . trim(JRequest::getVar('limitstart', 0)) . "\">";
-    $html .= "<input type=\"hidden\" name=\"search\" value=\"" . trim(strtolower(JRequest::getVar('search', ''))) . "\">";
+    $html = "<input type=\"hidden\" name=\"katid\" value=\"" . trim(JFactory::getApplication()->input->getInt('katid', 0)) . "\">";
+    $html .= "<input type=\"hidden\" name=\"ordid\" value=\"" . trim(JFactory::getApplication()->input->getInt('ordid', 0)) . "\">";
+    $html .= "<input type=\"hidden\" name=\"ricid\" value=\"" . trim(JFactory::getApplication()->input->getInt('ricid', 0)) . "\">";
+    $html .= "<input type=\"hidden\" name=\"einid\" value=\"" . trim(JFactory::getApplication()->input->getInt('einid', 0)) . "\">";
+    $html .= "<input type=\"hidden\" name=\"limit\" value=\"" . trim(JFactory::getApplication()->input->getInt('limit', 0)) . "\">";
+    $html .= "<input type=\"hidden\" name=\"limitstart\" value=\"" . trim(JFactory::getApplication()->input->getInt('limitstart', 0)) . "\">";
+    $html .= "<input type=\"hidden\" name=\"search\" value=\"" . trim(strtolower(JFactory::getApplication()->input->get('search', '', 'string'))) . "\">";
     return $html;
 }
 
@@ -637,7 +637,7 @@ function sem_f016($done)
 //
 //function sem_f020($row)
 //{
-//    $database = &JFactory::getDBO();
+//    $database = JFactory::getDBO();
 //    $database->setQuery("SELECT * FROM #__matukio_bookings WHERE semid='" . $row->id . "'");
 //    $temps = $database->loadObjectList();
 //    $gebucht = 0;
@@ -661,7 +661,7 @@ function sem_f016($done)
 //
 //function sem_f021($art, $row, $usrid)
 //{
-//    $database = &JFactory::getDBO();
+//    $database = JFactory::getDBO();
 //    $database->setQuery("SELECT * FROM #__matukio_bookings WHERE semid='$row->id' ORDER BY id");
 //    $temps = $database->loadObjectList();
 //    $gebucht = 0;
@@ -910,7 +910,7 @@ function sem_f025($status)
 
 function sem_f027($art)
 {
-    $my = &JFactory::getuser();
+    $my = JFactory::getuser();
     $html = "\n<script type=\"text/javascript\">";
     if ($art == 4 OR $art == 6 OR $art == 8) {
         $html .= "\nwmtt = null;";
@@ -1154,7 +1154,7 @@ function sem_f027($art)
 //
 //function sem_f032($tab)
 //{
-//    $confusers = &JComponentHelper::getParams('com_users');
+//    $confusers = JComponentHelper::getParams('com_users');
 //    $reglevel = MatukioHelperUtilsBasic::getUserLevel();
 //    switch ($tab) {
 //        case "2":
@@ -1302,11 +1302,11 @@ function sem_f027($art)
 //{
 //
 //    //  if(MatukioHelperUtilsBasic::getUserLevel() > 1) {
-//    $dateid = trim(JRequest::getVar('dateid', 1));
-//    $catid = trim(JRequest::getVar('catid', 0));
-//    $search = trim(strtolower(JRequest::getVar('search', '')));
-//    $limit = trim(JRequest::getVar('limit', MatukioHelperSettings::getSettings('event_showanzahl', 10)));
-//    $limitstart = trim(JRequest::getVar('limitstart', 0));
+//    $dateid = trim(JFactory::getApplication()->input->getInt('dateid', 1));
+//    $catid = trim(JFactory::getApplication()->input->getInt('catid', 0));
+//    $search = trim(strtolower(JFactory::getApplication()->input->get('search', '')));
+//    $limit = trim(JFactory::getApplication()->input->get('limit', MatukioHelperSettings::getSettings('event_showanzahl', 10)));
+//    $limitstart = trim(JFactory::getApplication()->input->get('limitstart', 0));
 //    if ($knopf == "") {
 //        $image = "1932";
 //    } else {
@@ -1378,14 +1378,14 @@ function sem_f027($art)
 //
 //function sem_f038($art, $cid)
 //{
-//    $katid = trim(JRequest::getVar('katid', 0));
-//    $ordid = trim(JRequest::getVar('ordid', 0));
-//    $ricid = trim(JRequest::getVar('ricid', 0));
-//    $einid = trim(JRequest::getVar('einid', 0));
-//    $search = trim(strtolower(JRequest::getVar('search', '')));
-//    $limit = trim(JRequest::getVar('limit', 5));
-//    $limitstart = trim(JRequest::getVar('limitstart', 0));
-//    $uid = trim(JRequest::getVar('uid', 0));
+//    $katid = trim(JFactory::getApplication()->input->get('katid', 0));
+//    $ordid = trim(JFactory::getApplication()->input->get('ordid', 0));
+//    $ricid = trim(JFactory::getApplication()->input->get('ricid', 0));
+//    $einid = trim(JFactory::getApplication()->input->get('einid', 0));
+//    $search = trim(strtolower(JFactory::getApplication()->input->get('search', '')));
+//    $limit = trim(JFactory::getApplication()->input->get('limit', 5));
+//    $limitstart = trim(JFactory::getApplication()->input->get('limitstart', 0));
+//    $uid = trim(JFactory::getApplication()->input->get('uid', 0));
 //
 //    $zufall = MatukioHelperUtilsBasic::getRandomChar();
 //    $href = "index.php?tmpl=component&s=" . $zufall . "&option=com_matukio&katid=" . $katid . "&ordid=" . $ordid . "&ricid=" . $ricid . "&einid=" . $einid . "&search=" . $search . "&limit=" . $limit . "&limitstart=" . $limitstart . "&uid=" . $uid . "&task=";
@@ -1540,7 +1540,7 @@ function sem_f040($art, $limit)
 //
 //function MatukioHelperUtilsBasic::getUserLevel()
 //{
-//    $my = &JFactory::getuser();
+//    $my = JFactory::getuser();
 //
 //    // Zugriffslevel festlegen
 //    $utype = strtolower($my->usertype);
@@ -1661,9 +1661,9 @@ function sem_f040($art, $limit)
 
 function sem_f048()
 {
-    $database = &JFactory::getDBO();
+    $database = JFactory::getDBO();
 
-    $cid = trim(JRequest::getVar('cid', ''));
+    $cid = trim(JFactory::getApplication()->input->getInt('cid', ''));
     $kurs = new mosSeminar($database);
     $kurs->load($cid);
     $database->setQuery("SELECT a.*, cc.*, a.id AS sid, a.name AS aname, a.email AS aemail FROM #__matukio_bookings AS a LEFT JOIN #__users AS cc ON cc.id = a.userid WHERE a.semid = '$kurs->id' ORDER BY a.id");
@@ -1836,7 +1836,7 @@ function sem_f048()
 //    $mainframe = JFactory::getApplication();
 //
 //    if (MatukioHelperSettings::getSettings('sendmail_teilnehmer', 1) > 0 OR MatukioHelperSettings::getSettings('sendmail_owner', 1) > 0) {
-//        $database = &JFactory::getDBO();
+//        $database = JFactory::getDBO();
 //        $database->setQuery("SELECT * FROM #__matukio WHERE id='$cid'");
 //        $rows = $database->loadObjectList();
 //        $row = &$rows[0];
@@ -1846,9 +1846,9 @@ function sem_f048()
 //            $user->name = $rows[0]->name;
 //            $user->email = $rows[0]->email;
 //        } else {
-//            $user = &JFactory::getuser($rows[0]->userid);
+//            $user = JFactory::getuser($rows[0]->userid);
 //        }
-//        $publisher = &JFactory::getuser($row->publisher);
+//        $publisher = JFactory::getuser($row->publisher);
 //        $body1 = "<p><span style=\"font-size:10pt;\">" . JTEXT::_('COM_MATUKIO_PLEASE_DONT_ANSWER_THIS_EMAIL') . "</span><p>";
 //        $body2 = $body1;
 //        $gebucht = sem_f020($row);
@@ -1948,7 +1948,7 @@ function sem_f048()
 
 function sem_f051($cid)
 {
-    $database = &JFactory::getDBO();
+    $database = JFactory::getDBO();
     $database->setQuery("SELECT * FROM #__matukio_bookings WHERE id='$cid'");
     $rows = $database->loadObjectList();
     $booking = &$rows[0];
@@ -1959,7 +1959,7 @@ function sem_f051($cid)
         $user->name = $booking->name;
         $user->email = $booking->email;
     } else {
-        $user = &JFactory::getuser($booking->userid);
+        $user = JFactory::getuser($booking->userid);
     }
     $html = "\n<body onload=\" parent.sbox-window.focus(); parent.sbox-window.print(); \">";
 
@@ -1979,10 +1979,10 @@ function sem_f051($cid)
 
 function sem_f052($art)
 {
-//    $database = &JFactory::getDBO();
+//    $database = JFactory::getDBO();
 //
 //    $neudatum = MatukioHelperUtilsDate::getCurrentDate();
-//    $cid = trim(JRequest::getVar('cid', ''));
+//    $cid = trim(JFactory::getApplication()->input->getInt('cid', ''));
 //    $kurs = new mosSeminar($database);
 //    $kurs->load($cid);
 //    $database->setQuery("SELECT a.*, cc.*, a.id AS sid, a.name AS aname, a.email AS aemail FROM #__matukio_bookings AS a LEFT JOIN #__users AS cc ON cc.id = a.userid WHERE a.semid = '$kurs->id' ORDER BY a.id");
@@ -2364,9 +2364,9 @@ function sem_f056()
 //
 //function loginUser()
 //{
-//    $mainframe =& JFactory::getApplication();
-//    $username = JRequest::getVar('semusername', JTEXT::_('USERNAME'));
-//    $password = JRequest::getVar('sempassword', JTEXT::_('PASSWORD'));
+//    $mainframe = JFactory::getApplication();
+//    $username = JFactory::getApplication()->input->get('semusername', JTEXT::_('USERNAME'));
+//    $password = JFactory::getApplication()->input->get('sempassword', JTEXT::_('PASSWORD'));
 //    if ($username != JTEXT::_('USERNAME')) {
 //        $data['username'] = $username;
 //        $data['password'] = $password;
@@ -2382,12 +2382,12 @@ function sem_f056()
 
 function sem_f059()
 {
-    $database = &JFactory::getDBO();
+    $database = JFactory::getDBO();
 
-//    $cid = trim(JRequest::getVar('cid', 0));
+//    $cid = trim(JFactory::getApplication()->input->get('cid', 0));
 //    $kurs = new mosSeminar($database);
 //    $kurs->load($cid);
-//    $user = &JFactory::getuser($kurs->publisher);
+//    $user = JFactory::getuser($kurs->publisher);
 //    $icsdata = "BEGIN:VCALENDAR\n";
 //    $icsdata .= "VERSION:2.0\n";
 //    $icsdata .= "PRODID:" . MatukioHelperUtilsBasic::getSitePath() . "\n";
@@ -2436,8 +2436,8 @@ function sem_f059()
 
 function sem_f061()
 {
-//    $database = &JFactory::getDBO();
-//    $my = &JFactory::getuser();
+//    $database = JFactory::getDBO();
+//    $my = JFactory::getuser();
 //
 //    $daten = trim(JRequest::getVar('a6d5dgdee4cu7eho8e7fc6ed4e76z', ''));
 //    $cid = substr($daten, 40);
@@ -2491,7 +2491,7 @@ function sem_f062()
 
 //function MatukioHelperUtilsEvents::createNewEventNumber($newyear)
 //{
-//    $database = &JFactory::getDBO();
+//    $database = JFactory::getDBO();
 //    $database->setQuery("SELECT * FROM #__matukio_number WHERE year = '$newyear'");
 //
 //    $temp = $database->loadObjectList();

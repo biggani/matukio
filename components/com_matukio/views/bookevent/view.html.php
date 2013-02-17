@@ -12,13 +12,13 @@ defined( '_JEXEC' ) or die ( 'Restricted access' );
 
 jimport('joomla.application.component.view');
 
-class MatukioViewBookEvent extends JView {
+class MatukioViewBookEvent extends JViewLegacy {
 
-    public function display() {
+    public function display($tpl = NULL) {
 
-        $cid = JRequest::getInt('cid', 0);
+        $cid = JFactory::getApplication()->input->getInt('cid', 0);
         $user = JFactory::getUser();
-        $uid = JRequest::getInt('uid', 0);     // Booking id!!   Dirk.. WTF?!?!?!?!?!
+        $uid = JFactory::getApplication()->input->getInt('uid', 0);     // Booking id!!   Dirk.. WTF?!?!?!?!?!
 
         $model = $this->getModel();
 
@@ -68,15 +68,15 @@ class MatukioViewBookEvent extends JView {
         MatukioHelperUtilsBasic::expandPathway(JTEXT::_('COM_MATUKIO_EVENTS'), JRoute::_("index.php?option=com_matukio&view=eventlist"));
         MatukioHelperUtilsBasic::expandPathway(JTEXT::_('COM_MATUKIO_EVENT_BOOKING'), "");
 
-        $this->assignRef('event', $event);
-        $this->assignRef('uid', $uid);
-        $this->assignRef('user', $user);
-        $this->assignRef('steps', $steps);
-        $this->assignRef('payment', $payment);
-        $this->assignRef('fields_p1', $fields_p1);
-        $this->assignRef('fields_p2', $fields_p2);
-        $this->assignRef('fields_p3', $fields_p3);
+        $this->event = $event;
+        $this->uid = $uid;
+        $this->user = $user;
+        $this->steps = $steps;
+        $this->payment = $payment;
+        $this->fields_p1 = $fields_p1;
+        $this->fields_p2 = $fields_p2;
+        $this->fields_p3 = $fields_p3;
 
-        parent::display();
+        parent::display($tpl);
     }
 }

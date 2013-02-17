@@ -12,7 +12,7 @@
 defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.view');
 
-class MatukioViewCoupons extends JView {
+class MatukioViewCoupons extends JViewLegacy {
 
     function display($tpl = null) {
         $appl = JFactory::getApplication();
@@ -46,11 +46,11 @@ class MatukioViewCoupons extends JView {
 
         $ordering = ($filter['order'] == 'cc.code'); //Ordering allowed ?
 
-        $this->assignRef('list', $list);
-        $this->assignRef('filter', $filter);
-        $this->assignRef('pagination', $pagination2);
-        $this->assignRef('total', $total2);
-        $this->assignRef('ordering', $ordering2); // WTF Daniel?!
+        $this->list = $list;
+        $this->filter = $filter;
+        $this->pagination = $pagination2;
+        $this->total = $total2;
+        $this->ordering = $ordering; // WTF Daniel?!
 
         $this->addToolbar();
         parent::display($tpl);
@@ -62,7 +62,7 @@ class MatukioViewCoupons extends JView {
         JToolBarHelper::publishList();
         JToolBarHelper::unpublishList();
         JToolBarHelper::deleteList(JText::_('COM_MATUKIO_DO_YOU_REALLY_WANT_TO_DELETE_THIS_COUPON'));
-        JToolBarHelper::editList();
-        JToolBarHelper::addNewX('editCoupon');
+//        JToolBarHelper::editList();
+        JToolBarHelper::addNew('editCoupon');
     }
 }

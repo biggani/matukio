@@ -14,14 +14,13 @@ defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.controller');
 
 
-class MatukioControllerAGB extends JController
+class MatukioControllerAGB extends JControllerLegacy
 {
-    public function display()
-    {
+    public function display($cachable = false, $urlparams = false) {
         MatukioHelperUtilsBasic::loginUser();
 
         $document = JFactory::getDocument();
-        $viewName = JRequest::getVar('view', 'agb');
+        $viewName = JFactory::getApplication()->input->get('view', 'agb');
         $viewType = $document->getType();
         $view = $this->getView($viewName, $viewType);
         $model = $this->getModel('agb', 'MatukioModel');

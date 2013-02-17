@@ -22,10 +22,21 @@ class MatukioHelperUtilsDate
     public static function getCurrentDate()
     {
 
-        $app = JFactory::getApplication();
-        $offset = $app->getCfg('offset');
-        $date = JFactory::getDate();
-        $date->setOffset($offset);
-        return $date->toformat();
+//        $app = JFactory::getApplication();
+//        $offset = $app->getCfg('offset');
+//        $date = JFactory::getDate();
+//        $date->setTimezone($offset);
+//        return $date->Format;
+//
+//        return JHtml::_('date', $date, $format, true, true)->Format;
+
+        return JFactory::getDate()->toSql();
     }
+
+
+//    public static function getLocalDate($date) {
+//        $format = HotspotsHelper::getSettings('date_format', 'Y-m-d H:i');
+//        $formattedDate = JHtml::_('date', $date, $format, true, true);
+//        return $formattedDate;
+//    }
 }

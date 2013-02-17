@@ -13,12 +13,12 @@ defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.application.component.controller');
 
-class MatukioControllerCallback extends JController
+class MatukioControllerCallback extends JControllerLegacy
 {
-    public function display()
+    public function display($cachable = false, $urlparams = false)
     {
         $document = JFactory::getDocument();
-        $viewName = JRequest::getVar('view', 'Callback');
+        $viewName = JFactory::getApplication()->input->get('view', 'Callback');
         $viewType = $document->getType();
         $view = $this->getView($viewName, $viewType);
         $model = $this->getModel('Callback', 'MatukioModel');
@@ -28,7 +28,7 @@ class MatukioControllerCallback extends JController
     }
 
     public function cancel(){
-        $uuid = JRequest::getVar('booking_id', '');
+        $uuid = JFactory::getApplication()->input->get('booking_id', '', 'string');
 
         if(empty($uuid)){
             return JError::raiseError('404', "COM_MATUKIO_NO_ID");

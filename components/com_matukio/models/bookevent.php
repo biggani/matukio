@@ -12,7 +12,7 @@
 defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.model');
 
-class MatukioModelBookEvent extends JModel {
+class MatukioModelBookEvent extends JModelLegacy {
 
     public function getItem($id) {
         $db = JFactory::getDbo();

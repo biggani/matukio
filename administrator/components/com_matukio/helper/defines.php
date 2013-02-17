@@ -11,4 +11,4 @@
 
 defined( '_JEXEC' ) or die ( 'Restricted access' );
 
-define("MATUKIO_VERSION", "2.1.3");
+define("MATUKIO_VERSION", "2.1.10");

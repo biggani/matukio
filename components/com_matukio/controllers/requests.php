@@ -13,7 +13,7 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 jimport('joomla.application.component.controller');
 
-class MatukioControllerRequests extends JController {
+class MatukioControllerRequests extends JControllerLegacy {
 
     public function display($cachable = false, $urlparams = false) {
         $document = JFactory::getDocument();

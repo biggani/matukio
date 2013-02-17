@@ -13,14 +13,14 @@ defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.application.component.controller');
 
-class MatukioControllerEvent extends JController
+class MatukioControllerEvent extends JControllerLegacy
 {
-    public function display()
+    public function display($cachable = false, $urlparams = false)
     {
         MatukioHelperUtilsBasic::loginUser();
 
         $document = JFactory::getDocument();
-        $viewName = JRequest::getVar('view', 'event');
+        $viewName = JFactory::getApplication()->input->get('view', 'event');
         $viewType = $document->getType();
         $view = $this->getView($viewName, $viewType);
         $model = $this->getModel('Event', 'MatukioModel');
@@ -28,11 +28,13 @@ class MatukioControllerEvent extends JController
 
         $tmpl = MatukioHelperSettings::getSettings("event_template", "default");
 
-        $params = &JComponentHelper::getParams( 'com_matukio' );
-        $menuitemid = JRequest::getInt( 'Itemid' );
+        $params = JComponentHelper::getParams( 'com_matukio' );
+        $menuitemid = JFactory::getApplication()->input->getInt( 'Itemid' );
         if ($menuitemid)
         {
-            $menu = JSite::getMenu();
+//            $menu = JSite::getMenu();
+            $site = new JSite();
+            $menu = $site->getMenu();
             $menuparams = $menu->getParams( $menuitemid );
             $params->merge( $menuparams );
         }
@@ -53,25 +55,25 @@ class MatukioControllerEvent extends JController
      */
     public function bookevent()
     {
-        $database = &JFactory::getDBO();
-        $my = &JFactory::getUser();
-        $dateid = JRequest::getInt('dateid', 1);
-        $id = JRequest::getInt('cid', 0);
-        $uid = JRequest::getInt('uid', 0);
-        $catid = JRequest::getInt('catid', 0);
-        $search = JRequest::getVar('search', '');
-        $limit = JRequest::getInt('limit', 5);
-        $limitstart = JRequest::getInt('limitstart', 0);
-        $nrbooked = JRequest::getInt('nrbooked', 0);
-        $name = JRequest::getVar('name', '');
-        $email = JRequest::getVar('email', '');
+        $database = JFactory::getDBO();
+        $my = JFactory::getUser();
+        $dateid = JFactory::getApplication()->input->getInt('dateid', 1);
+        $id = JFactory::getApplication()->input->getInt('cid', 0);
+        $uid = JFactory::getApplication()->input->getInt('uid', 0);
+        $catid = JFactory::getApplication()->input->getInt('catid', 0);
+        $search = JFactory::getApplication()->input->get('search', '', 'string');
+        $limit = JFactory::getApplication()->input->getInt('limit', 5);
+        $limitstart = JFactory::getApplication()->input->getInt('limitstart', 0);
+        $nrbooked = JFactory::getApplication()->input->getInt('nrbooked', 0);
+        $name = JFactory::getApplication()->input->get('name', '', 'string');
+        $email = JFactory::getApplication()->input->get('email', '', 'string');
 
         // Edit own booking
-        $booking_id = JRequest::getInt('booking_id', 0);
+        $booking_id = JFactory::getApplication()->input->getInt('booking_id', 0);
 
         // AGBs
 
-        $veragb = JRequest::getVar('veragb', 0);
+        $veragb = JFactory::getApplication()->input->get('veragb', 0, 'string');
 
         $reason = "";
 
@@ -80,7 +82,7 @@ class MatukioControllerEvent extends JController
         // Werte des angegebenen Kurses ermitteln
         //$row = new mosSeminar($database);
 
-        $row =& JTable::getInstance('matukio', 'Table');
+        $row = JTable::getInstance('matukio', 'Table');
         $row->load($id);
 
         $usrid = $my->id;
@@ -134,7 +136,7 @@ class MatukioControllerEvent extends JController
                //die(asdf);
                $res = explode("|", $test);
                if(trim($res[1]) == "1") {
-                    $value = JRequest::getVar(("zusatz" . ($i + 1)), '');
+                    $value = JFactory::getApplication()->input->get(("zusatz" . ($i + 1)), '', 'string');
                     //echo "Val: " . $value;
 
                     if(empty($value)){
@@ -200,7 +202,7 @@ class MatukioControllerEvent extends JController
         if ($allesok > 0) {
 
             // Buchung eintragen
-            $neu =& JTable::getInstance('bookings', 'Table');
+            $neu = JTable::getInstance('bookings', 'Table');
 
             //$neu = new mossembookings($database);
             if (!$neu->bind(JRequest::get( 'post' ))) {

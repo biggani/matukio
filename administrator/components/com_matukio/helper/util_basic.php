@@ -62,7 +62,7 @@ class MatukioHelperUtilsBasic
      */
     public static function getTimeZone() {
         $userTz = JFactory::getUser()->getParam('timezone');
-        $timeZone = JFactory::getConfig()->getValue('offset');
+        $timeZone = JFactory::getConfig()->get('offset');
         if($userTz) {
             $timeZone = $userTz;
         }
@@ -90,7 +90,7 @@ class MatukioHelperUtilsBasic
 
     public static function getComponentPath()
     {
-        return MatukioHelperUtilsBasic::getSitePath() . "components/" . JRequest::getCmd('option') . "/";
+        return MatukioHelperUtilsBasic::getSitePath() . "components/" . JFactory::getApplication()->input->get('option') . "/";
     }
 
 
@@ -121,6 +121,7 @@ class MatukioHelperUtilsBasic
     // ++++++++++++++++++++++++++++++++++++++
 
     /**
+     * TODO Fix this
      * @deprecated TODO Move to ACL
      * @return int|string
      */
@@ -128,10 +129,15 @@ class MatukioHelperUtilsBasic
     {
         // Public
         $reglevel = 0;
-        $my = &JFactory::getuser();
+        $my = JFactory::getuser();
 
         // Zugriffslevel festlegen
-        $utype = strtolower($my->usertype);
+
+        if(CJOOMLA_VERSION == 3) {
+            $utype = 0;
+        } else {
+            $utype = strtolower($my->usertype);
+        }
 
         // > Joomla 1.5
         if (MatukioHelperUtilsBasic::getJoomlaVersion() != '1.5') {
@@ -226,7 +232,7 @@ class MatukioHelperUtilsBasic
         if ($art > 2) {
             $type = " enctype=\"multipart/form-data\"";
         }
-        echo "<form action=\"\" method=\"post\" name=\"" . $htxt . "\" id=\"" . $htxt . "\"" . $type . ">";
+        echo "<form action=\"" . JRoute::_("index.php?option=com_matukio") . "\" method=\"post\" name=\"" . $htxt . "\" id=\"" . $htxt . "\"" . $type . ">";
     }
 
     /**
@@ -254,9 +260,9 @@ class MatukioHelperUtilsBasic
 
     public static function loginUser()
     {
-        $mainframe =& JFactory::getApplication();
-        $username = JRequest::getVar('semusername', JTEXT::_('USERNAME'));
-        $password = JRequest::getVar('sempassword', JTEXT::_('PASSWORD'));
+        $mainframe = JFactory::getApplication();
+        $username = JFactory::getApplication()->input->get('semusername', JTEXT::_('USERNAME'), 'string');
+        $password = JFactory::getApplication()->input->get('sempassword', JTEXT::_('PASSWORD'), 'string');
         if ($username != JTEXT::_('USERNAME')) {
             $data['username'] = $username;
             $data['password'] = $password;
@@ -272,7 +278,7 @@ class MatukioHelperUtilsBasic
 
     public static function getBookedUserList($row)
     {
-        $database = &JFactory::getDBO();
+        $database = JFactory::getDBO();
         //  $database->setQuery( "SELECT a.*, cc.*, a.id AS sid FROM #__matukio_bookings AS a LEFT JOIN #__users AS cc ON cc.id = a.userid WHERE a.semid = '$row->id' ORDER BY a.id");
         $database->setQuery("SELECT userid AS id FROM #__matukio_bookings WHERE semid = '$row->id'");
         $users = $database->loadObjectList();

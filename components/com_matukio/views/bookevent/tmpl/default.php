@@ -13,8 +13,8 @@ defined('_JEXEC') or die('Restricted access');
 
 JHTML::_('behavior.modal');
 JHTML::_('behavior.tooltip');
-JHTML::_('stylesheet', 'matukio.css', 'media/com_matukio/css/');
-JHTML::_('stylesheet', 'booking.css', 'media/com_matukio/css/');
+JHTML::_('stylesheet', 'media/com_matukio/css/matukio.css');
+JHTML::_('stylesheet', 'media/com_matukio/css/booking.css');
 
 $usermail = $this->user->email;
 ?>
@@ -638,7 +638,7 @@ if (!empty($this->event->fees) && !empty($this->payment)) {
     echo "<br />";
     $agb = MatukioHelperSettings::getSettings("agb_text", "");
     if (!empty($agb)) {
-        $link = JURI::ROOT() . "index.php?tmpl=component&s=" . MatukioHelperUtilsBasic::getRandomChar() . "&option=" . JRequest::getCmd('option') . "&view=agb";
+        $link = JURI::ROOT() . "index.php?tmpl=component&s=" . MatukioHelperUtilsBasic::getRandomChar() . "&option=" . JFactory::getApplication()->input->get('option') . "&view=agb";
         echo MatukioHelperUtilsBooking::getCheckbox("agb", " ", false);
         echo "<a href=\"" . $link . "\" class=\"modal\" rel=\"{handler: 'iframe', size: {x:500, y:350}}\">";
         echo JTEXT::_('COM_MATUKIO_TERMS_AND_CONDITIONS');

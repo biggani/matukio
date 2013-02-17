@@ -11,12 +11,13 @@
 defined( '_JEXEC' ) or die ( 'Restricted access' );
 
 global $mainframe;
-$document = &JFactory::getDocument();
-$database = &JFactory::getDBO();
-$my = &JFactory::getuser();
+$document = JFactory::getDocument();
+$database = JFactory::getDBO();
+$my = JFactory::getuser();
 
 JHTML::_('behavior.modal');
-JHTML::_('stylesheet', 'modern.css', 'media/com_matukio/css/');
+JHTML::_('stylesheet', 'media/com_matukio/css/modern.css');
+
 
 // Backward compatibilty
 $buchopt = MatukioHelperUtilsEvents::getEventBookableArray($this->art, $this->event, $my->id);
@@ -34,7 +35,7 @@ if ($this->art > 2) {
     if ($usrid == 0) {
         $nametemp = MatukioHelperUtilsBasic::getBookedUserList($this->event);
     } else if ($usrid > 0) {
-        $nametemp = &JFactory::getuser($usrid);
+        $nametemp = JFactory::getuser($usrid);
         $nametemp = $nametemp->name;
     }
     if ($nametemp == "") {
@@ -281,29 +282,29 @@ if ($buchopt[0] == 2) {
 
                     geocoder = new google.maps.Geocoder();
                     var myOptions = {
-                    zoom:8,
-                    mapTypeId:google.maps.MapTypeId.ROADMAP
+                        zoom:8,
+                        mapTypeId:google.maps.MapTypeId.ROADMAP
                     };
                     var map = new google.maps.Map(document.getElementById('map_canvas'),
-                    myOptions);
+                              myOptions);
                     var address = '" . preg_replace("#\n|\r#", ' ', str_replace('<br />', ',', $this->event->gmaploc)) . "';
                     geocoder.geocode( { 'address': address}, function(results, status) {
                     if (status == google.maps.GeocoderStatus.OK) {
-                    map.setCenter(results[0].geometry.location);
-                    var marker = new google.maps.Marker({
-                    map: map,
-                    position: results[0].geometry.location
+                        map.setCenter(results[0].geometry.location);
+                        var marker = new google.maps.Marker({
+                        map: map,
+                        position: results[0].geometry.location
                     });
 
                     var infowindow = new google.maps.InfoWindow({
-                    content: address
+                        content: address
                     });
                     google.maps.event.addListener(marker, 'click', function() {
-                    infowindow.open(map,marker);
+                        infowindow.open(map,marker);
                     });
 
                     } else {
-                    alert('Geocode was not successful for the following reason: ' + status);
+                        alert('Geocode was not successful for the following reason: ' + status);
                     }
                     });
 
@@ -327,7 +328,7 @@ if ($buchopt[0] == 2) {
                     var js, fjs = d.getElementsByTagName(s)[0];
                     if (d.getElementById(id)) return;
                     js = d.createElement(s); js.id = id;
-                    js.src = "//connect.facebook.net/de_DE/all.js#xfbml=1";
+                    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
                     fjs.parentNode.insertBefore(js, fjs);
                 }(document, 'script', 'facebook-jssdk'));
                 </script>
@@ -368,7 +369,23 @@ if ($buchopt[0] == 2) {
 
         // Kalender
         if (MatukioHelperSettings::getSettings('frontend_usericsdownload', 1) > 0) {
-            $icslink = JRoute::_("index.php?option=com_matukio&view=ics&format=raw&cid=" . $this->event->id);
+
+
+//            $icslink = JRoute::_("index.php?option=com_matukio&view=ics&format=raw&cid=" . $this->event->id);
+            $config = JFactory::getConfig();
+
+
+            $_suffix = $config->get( 'config.sef_suffix' );
+
+            //$_suffix = JFactory::getApplication()->getCfg( 'config.sef_suffix' );
+
+            if ( $_suffix == 0) { // no .html suffix
+                $icslink = JRoute::_("index.php?option=com_matukio&tmpl=component&view=ics&format=raw&cid=" . $this->event->id);
+            } else {
+                $icslink = JRoute::_("index.php?option=com_matukio&tmpl=component&view=ics&cid=" . $this->event->id) . "?format=raw";
+            }
+
+
             echo " <a title=\"" . JTEXT::_('COM_MATUKIO_DOWNLOAD_CALENDER_FILE') . "\" href=\"" . $icslink . "\" target=\"_BLANK\">"
                 . "<span class=\"mat_button\"><img src=\""
                 . MatukioHelperUtilsBasic::getComponentImagePath() . "3316.png\" border=\"0\" align=\"absmiddle\">&nbsp;"

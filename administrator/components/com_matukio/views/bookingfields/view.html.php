@@ -12,7 +12,7 @@
 defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.view');
 
-class MatukioViewBookingfields extends JView {
+class MatukioViewBookingfields extends JViewLegacy {
 
     function display($tpl = null) {
         $appl = JFactory::getApplication();
@@ -46,11 +46,11 @@ class MatukioViewBookingfields extends JView {
 
         $ordering = ($filter['order'] == 'cc.field_name'); //Ordering allowed ?
 
-        $this->assignRef('list', $list);
-        $this->assignRef('filter', $filter);
-        $this->assignRef('pagination', $pagination2);
-        $this->assignRef('total', $total2);
-        $this->assignRef('ordering', $ordering2); // WTF Daniel?!
+        $this->list = $list;
+        $this->filter = $filter;
+        $this->pagination = $pagination2;
+        $this->total = $total2;
+        $this->ordering = $ordering;
 
         $this->addToolbar();
         parent::display($tpl);
@@ -62,7 +62,7 @@ class MatukioViewBookingfields extends JView {
         JToolBarHelper::publishList();
         JToolBarHelper::unpublishList();
         JToolBarHelper::deleteList(JText::_('COM_MATUKIO_DO_YOU_REALLY_WANT_TO_DELETE_THIS_BOOKING_FIELD'));
-        JToolBarHelper::editList();
-        JToolBarHelper::addNewX('editBookingfield');
+//        JToolBarHelper::editList('editBookingfield');
+        JToolBarHelper::addNew('editBookingfield');
     }
 }

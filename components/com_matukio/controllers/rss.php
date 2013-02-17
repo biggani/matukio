@@ -14,12 +14,12 @@ defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.controller');
 
 
-class MatukioControllerRSS extends JController
+class MatukioControllerRSS extends JControllerLegacy
 {
-    public function display()
+    public function display($cachable = false, $urlparams = false)
     {
         $document = JFactory::getDocument();
-        $viewName = JRequest::getVar('view', 'rss');
+        $viewName = JFactory::getApplication()->input->get('view', 'rss');
         $viewType = $document->getType();
         $view = $this->getView($viewName, $viewType);
         $model = $this->getModel('rss', 'MatukioModel');

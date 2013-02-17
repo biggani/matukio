@@ -11,6 +11,6 @@
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
 jimport('joomla.application.component.view');
-class MatukioViewRequests extends JView {
+class MatukioViewRequests extends JViewLegacy {
 
 }

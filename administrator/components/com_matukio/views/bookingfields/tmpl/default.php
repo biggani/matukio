@@ -33,7 +33,7 @@ jimport('joomla.filter.output');
         Joomla.submitform(button);
     }
 </script>
-<form action="index.php" method="post" name="adminForm">
+<form action="index.php" method="post" name="adminForm" id="adminForm">
     <table>
         <tr>
             <td align="left" width="100%"><?php echo JText::_('JSEARCH_FILTER_LABEL'); ?>:
@@ -41,7 +41,7 @@ jimport('joomla.filter.output');
                        class="text_area" onchange="document.adminForm.submit();"/>
                 <button onclick="this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
                 <button
-                    onclick="document.getElementById('search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR');
+                    onclick="document.getElementById('task').value='';document.getElementById('search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR');
                     ?></button>
             </td>
             <td nowrap="nowrap">
@@ -59,7 +59,7 @@ jimport('joomla.filter.output');
                 <th width="5"><?php echo JText::_('JGRID_HEADING_ROW_NUMBER'); ?></th>
                 <th width="5">
                     <input type="checkbox" name="toggle" value=""
-                           onclick="checkAll(<?php echo count($this->list); ?>);"/>
+                           onclick="Joomla.checkAll(this);"/>
                 </th>
                 <th class="title"><?php echo JHTML::_('grid.sort', 'JGLOBAL_TITLE', 'cc.$field_name', $this->filter['order_Dir'],
                                             $this->filter['order']); ?></th>

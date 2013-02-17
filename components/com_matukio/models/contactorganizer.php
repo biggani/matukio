@@ -13,7 +13,7 @@
 defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.model');
 
-class MatukioModelContactOrganizer extends JModel {
+class MatukioModelContactOrganizer extends JModelLegacy {
 
     public function getEvent($id) {
         $db = JFactory::getDbo();

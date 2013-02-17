@@ -12,10 +12,10 @@
 defined('_JEXEC') or die('Restricted access');
 
 global $mainframe;
-$document = &JFactory::getDocument();
-$database = &JFactory::getDBO();
-$my = &JFactory::getuser();
-JHTML::_('stylesheet', 'matukio.css', 'media/com_matukio/css/');
+$document = JFactory::getDocument();
+$database = JFactory::getDBO();
+$my = JFactory::getuser();
+JHTML::_('stylesheet', 'media/com_matukio/css/matukio.css');
 
 JFilterOutput::objectHTMLSafe($this->event);
 JHTML::_('behavior.modal');
@@ -29,8 +29,6 @@ JHTML::_('behavior.tooltip');
 ?>
 <form action="index.php" method="post" name="FrontForm" enctype="multipart/form-data">
 <?php
-
-
 $knopfunten = MatukioHelperUtilsEvents::getEventlistHeader(3);
 
     // Zurück
@@ -41,7 +39,6 @@ $knopfoben = "<a title=\"" . JTEXT::_('COM_MATUKIO_BACK') . "\" href=\"" .$backl
 $knopfunten .= "<a href=\"" .$backlink . "\"> <span class=\"mat_button\" style=\"cursor:pointer;\" type=\"button\"><img src=\""
     . MatukioHelperUtilsBasic::getComponentImagePath() . "1016.png\" border=\"0\" align=\"absmiddle\">&nbsp;"
     . JTEXT::_('COM_MATUKIO_BACK') . "</span></a>";
-
 
 // Submit
 $knopfunten .= " <input type=\"submit\" class=\"mat_button\" style=\"cursor:pointer;\" value=\"" . JText::_("COM_MATUKIO_SAVE") ."\">";

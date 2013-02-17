@@ -7,7 +7,6 @@
     <description><![CDATA[Matukio is an advanced event manager by Compojoom.com]]>
     </description>
     <license>http://www.gnu.org/licenses/gpl.html</license>
-
     <authorEmail>yves@compojoom.com</authorEmail>
     <authorUrl>https://compojoom.com</authorUrl>
     <version>@@VERSION@@</version>
@@ -24,7 +23,7 @@
         ##FRONTENDLANGUAGEFILES##
     </languages>
     <administration>
-        <menu img="../media/com_matukio/backend/images/icon-16-sem_logo.png">COM_@@COMPONENTNAMEUPPERCASE@@</menu>
+        <menu img="../media/com_matukio/backend/images/icon-16-sem_logo.png" link="option=com_matukio">COM_@@COMPONENTNAMEUPPERCASE@@</menu>
         <submenu>
             <menu task="2" img="../media/com_matukio/backend/images/icon-16-sem_event.png">EVENTS</menu>
            <!--<menu task="1" img="../media/com_matukio/backend/images/icon-16-sem_pattern.png">TEMPLATES</menu>-->

@@ -15,7 +15,7 @@ defined('_JEXEC') or die();
 
 class ControlCenterConfig {
 
-    var $version                = "2.1.3";
+    var $version                = "2.1.10";
     var $copyright              = "Copyright (C) 2012 Yves Hoppe - compojoom.com";
     var $license                = "GPL v2 or later";
     var $translation            = "English: compojoom.com <br />German: compojoom.com";

@@ -12,7 +12,7 @@
 defined('_JEXEC') or die();
 
 $version = $params->get('version', '2.0.0');
-$copyright = $params->get('copyrigh', 'Copyright (C) 2012 compojoom.com');
+$copyright = $params->get('copyright', 'Copyright (C) 2012 compojoom.com');
 $license = $version = $params->get('license', 'GPL v2');
 $translation = $params->get('translation', '');
 $description = $params->get('description', '');

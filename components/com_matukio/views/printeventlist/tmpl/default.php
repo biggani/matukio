@@ -11,12 +11,11 @@
 
 defined('_JEXEC') or die('Restricted access');
 
-$document = &JFactory::getDocument();
-$database = &JFactory::getDBO();
+$document = JFactory::getDocument();
+$database = JFactory::getDBO();
 $neudatum = MatukioHelperUtilsDate::getCurrentDate();
 JHTML::_('behavior.modal');
-JHTML::_('stylesheet', 'matukio.css', 'media/com_matukio/css/');
-
+JHTML::_('stylesheet', 'media/com_matukio/css/matukio.css');
 
 $html = "";
 

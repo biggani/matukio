@@ -9,12 +9,16 @@
  * @version $Revision: 1.0.0 $
  **/
 
-defined( '_JEXEC' ) or die ( 'Restricted access' );
+defined('_JEXEC') or die ('Restricted access');
 
 class MatukioHelperUtilsBooking
 {
     private static $instance;
 
+    /**
+     * @param $id
+     * @return string
+     */
     public static function getBookingId($id)
     {
         return strtoupper(substr(sha1($id), 0, 10));
@@ -38,10 +42,17 @@ class MatukioHelperUtilsBooking
         }
     }
 
+    /**
+     * @param null $page
+     * @param int $published
+     * @param string $orderby
+     * @return mixed
+     */
 
-    public static function getBookingFields($page = null, $published = 1, $orderby = 'ordering' ){
-        $database = &JFactory::getDBO();
-        if(empty($page)){
+    public static function getBookingFields($page = null, $published = 1, $orderby = 'ordering')
+    {
+        $database = JFactory::getDBO();
+        if (empty($page)) {
             $database->setQuery("SELECT * FROM #__matukio_booking_fields WHERE published = " . $published . " ORDER BY " . $orderby);
         } else {
             $database->setQuery("SELECT * FROM #__matukio_booking_fields WHERE page = " . $page
@@ -50,13 +61,19 @@ class MatukioHelperUtilsBooking
 
         $fields = $database->loadObjectList();
 
-        return($fields);
+        return ($fields);
     }
 
-    public static function getBookingHeader($steps){
+    /**
+     * @param $steps
+     * @return string
+     */
+
+    public static function getBookingHeader($steps)
+    {
         $html = "";
 
-        if($steps == 2) {
+        if ($steps == 2) {
             $html = '<div id="mat_h1">';
             $html .= '</div>';
             $html .= '<div id="mat_h2">';
@@ -73,17 +90,28 @@ class MatukioHelperUtilsBooking
         return $html;
     }
 
-        public static function getTextAreaField($name, $title, $value, $style = 'width:300px', $required=false, $class = 'text_area',
-                                                $rows = 8, $cols = 50)
-        {
-            $req = "";
-            if($required){
-                $req = " required";
-            }
-            return '<textarea class="' . $class . $req . '" name="' . $name . '" id="' . $name . '" rows="'
-                . $rows . '" cols="' . $cols . '" style="' . $style . '" title="' . JText::_($title)
-                . '" />' . $value . '</textarea>';
+    /**
+     * @param $name
+     * @param $title
+     * @param $value
+     * @param string $style
+     * @param bool $required
+     * @param string $class
+     * @param int $rows
+     * @param int $cols
+     * @return string
+     */
+    public static function getTextAreaField($name, $title, $value, $style = 'width:300px', $required = false, $class = 'text_area',
+                                            $rows = 8, $cols = 50)
+    {
+        $req = "";
+        if ($required) {
+            $req = " required";
         }
+        return '<textarea class="' . $class . $req . '" name="' . $name . '" id="' . $name . '" rows="'
+            . $rows . '" cols="' . $cols . '" style="' . $style . '" title="' . JText::_($title)
+            . '" />' . $value . '</textarea>';
+    }
 
     /**
      * @static
@@ -99,18 +127,18 @@ class MatukioHelperUtilsBooking
      * @return string
      */
     public static function getSelectField($name, $title, $value, $values, $style = 'width:300px',
-                                          $required=false, $class = 'inputbox', $size = 50,
+                                          $required = false, $class = 'inputbox', $size = 50,
                                           $maxlength = 255)
     {
 
         $req = "";
-        if($required){
+        if ($required) {
             $req = " required";
         }
 
         $valuesArray = MatukioHelperUtilsBooking::getSelectValues($values);
 
-        $select = '<select name="'. $name . '" id="'. $name . '" class="' . $class . $req . '">' . "\n";
+        $select = '<select name="' . $name . '" id="' . $name . '" class="' . $class . $req . '">' . "\n";
 
         foreach ($valuesArray as $valueOption) {
             if ($value == $valueOption['id']) {
@@ -143,11 +171,12 @@ class MatukioHelperUtilsBooking
      * @param string $class
      * @return string
      */
-    public static function getRadioField($name, $title, $value, $values, $style = "", $required = false, $class="inputbox"){
+    public static function getRadioField($name, $title, $value, $values, $style = "", $required = false, $class = "inputbox")
+    {
 
         $req = "";
 
-        if($required){
+        if ($required) {
             $req = " required";
         }
 
@@ -169,7 +198,7 @@ class MatukioHelperUtilsBooking
             $text = str_replace('-', '', $text);
             $text = str_replace('__', '_', $text);
 
-            $radio .= '<input type="radio" name="' . $name .'" value="' . $valueOption['id'] .'" ' . $selected . ' /> ' . JText::_($text);
+            $radio .= '<input type="radio" name="' . $name . '" value="' . $valueOption['id'] . '" ' . $selected . ' /> ' . JText::_($text);
         }
 
         return $radio;
@@ -186,11 +215,12 @@ class MatukioHelperUtilsBooking
      * @param string $class
      * @return string
      */
-    public static function getCheckboxField($name, $title, $value, $values, $style = "", $required = false, $class="inputbox"){
+    public static function getCheckboxField($name, $title, $value, $values, $style = "", $required = false, $class = "inputbox")
+    {
 
         $req = "";
 
-        if($required){
+        if ($required) {
             $req = " required";
         }
 
@@ -212,7 +242,7 @@ class MatukioHelperUtilsBooking
             $text = str_replace('-', '', $text);
             $text = str_replace('__', '_', $text);
 
-            $check .= '<input type="checkbox" name="' . $name .'" value="' . $valueOption['id'] .'" ' . $selected . ' /> ' . JText::_($text);
+            $check .= '<input type="checkbox" name="' . $name . '" value="' . $valueOption['id'] . '" ' . $selected . ' /> ' . JText::_($text);
         }
 
         return $check;
@@ -224,7 +254,7 @@ class MatukioHelperUtilsBooking
      * @param <type> $params
      * @return <type>
      */
-    function getSelectValues($params)
+    public static function getSelectValues($params)
     {
 
         $regex_one = '/({\s*)(.*?)(})/si';
@@ -252,11 +282,23 @@ class MatukioHelperUtilsBooking
         return $returnValues;
     }
 
+    /**
+     * @param $name
+     * @param $title
+     * @param $value
+     * @param string $style
+     * @param bool $required
+     * @param string $class
+     * @param int $size
+     * @param int $maxlength
+     * @return string
+     */
+
     public static function getTextField($name, $title, $value, $style = 'width: 250px', $required = false, $class = 'text_area',
                                         $size = 50, $maxlength = 255)
     {
         $req = "";
-        if($required){
+        if ($required) {
             $req = " required";
         }
         return '<input class="' . $class . $req . '" type="text" name="' . $name . '"
@@ -266,7 +308,13 @@ class MatukioHelperUtilsBooking
     }
 
 
-    public static function getSpacerField($class = "mat_spacer", $style = ""){
+    /**
+     * @param string $class
+     * @param string $style
+     * @return string
+     */
+    public static function getSpacerField($class = "mat_spacer", $style = "")
+    {
         return '<hr class="' . $class . '" style="' . $style . '" >';
     }
 
@@ -280,14 +328,20 @@ class MatukioHelperUtilsBooking
      * @param string $class
      * @return string
      */
-    public static function getCheckbox($name, $title, $link, $checked = false, $style = "width: 20px;", $class = 'checkbox'){
+    public static function getCheckbox($name, $title, $link, $checked = false, $style = "width: 20px;", $class = 'checkbox')
+    {
 
-        return '<input type="checkbox" name="' . $name . '" id="' . $name .'" value="' . $name
-            .'" style="' . $style . '" class="' . $class . '" /> ' . JText::_($title);
+        return '<input type="checkbox" name="' . $name . '" id="' . $name . '" value="' . $name
+            . '" style="' . $style . '" class="' . $class . '" /> ' . JText::_($title);
     }
 
-    public static function getConfirmationfields($name){
-        return "<div id=\"conf_" . $name .  "\"></div>";
+    /**
+     * @param $name
+     * @return string
+     */
+    public static function getConfirmationfields($name)
+    {
+        return "<div id=\"conf_" . $name . "\"></div>";
     }
 
     /**
@@ -297,7 +351,8 @@ class MatukioHelperUtilsBooking
      * @param bool $pageone
      * @param $value
      */
-    public static function printFieldElement($field, $pageone = false, $value = -1){
+    public static function printFieldElement($field, $pageone = false, $value = -1)
+    {
         if ($field->type == 'spacer') {
             echo "</table>";
             echo MatukioHelperUtilsBooking::getSpacerField();
@@ -321,11 +376,11 @@ class MatukioHelperUtilsBooking
             }
 
             // Checking required only on page one, should be changed sometime
-            if(!$pageone) {
-               $field->required = false;
+            if (!$pageone) {
+                $field->required = false;
             }
 
-            if($value != -1){
+            if ($value != -1) {
                 $field->default = $value;
             }
 
@@ -362,7 +417,12 @@ class MatukioHelperUtilsBooking
         }
     }
 
-    public static function getBooking($booking_id) {
+    /**
+     * @param $booking_id
+     * @return mixed
+     */
+    public static function getBooking($booking_id)
+    {
         $database = JFactory::getDBO();
         $database->setQuery("SELECT * FROM #__matukio_bookings WHERE id='" . $booking_id . "'");
         $booking = $database->loadObject();

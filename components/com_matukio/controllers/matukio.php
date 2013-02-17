@@ -13,13 +13,13 @@ defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.application.component.controller');
 
-class MatukioControllerMatukio extends JController
+class MatukioControllerMatukio extends JControllerLegacy
 {
     // Just for old links
     // could be removed sometime
-    public function display()
+    public function display($cachable = false, $urlparams = false)
     {
-        $task = JRequest::getVar('task', '');
+        $task = JFactory::getApplication()->input->get('task', '');
         if(empty($task)){
             MatukioHelperUtilsBasic::loginUser();
             $link = JRoute::_("index.php?option=com_matukio");
@@ -31,7 +31,7 @@ class MatukioControllerMatukio extends JController
     public function logoutUser()
     {
         $mainframe = JFactory::getApplication();
-        $my = &JFactory::getuser();
+        $my = JFactory::getuser();
         $mainframe->logout($my->id);
         $link = JRoute::_("index.php?option=com_matukio");
         $msg = JText::_("COM_MATUKIO_LOGOUT_SUCCESS");
@@ -40,10 +40,10 @@ class MatukioControllerMatukio extends JController
     }
 
     public function downloadFile() {
-        $database = &JFactory::getDBO();
-        $my = &JFactory::getuser();
+        $database = JFactory::getDBO();
+        $my = JFactory::getuser();
 
-        $daten = trim(JRequest::getVar('a6d5dgdee4cu7eho8e7fc6ed4e76z', ''));
+        $daten = trim(JFactory::getApplication()->input->get('a6d5dgdee4cu7eho8e7fc6ed4e76z', ''));
         $cid = substr($daten, 40);
         $dat = substr($daten, 0, 40);
 
