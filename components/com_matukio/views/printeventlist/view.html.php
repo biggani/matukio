@@ -250,7 +250,11 @@ class MatukioViewPrintEventlist extends JViewLegacy {
                 $art = JFactory::getApplication()->input->getInt('art', 0);
                 $this->art = $art;
 
-                $this->setLayout("participants");
+                if($art == 1) {
+                    $this->setLayout("signaturelist");
+                } else {
+                    $this->setLayout("participants");
+                }
                 break;
 
 

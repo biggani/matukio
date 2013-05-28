@@ -48,4 +48,4 @@ geocoder = new google.maps.Geocoder();
 $document->addScriptDeclaration($script);
 ?>
 
-<div id="map_canvas" style="width:450px; height:300px"></div>
+<div id="map_canvas" style="width:600px; height:400px"></div>

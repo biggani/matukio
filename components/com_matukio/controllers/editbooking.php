@@ -31,7 +31,7 @@ class MatukioControllerEditBooking extends JControllerLegacy
     function save()
     {
         // Check authorization
-        if (!JFactory::getUser()->authorise('core.edit', 'com_matukio.frontend.')) {
+        if (!JFactory::getUser()->authorise('core.edit', 'com_matukio')) {
             return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
         }
 
@@ -41,8 +41,8 @@ class MatukioControllerEditBooking extends JControllerLegacy
         $event_id = JFactory::getApplication()->input->getInt('event_id', 0);
         $uid = JFactory::getApplication()->input->getInt('uid', 0);
         $uuid = JFactory::getApplication()->input->getInt('uuid', 0);
-        $nrbooked = JFactory::getApplication()->input->getInt('nrbooked', 0);
-        $userid = JFactory::getApplication()->input->getInt('userid', 0);;
+        $nrbooked = JFactory::getApplication()->input->getInt('nrbooked', 1);
+        $userid = JFactory::getApplication()->input->getInt('userid', 0);
 
         $payment_method = JFactory::getApplication()->input->get('payment', '', 'string');
 
@@ -63,56 +63,7 @@ class MatukioControllerEditBooking extends JControllerLegacy
 
             $art = 4;
         }
-        // Checking old required fields - backward compatibilty - only frontend
-//        for($i = 0; $i < 20; $i++) {
-//
-//            //var_dump($fields);
-//
-//            $test = $fields[0][$i];
-//
-//            if(!empty($test)) {
-//                //echo "Test" . $i . ": " . $test;
-//
-//                //die(asdf);
-//                $res = explode("|", $test);
-//                if(trim($res[1]) == "1") {
-//                    $value = JRequest::getVar(("zusatz" . ($i + 1)), '');
-//                    //echo "Val: " . $value;
-//
-//                    if(empty($value)){
-//                        //echo "VALUE IS EMPTY " . $value . " i = " . $i;
-//                        $pflichtfeld = true;
-//                    }
-//                }
-//            }
-//        }
 
-//        echo "Pflichtfeld " . $pflichtfeld;
-//        die("asd");
-
-//        if ($pflichtfeld) {
-//            $allesok = 0;
-//            $ueber1 = JTEXT::_('COM_MATUKIO_BOOKING_WAS_NOT_SUCCESSFULL');
-//            $reason = JTEXT::_('COM_MATUKIO_REQUIRED_ADDITIONAL_FIELD_EMPTY');
-//        } else if (count($temp) > 0) {
-//            $allesok = 0;
-//            $ueber1 = JTEXT::_('COM_MATUKIO_BOOKING_WAS_NOT_SUCCESSFULL');
-//            $reason = JTEXT::_('COM_MATUKIO_REGISTERED_FOR_THIS_EVENT');
-//        } else if (MatukioHelperUtilsDate::getCurrentDate() > $event->booked) {
-//            echo "current: " .  MatukioHelperUtilsDate::getCurrentDate();
-//            echo " booking: " . $event->booked;
-//            $allesok = 0;
-//            $ueber1 = JTEXT::_('COM_MATUKIO_BOOKING_WAS_NOT_SUCCESSFULL');
-//            $reason = JTEXT::_('COM_MATUKIO_EXCEEDED');
-//        } else if ($event->maxpupil - $gebucht - $nrbooked < 0 && $event->stopbooking == 1) {
-//            $allesok = 0;
-//            $ueber1 = JTEXT::_('COM_MATUKIO_BOOKING_WAS_NOT_SUCCESSFULL');
-//            $reason = JTEXT::_('COM_MATUKIO_MAX_PARTICIPANT_NUMBER_REACHED');
-//        } else if ($event->maxpupil - $gebucht - $nrbooked < 0 && $event->stopbooking == 0) {
-//            $allesok = 2;
-//            $ueber1 = JTEXT::_('COM_MATUKIO_ADDED_WAITLIST');
-//            $reason = JTEXT::_('COM_MATUKIO_YOU_ARE_BOOKED_ON_THE_WAITING_LIST');
-//        }
         if ($art == 4) {
             $allesok = 1;
             $ueber1 = JTEXT::_('COM_MATUKIO_BOOKING_WAS_SUCCESSFULL');
@@ -184,8 +135,40 @@ class MatukioControllerEditBooking extends JControllerLegacy
 
             $neu->newfields = $newfields;
 
-            if (!empty($event->fees)) {
+            if(!empty($event->fees)){
                 $neu->payment_method = $payment_method;
+                $payment_brutto = $event->fees * $neu->nrbooked;
+                $coupon_code = $neu->coupon_code;
+
+                if(!empty($coupon_code)) {
+
+                    $cdate = new DateTime();
+
+                    $db = JFactory::getDBO();
+                    $query= $db->getQuery(true);
+                    $query->select('*')->from('#__matukio_booking_coupons')
+                        ->where('code = ' . $db->quote($coupon_code) . ' AND published = 1 AND published_up < '
+                        . $db->quote($cdate->format('Y-m-d H:i:s')) . " AND published_down > " . $db->quote($cdate->format('Y-m-d H:i:s')));
+
+                    //echo $query;
+                    $db->setQuery( $query );
+                    $coupon = $db->loadObject();
+
+                    //var_dump($coupon);
+
+                    if(!empty($coupon)){
+                        if($coupon->procent == 1){
+                            // Get a procent value
+                            $payment_brutto = round($payment_brutto * ((100 - $coupon->value) / 100), 2);
+                        } else {
+                            $payment_brutto = $payment_brutto - $coupon->value;
+                        }
+                    } else {
+                        // Raise an error
+                        JError::raise(E_ERROR, 500, JText::_("COM_MATUKIO_INVALID_COUPON_CODE"));
+                    }
+                }
+                $neu->payment_brutto = $payment_brutto;
             }
         }
 
@@ -232,7 +215,7 @@ class MatukioControllerEditBooking extends JControllerLegacy
      */
     function saveoldevent(){
         // Check authorization
-        if (!JFactory::getUser()->authorise('core.edit', 'com_matukio.frontend.')) {
+        if (!JFactory::getUser()->authorise('core.edit', 'com_matukio')) {
             return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
         }
 
@@ -242,7 +225,7 @@ class MatukioControllerEditBooking extends JControllerLegacy
         $event_id = JFactory::getApplication()->input->getInt('event_id', 0);
         $uid = 0; // hardcoding, could cause some issues with booking user
         $uuid = JFactory::getApplication()->input->get('uuid', 0, 'string');
-        $nrbooked = JFactory::getApplication()->input->getInt('nrbooked', 0);
+        $nrbooked = JFactory::getApplication()->input->getInt('nrbooked', 1);
         $userid = JFactory::getApplication()->input->getInt('userid', 0);;
 
         //$payment_method = JRequest::getVar('payment', '');
@@ -264,56 +247,7 @@ class MatukioControllerEditBooking extends JControllerLegacy
 
             $art = 4;
         }
-        // Checking old required fields - backward compatibilty - only frontend
-//        for($i = 0; $i < 20; $i++) {
-//
-//            //var_dump($fields);
-//
-//            $test = $fields[0][$i];
-//
-//            if(!empty($test)) {
-//                //echo "Test" . $i . ": " . $test;
-//
-//                //die(asdf);
-//                $res = explode("|", $test);
-//                if(trim($res[1]) == "1") {
-//                    $value = JRequest::getVar(("zusatz" . ($i + 1)), '');
-//                    //echo "Val: " . $value;
-//
-//                    if(empty($value)){
-//                        //echo "VALUE IS EMPTY " . $value . " i = " . $i;
-//                        $pflichtfeld = true;
-//                    }
-//                }
-//            }
-//        }
 
-//        echo "Pflichtfeld " . $pflichtfeld;
-//        die("asd");
-
-//        if ($pflichtfeld) {
-//            $allesok = 0;
-//            $ueber1 = JTEXT::_('COM_MATUKIO_BOOKING_WAS_NOT_SUCCESSFULL');
-//            $reason = JTEXT::_('COM_MATUKIO_REQUIRED_ADDITIONAL_FIELD_EMPTY');
-//        } else if (count($temp) > 0) {
-//            $allesok = 0;
-//            $ueber1 = JTEXT::_('COM_MATUKIO_BOOKING_WAS_NOT_SUCCESSFULL');
-//            $reason = JTEXT::_('COM_MATUKIO_REGISTERED_FOR_THIS_EVENT');
-//        } else if (MatukioHelperUtilsDate::getCurrentDate() > $event->booked) {
-//            echo "current: " .  MatukioHelperUtilsDate::getCurrentDate();
-//            echo " booking: " . $event->booked;
-//            $allesok = 0;
-//            $ueber1 = JTEXT::_('COM_MATUKIO_BOOKING_WAS_NOT_SUCCESSFULL');
-//            $reason = JTEXT::_('COM_MATUKIO_EXCEEDED');
-//        } else if ($event->maxpupil - $gebucht - $nrbooked < 0 && $event->stopbooking == 1) {
-//            $allesok = 0;
-//            $ueber1 = JTEXT::_('COM_MATUKIO_BOOKING_WAS_NOT_SUCCESSFULL');
-//            $reason = JTEXT::_('COM_MATUKIO_MAX_PARTICIPANT_NUMBER_REACHED');
-//        } else if ($event->maxpupil - $gebucht - $nrbooked < 0 && $event->stopbooking == 0) {
-//            $allesok = 2;
-//            $ueber1 = JTEXT::_('COM_MATUKIO_ADDED_WAITLIST');
-//            $reason = JTEXT::_('COM_MATUKIO_YOU_ARE_BOOKED_ON_THE_WAITING_LIST');
-//        }
         if ($art == 4) {
             $allesok = 1;
             $ueber1 = JTEXT::_('COM_MATUKIO_BOOKING_WAS_SUCCESSFULL');
@@ -327,10 +261,6 @@ class MatukioControllerEditBooking extends JControllerLegacy
             return JError::raiseError(500, $database->stderr());
         }
         $neu->semid = $event->id;
-//
-//        if(empty($userid)) {
-//            $userid = $event_id * -1;
-//        }
 
         $neu->userid = $userid;
 
@@ -357,6 +287,16 @@ class MatukioControllerEditBooking extends JControllerLegacy
         $neu->zusatz18 = MatukioHelperUtilsBasic::cleanHTMLfromText($neu->zusatz18);
         $neu->zusatz19 = MatukioHelperUtilsBasic::cleanHTMLfromText($neu->zusatz19);
         $neu->zusatz20 = MatukioHelperUtilsBasic::cleanHTMLfromText($neu->zusatz20);
+        $neu->nrbooked = $nrbooked;
+
+        if (!empty($event->fees)) {
+            $neu->payment_method = "cash";
+
+            if($nrbooked > 0)
+                $neu->payment_brutto = $event->fees * $nrbooked;
+            else
+                $neu->payment_brutto = $event->fees;
+        }
 
         if(empty($neu->uuid)) {
             $neu->uuid = MatukioHelperPayment::getUuid(true);
@@ -389,8 +329,6 @@ class MatukioControllerEditBooking extends JControllerLegacy
             }
         }
 
-
-        //$link = 'index.php?option=com_matukio&view=participants' . $neu->id;
 
         $viewteilnehmerlink = JRoute::_("index.php?option=com_matukio&view=participants&cid=" . $event->id . "&art=2");
 

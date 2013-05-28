@@ -1,6 +1,6 @@
 <?php
 /**
- * Tiles
+ * Matukio
  * @package Joomla!
  * @Copyright (C) 2012 - Yves Hoppe - compojoom.com
  * @All rights reserved

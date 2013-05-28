@@ -18,7 +18,6 @@ $my = JFactory::getuser();
 JHTML::_('behavior.modal');
 JHTML::_('stylesheet', 'media/com_matukio/css/modern.css');
 
-
 // Backward compatibilty
 $buchopt = MatukioHelperUtilsEvents::getEventBookableArray($this->art, $this->event, $my->id);
 
@@ -60,6 +59,7 @@ if ($buchopt[0] == 2) {
 
 ?>
 <!-- Start Matukio by compojoom.com -->
+<div id="matukio_holder">
 <?php if (MatukioHelperSettings::getSettings('show_event_title', 1)) : ?>
 <div class="componentheading">
     <h2><?php echo $this->event->title; ?></h2>
@@ -114,6 +114,7 @@ if ($buchopt[0] == 2) {
                 $htx2 = "</del>)";
             }
             ?>
+            <?php if ($this->event->showbegin > 0) :?>
             <tr>
                 <td class="key" width="80px">
                     <?php echo JTEXT::_('COM_MATUKIO_BEGIN'); ?>
@@ -123,6 +124,8 @@ if ($buchopt[0] == 2) {
                     , MatukioHelperSettings::getSettings('date_format_small', 'd-m-Y, H:i')) . $htx2; ?>
                 </td>
             </tr>
+            <?php endif; ?>
+            <?php if ($this->event->showend > 0) :?>
             <tr>
                 <td class="key" width="80px">
                     <?php echo JTEXT::_('COM_MATUKIO_END'); ?>
@@ -132,6 +135,7 @@ if ($buchopt[0] == 2) {
                     , MatukioHelperSettings::getSettings('date_format_small', 'd-m-Y, H:i')) . $htx2; ?>
                 </td>
             </tr>
+            <?php endif; ?>
             <?php if ($this->event->showbooked > 0) { ?>
             <?php if ($this->art == 0 OR ($this->art == 3 AND $usrid == 0)): ?>
                 <tr>
@@ -161,7 +165,21 @@ if ($buchopt[0] == 2) {
                     <?php echo JTEXT::_('COM_MATUKIO_TUTOR'); ?>
                 </td>
                 <td>
-                    <?php echo $this->event->teacher; ?>
+                    <?php
+                        if(MatukioHelperSettings::getSettings('organizer_pages', 1)) {
+                            $organizer = MatukioHelperOrganizer::getOrganizer($this->event->publisher);
+                            if(!empty($organizer)) {
+                                $link = JRoute::_("index.php?option=com_matukio&view=organizer&id=" . $organizer->id . ":" . JFilterOutput::stringURLSafe($organizer->name));
+                                echo "<a href=\"" . $link . "\" title=\"" . $organizer->name . "\">";
+                                echo $organizer->name;
+                                echo "</a>";
+                            } else {
+                                echo $this->event->teacher;
+                            }
+                        } else {
+                            echo $this->event->teacher;
+                        }
+                    ?>
                 </td>
             </tr>
             <?php endif; ?>
@@ -314,7 +332,7 @@ if ($buchopt[0] == 2) {
                 ?>
                 <a title="<?php JTEXT::_('COM_MATUKIO_MAP'); ?>" class="modal" href="<?php echo
                  JRoute::_('index.php?option=com_matukio&view=map&tmpl=component&event_id=' . $this->event->id);
-                ?>" rel="{handler: 'iframe', size: {x: 500, y: 350}}">
+                ?>" rel="{handler: 'iframe', size: {x: 600, y: 400}}">
                 <div id="map_canvas" style="width: 100%;height: 200px; border-radius: 0 0 0 15px" ></div></a>
             </div>
         <?php endif; ?>
@@ -324,6 +342,7 @@ if ($buchopt[0] == 2) {
             <?php if (MatukioHelperSettings::getSettings('social_media', 1)) : ?>
             <div id="mat_social">
 
+                <!-- Facebook -->
                 <script>(function(d, s, id) {
                     var js, fjs = d.getElementsByTagName(s)[0];
                     if (d.getElementById(id)) return;
@@ -333,6 +352,10 @@ if ($buchopt[0] == 2) {
                 }(document, 'script', 'facebook-jssdk'));
                 </script>
 
+                <div class="fb-like" data-href="<?php echo JURI::current(); ?>" data-send="false" data-layout="button_count"
+                     data-width="100" data-show-faces="false" data-action="recommend" style="margin-right: 25px;"></div>
+
+                <!-- Twitter -->
                 <div class="twitter-btn">
                     <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">Tweet</a>
                     <script>
@@ -342,13 +365,17 @@ if ($buchopt[0] == 2) {
                     </script>
                 </div>
 
-                <div class="fb-like" data-href="<?php echo JURI::current(); ?>" data-send="false" data-layout="button_count"
-                     data-width="100" data-show-faces="false" data-action="recommend"></div>
+                <!-- Google plus one -->
+                <div class="g-plusone" data-size="medium" ></div>
 
-                <script type="text/javascript" src="http://apis.google.com/js/plusone.js">
-                    {lang: 'de', parsetags: 'explicit'}</script><g:plusone href="<?php echo JURI::current(); ?>" size="medium">
-            </g:plusone><script type="text/javascript">gapi.plusone.go();
-            </script>
+                <script type="text/javascript">
+                    (function() {
+                        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                        po.src = 'https://apis.google.com/js/plusone.js';
+                        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+                    })();
+                </script>
+                <!-- Plus One End -->
             </div>
             <?php endif; ?>
 
@@ -364,7 +391,7 @@ if ($buchopt[0] == 2) {
         <?php
         // Kontaktformular
         if(MatukioHelperSettings::getSettings("sendmail_contact", 1)){
-            echo MatukioHelperUtilsEvents::getEmailWindow(MatukioHelperUtilsBasic::getComponentImagePath(), $this->event->id, 2, "modern");
+            echo MatukioHelperUtilsEvents::getEmailWindow(MatukioHelperUtilsBasic::getComponentImagePath(), $this->event->id, 1, "modern");
         }
 
         // Kalender
@@ -404,7 +431,7 @@ if ($buchopt[0] == 2) {
                                         . JFilterOutput::stringURLSafe($this->event->title));
 
             echo " <a title=\"" . JTEXT::_('COM_MATUKIO_BOOK') . "\" href=\"" . $bookinglink
-                . "\"><span class=\"mat_button mat_book\" type=\"button\"><img src=\""
+                . "\"><span class=\"mat_book\" type=\"button\"><img src=\""
                 . MatukioHelperUtilsBasic::getComponentImagePath()
                 . "1116.png\" border=\"0\" align=\"absmiddle\">&nbsp;"
                 . JTEXT::_('COM_MATUKIO_BOOK') . "</span></a>";
@@ -423,7 +450,7 @@ if ($buchopt[0] == 2) {
 
             if (MatukioHelperSettings::getSettings('booking_stornotage', 1) > -1) {
                echo " <a border=\"0\" href=\"" . $unbookinglink
-                    . "\" ><span class=\"mat_button mat_book\" type=\"button\"><img src=\""
+                    . "\" ><span class=\"mat_book\" type=\"button\"><img src=\""
                     . MatukioHelperUtilsBasic::getComponentImagePath() . "1532.png\" border=\"0\" align=\"absmiddle\">&nbsp;"
                     . JTEXT::_('COM_MATUKIO_BOOKING_CANCELLED') . "</span></a>";
             }
@@ -436,4 +463,5 @@ if ($buchopt[0] == 2) {
 <?php
 echo MatukioHelperUtilsBasic::getCopyright();
 ?>
+</div>
 <!-- End Matukio by compojoom.com -->

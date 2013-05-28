@@ -15,7 +15,6 @@ JHTML::_('behavior.modal');
 JHTML::_('stylesheet', 'media/com_matukio/css/matukio.css');
 JHTML::_('stylesheet', 'media/com_matukio/css/upcoming.css');
 
-//$usermail = $this->user->email;
 ?>
 <!-- Start Matukio by compojoom.com -->
 <script type="text/javascript">
@@ -26,7 +25,6 @@ window.addEvent('domready', function () {
 <div class="componentheading">
     <h2><?php echo JText::_($this->title); ?></h2>
 </div>
-
 
 <div id="mat_holder">
 <?php
@@ -138,14 +136,16 @@ window.addEvent('domready', function () {
                         if(($this->user->id != 0 || (MatukioHelperSettings::getSettings('booking_unregistered', 1) == 1))
                             && MatukioHelperSettings::getSettings('oldbookingform', 0) != 1) {
 
-                            $bookinglink = JRoute::_("index.php?option=com_matukio&view=bookevent&cid=" . $event->id . ":"
-                                . JFilterOutput::stringURLSafe($event->title));
+                            if($event->nrbooked > 0) {
+                                $bookinglink = JRoute::_("index.php?option=com_matukio&view=bookevent&cid=" . $event->id . ":"
+                                    . JFilterOutput::stringURLSafe($event->title));
 
-                            echo " <a title=\"" . JTEXT::_('COM_MATUKIO_BOOK') . "\" href=\"" . $bookinglink
-                                . "\"><span class=\"mat_button mat_book\" type=\"button\"><img src=\""
-                                . MatukioHelperUtilsBasic::getComponentImagePath()
-                                . "1116.png\" border=\"0\" align=\"absmiddle\">&nbsp;"
-                                . JTEXT::_('COM_MATUKIO_BOOK') . "</span></a>";
+                                echo " <a title=\"" . JTEXT::_('COM_MATUKIO_BOOK') . "\" href=\"" . $bookinglink
+                                    . "\"><span class=\"mat_button mat_book\" type=\"button\"><img src=\""
+                                    . MatukioHelperUtilsBasic::getComponentImagePath()
+                                    . "1116.png\" border=\"0\" align=\"absmiddle\">&nbsp;"
+                                    . JTEXT::_('COM_MATUKIO_BOOK') . "</span></a>";
+                            }
                         }
 
                     ?>

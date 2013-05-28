@@ -3,7 +3,7 @@
     <name>COM_@@COMPONENTNAMEUPPERCASE@@</name>
     <creationDate>@@DATE@@</creationDate>
     <author>Yves Hoppe - Compojoom.com</author>
-    <copyright>(C) 2012 Yves Hoppe - Compojoom.com</copyright>
+    <copyright>(C) 2012 - 2013 Yves Hoppe - Compojoom.com</copyright>
     <description><![CDATA[Matukio is an advanced event manager by Compojoom.com]]>
     </description>
     <license>http://www.gnu.org/licenses/gpl.html</license>
@@ -32,7 +32,7 @@
             </menu>
             <menu img="../media/com_matukio/backend/images/icon-16-coupons.png" view="coupons">COUPONS</menu>
             <menu img="../media/com_matukio/backend/images/icon-16-bookingfields.png" view="bookingfields">BOOKINGFIELDS</menu>
-            <menu task="3" img="../media/com_matukio/backend/images/icon-16-sem_config.png">CONFIGURATION</menu>
+            <menu img="../media/com_matukio/backend/images/icon-16-sem_config.png" view="settings">CONFIGURATION</menu>
             <menu task="4" img="../media/com_matukio/backend/images/icon-16-sem_statistic.png">STATISTICS</menu>
             <menu img="../media/com_matukio/backend/images/live-update.png" view="liveupdate">LIVEUPDATE</menu>
         </submenu>

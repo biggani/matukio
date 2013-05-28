@@ -28,13 +28,14 @@ class MatukioViewRateEvent extends JViewLegacy {
             return;
         }
 
+        // Only registered users
+        if($my->id == 0) {
+            return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
+        }
+
         $event = $model->getEvent($cid);
 
         $database = JFactory::getDBO();
-//        $cid = JFactory::getApplication()->input->getInt('cid', 0);
-//        $database->setQuery("SELECT * FROM #__matukio WHERE id='$cid'");
-//        $rows = $database->loadObjectList();
-//        $row = &$rows[0];
 
         $database->setQuery("SELECT * FROM #__matukio_bookings WHERE semid='" . $cid . "' AND userid='" . $my->id . "'");
         $booking = $database->loadObject();

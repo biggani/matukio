@@ -38,7 +38,7 @@ $html .= "</table></center>";
 $html .= "<br /><div class=\"sem_shortdesc\">" . JTEXT::_('COM_MATUKIO_COMMENT') . ":</div>";
 $html .= "<br /><center><input type=\"text\" name=\"text\" size=\"70\" maxlength=\"200\" value=\""
     . $this->booking->comment . "\"></center><br />";
-$html .= "<input type=\"hidden\" name=\"option\" value=\"" . JFactory::getApplication()->input->get('option') . "\">
+$html .= "<input type=\"hidden\" name=\"option\" value=\"com_matukio\">
         <input type=\"hidden\" name=\"view\" value=\"rateevent\" />
         <input type=\"hidden\" name=\"controller\" value=\"rateevent\" />
         <input type=\"hidden\" name=\"cid\" value=\"" . $this->event->id . "\">

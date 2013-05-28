@@ -19,16 +19,21 @@ class MatukioViewContactOrganizer extends JViewLegacy {
         $art = JFactory::getApplication()->input->getInt('art', 1);  // should be 1, else it's messages to participants
         $cid = JFactory::getApplication()->input->getInt('cid', 0);
 
-        if(empty($cid)){
+        if(empty($cid) && $this->art != "organizer"){
             JError::raiseError('404', "COM_MATUKIO_NO_ID");
             return;
         }
 
-        $database = JFactory::getDBO();
-        $database->setQuery("SELECT * FROM #__matukio WHERE id= " . $cid);
-        $row = $database->loadObject();
+        if($this->art != "organizer") {
+            $database = JFactory::getDBO();
+            $database->setQuery("SELECT * FROM #__matukio WHERE id= " . $cid);
+            $row = $database->loadObject();
 
-        $this->event = $row;
+            $this->event = $row;
+        } else {
+            $this->organizer = MatukioHelperOrganizer::getOrganizerId($cid);
+        }
+
         $this->art = $art;
 
 //        echo $art;

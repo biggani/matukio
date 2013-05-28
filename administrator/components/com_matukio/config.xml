@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
-    <!-- joomla 1.6 -->
     <fieldset name="backend" label="COM_MATUKIO_CONFIG_BACKEND_HEADER_LABEL"
               description="COM_MATUKIO_CONFIG_LIVE_UPDATE_HEADER_DESC">
         <field name="username" type="text" default="" size="30" label="Username"
@@ -10,18 +9,20 @@
     </fieldset>
     <fieldset
             name="permissions"
-            label="COM_MATUKIO_PERMISSIONS_FRONTEND_LABEL"
-            description="COM_MATUKIO_PERMISSIONS_FRONTEND_DESC"
+            label="COM_MATUKIO_PERMISSIONS_LABEL"
+            description="COM_MATUKIO_PERMISSIONS_DESC"
             >
+
+        <field name="asset_id" type="hidden" filter="unset" />
 
         <field
                 name="rules"
                 type="rules"
-                label="COM_MATUKIO_PERMISSIONS_FRONTEND"
+                label="COM_MATUKIO_PERMISSIONS"
                 class="inputbox"
                 validate="rules"
                 filter="rules"
                 component="com_matukio"
-                section="frontend" />
+                section="component" />
     </fieldset>
 </config>

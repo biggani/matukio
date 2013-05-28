@@ -123,6 +123,13 @@ CREATE TABLE IF NOT EXISTS `#__matukio` (
   `modified_by` int(10) NOT NULL DEFAULT '0',
   `group_id` int(11) NOT NULL DEFAULT '0',
   `webinar` tinyint(1) NOT NULL DEFAULT '0',
+  `booking_mail` text NOT NULL,
+  `certificate_code` text NOT NULL,
+  `top_event` tinyint(1) NOT NULL DEFAULT '0',
+  `hot_event` tinyint(1) NOT NULL DEFAULT '0',
+  `language` varchar(255) NOT NULL DEFAULT '*',
+  `asset_id` int(10) NOT NULL DEFAULT '0',
+  `status` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) COMMENT='matukio events';
 
@@ -169,6 +176,8 @@ CREATE TABLE IF NOT EXISTS `#__matukio_bookings` (
   `payment_brutto` float(11,2) DEFAULT '0.00',
   `coupon_code` varchar(255) DEFAULT NULL,
   `checked_in` tinyint(1) NOT NULL DEFAULT '0',
+  `payment_status` varchar(255) NOT NULL DEFAULT 'P',
+  `status` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 )  COMMENT='Bookings';
 
@@ -212,4 +221,34 @@ CREATE TABLE IF NOT EXISTS `#__matukio_booking_fields` (
   `style` text,
   `published` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) COMMENT='Fields';
+) COMMENT='Bookingfields';
+
+CREATE TABLE IF NOT EXISTS `#__matukio_templates` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `tmpl_name` varchar(255) NOT NULL,
+  `category` tinyint(4) NOT NULL DEFAULT '0',
+  `subject` text NOT NULL,
+  `value` text NOT NULL,
+  `value_text` text NOT NULL,
+  `default` text NOT NULL,
+  `modified_by` int(11) NOT NULL DEFAULT '0',
+  `published` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) COMMENT='Templates';
+
+CREATE TABLE IF NOT EXISTS `#__matukio_organizers` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `website` varchar(255) NOT NULL,
+  `phone` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `comments` text NOT NULL,
+  `created` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `image` varchar(255) NOT NULL,
+  `created_by` varchar(11) NOT NULL,
+  `modified_by` varchar(11) NOT NULL,
+  `published` varchar(1) NOT NULL,
+  PRIMARY KEY (`id`)
+) COMMENT="Organizer Pages";

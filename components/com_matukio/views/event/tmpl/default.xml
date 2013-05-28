@@ -11,7 +11,7 @@
                    label="COM_MATUKIO_EVENT_ID">
             </field>
 
-            <field name="template" type="list" default="default" required="true"
+            <field name="event_template" type="list" default="default" required="true"
                    label="COM_MATUKIO_EVENT_TEMPLATE">
                 <option value="default">Default</option>
                 <option value="modern">Modern</option>

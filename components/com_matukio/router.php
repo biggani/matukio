@@ -154,8 +154,6 @@ function MatukioParseRoute($segments) {
 
 
     } else {
-        // TODO Comment this
-       // var_dump($segments);
 
         $view = $segments[0];
 
@@ -483,7 +481,21 @@ function MatukioParseRoute($segments) {
 
                 break;
 
+            case 'organizer'   :
+                if($count == 1) {
+                    $vars['view'] 	= 'organizer';
+                }
+
+                if($count == 2) {
+                    $vars['view'] 	= 'organizer';
+                    $id = explode(':', $segments[1]);
+                    $vars['id'] 	= $id[0];
+                }
+
+                break;
             }
+
+
 
     }
 

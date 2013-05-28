@@ -29,8 +29,6 @@ class MatukioControllerContactOrganizer extends JControllerLegacy
     }
 
     public function sendEmail(){
-
-
         $mainframe = JFactory::getApplication();
         $msg = JText::_("COM_MATUKIO_MAIL_TO_ORGANIZER_SEND_SUCCESSFULL");
         $msg_type = "message";
@@ -39,7 +37,9 @@ class MatukioControllerContactOrganizer extends JControllerLegacy
         $my = JFactory::getuser();
         $database = JFactory::getDBO();
         $cid = JFactory::getApplication()->input->getInt('event_id', 0);
-        $uid = JFactory::getApplication()->input->getInt('art', 0);
+        $organizer_id = JFactory::getApplication()->input->getInt('organizer_id', 0);
+
+        $uid = JFactory::getApplication()->input->get('art', 0);
         $text = JMailHelper::cleanBody(nl2br(JFactory::getApplication()->input->get('text', '', 'string')));
 
         $name = JFactory::getApplication()->input->get('name', '', 'string');
@@ -67,12 +67,10 @@ class MatukioControllerContactOrganizer extends JControllerLegacy
                 // Setting it hardcoded for the body function.. dirk you really give me headaches
                 $my->name = $name;
                 $my->email = $email;
-
             } else {
                 $replyname = $my->name;
                 $replyto = $my->email;
             }
-
 
             $body = "\n<head>\n<style type=\"text/css\">\n<!--\nbody {\nfont-family: Verdana, Tahoma, Arial;\nfont-size:12pt;\n}\n-->\n</style></head><body>";
             if ($uid == 1 AND $my->id != 0) {
@@ -88,9 +86,15 @@ class MatukioControllerContactOrganizer extends JControllerLegacy
                 $mailer = JFactory::getMailer();
 
                 $mailer->sendMail($from, $sender, $email, $subject, $body, 1, null, null, null, $replyto, $replyname);
-            } else {
+            } else if ($uid == "organizer") {
+                $organizer = MatukioHelperOrganizer::getOrganizerId($organizer_id);
+                $publisher = JFactory::getuser($organizer->userId);
+                $email = $publisher->email;
+                $mailer = JFactory::getMailer();
 
-                if (!JFactory::getUser()->authorise('core.create', 'com_matukio.frontend.')) {
+                $mailer->sendMail($from, $sender, $email, $subject, $body, 1, null, null, null, $replyto, $replyname);
+            } else {
+                if (!JFactory::getUser()->authorise('core.create', 'com_matukio')) {
                     return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
                 }
 
@@ -116,10 +120,6 @@ class MatukioControllerContactOrganizer extends JControllerLegacy
         }
 
         $link = MatukioHelperUtilsBasic::getSitePath() . "index.php?option=com_matukio&tmpl=component&view=contactorganizer&cid=" . $cid;
-
-//        echo $link;
-//        die("asdf");
-
 
         $this->setRedirect($link, $msg, $msg_type);
     }

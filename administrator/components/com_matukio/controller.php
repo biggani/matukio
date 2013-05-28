@@ -13,9 +13,6 @@ jimport('joomla.application.component.controller');
 
 defined( '_JEXEC' ) or die ( 'Restricted access' );
 
-// Global imports
-
-
 class MatukioController extends JControllerLegacy
 {
 

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<extension type="module" version="2.5" method="upgrade" client="site">
+    <name>mod_matukio_calendar</name>
+    <creationDate>2013-04-16</creationDate>
+    <author>Compjoom - Yves Hoppe</author>
+    <copyright>(C) 2013 Compojoom - Yves Hoppe</copyright>
+    <license>http://www.gnu.org/licenses/gpl.html</license>
+    <authorEmail>yves@compojoom.com</authorEmail>
+    <authorUrl>http://compojoom.com</authorUrl>
+    <version>git_180c8fe</version>
+    <description>MOD_MATUKIO_CALENDAR_DESCRIPTION</description>
+    <files>
+        <file>helper.php</file>
+<file>index.html</file>
+<file module="mod_matukio_calendar">mod_matukio_calendar.php</file>
+<folder>tmpl</folder>
+    </files>
+    <languages folder="language">
+        <language tag="en-GB">en-GB/en-GB.mod_matukio_calendar.ini</language>
+    </languages>
+    <media destination="mod_matukio_calendar" folder="media/mod_matukio_calendar">
+        <folder>css</folder>
+<file>index.html</file>
+<folder>tmpl</folder>
+    </media>
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+
+                <field name="catid" type="category" extension="com_matukio" size="5" default="0"
+                       label="MOD_MATUKIO_UPCOMING_CATEGORY" multiple="multiple">
+                    <option value="0">JALL</option>
+                </field>
+
+                <field name="dateFormat" type="text" size="10" default="%Y-%m-%d"
+                       label="COM_MATUKIO_CALENDAR_DATE_FORMAT">
+                </field>
+
+                <field name="timeFormat" type="text" size="10" default="%I:%M"
+                       label="COM_MATUKIO_CALENDAR_TIME_FORMAT">
+                </field>
+
+                <field name="timeTwelveHourFormat" type="list" default="false" label="COM_MATUKIO_CALENDAR_TWELVE_HOUR_FORMAT">
+                    <option value="false">COM_MATUKIO_NO</option>
+                    <option value="true">COM_MATUKIO_YES</option>
+                </field>
+
+                <field name="showEnd" type="radio" default="1" label="MOD_MATUKIO_UPCOMING_SHOW_END"
+                       description="">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+
+                <field name="showBooked" type="radio" default="1" label="MOD_MATUKIO_UPCOMING_SHOW_BOOKED"
+                       description="">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+
+                <field name="showLocation" type="radio" default="1" label="MOD_MATUKIO_UPCOMING_SHOW_LOCATION"
+                       description="">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+
+                <field name="showHits" type="radio" default="0" label="MOD_MATUKIO_UPCOMING_SHOW_HITS"
+                       description="">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+
+                <field name="showShortDescription" type="radio" default="0" label="MOD_MATUKIO_UPCOMING_SHOW_SHORT_DESCRIPTION"
+                       description="">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+
+                <field name="showReadMore" type="radio" default="1" label="MOD_MATUKIO_UPCOMING_SHOW_READ_MORE"
+                       description="">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+
+            </fieldset>
+            <fieldset name="advanced">
+
+                <field name="moduleclass_sfx" type="text" default="" label="MOD_MATUKIO_UPCOMING_CLASS_SUFFIX"
+                       description="MOD_MATUKIO_UPCOMING_SUFFIX_DESC"/>
+
+            </fieldset>
+        </fields>
+    </config>
+</extension>
+

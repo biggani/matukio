@@ -12,9 +12,7 @@
  * by Dirk Vollmar
  **/
 
-header("Content-type: text/html; charset=UTF-8");
 defined('_JEXEC') or die('Restricted access');
-
 
 if(!defined('DS')){
     define('DS', DIRECTORY_SEPARATOR);
@@ -28,18 +26,27 @@ if(!defined('CJOOMLA_VERSION')) {
     }
 }
 
+// ACL Check
+if (!JFactory::getUser()->authorise('core.manage', 'com_matukio'))
+{
+    return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
+}
+
 JLoader::register('MatukioHelperSettings', JPATH_COMPONENT_ADMINISTRATOR . '/helper/settings.php');
 JLoader::register('MatukioHelperUtilsBasic', JPATH_COMPONENT_ADMINISTRATOR . '/helper/util_basic.php');
 JLoader::register('MatukioHelperUtilsBooking', JPATH_COMPONENT_ADMINISTRATOR . '/helper/util_booking.php');
 JLoader::register('MatukioHelperUtilsDate', JPATH_COMPONENT_ADMINISTRATOR . '/helper/util_date.php');
 JLoader::register('MatukioHelperUtilsEvents', JPATH_COMPONENT_ADMINISTRATOR . '/helper/util_events.php');
+JLoader::register('MatukioHelperUtilsAdmin', JPATH_COMPONENT_ADMINISTRATOR . '/helper/util_admin.php');
 JLoader::register('MatukioHelperRoute', JPATH_COMPONENT_ADMINISTRATOR . '/helper/util_route.php');
 JLoader::register('MatukioHelperCategories', JPATH_COMPONENT_ADMINISTRATOR . '/helper/util_categories.php');
 JLoader::register('MatukioHelperPayment', JPATH_COMPONENT_ADMINISTRATOR . '/helper/util_payment.php');
+JLoader::register('MatukioHelperTemplates', JPATH_COMPONENT_ADMINISTRATOR . '/helper/util_templates.php');
 
 JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR . '/tables');
 
 require_once(JPATH_COMPONENT_ADMINISTRATOR . "/toolbar.matukio.php");
+require_once(JPATH_COMPONENT_ADMINISTRATOR . "/controller.php");
 
 // thank you for this black magic Nickolas :)
 // Magic: merge the eventlist translation with the current translation
@@ -68,9 +75,25 @@ if ($input->get('view', '') == 'controlcenter') {
     return;
 }
 
-if ($input->get('controller', '') != '') {
+if($input->get('view','') == 'information') {
+    require_once JPATH_COMPONENT_ADMINISTRATOR .'/controlcenter/controlcenter.php';
+    JToolBarHelper::preferences( 'com_cadvancedslideshow' );
+    CompojoomControlCenter::handleRequest('information');
+    return;
+}
 
-    //echo "Controller: " . JFactory::getApplication()->input->get('controller', '');
+if($input->get('task') != '') {
+
+    if(count(explode(".", $input->get('task'))) > 1){ // Ugly hack improve!
+        $ar = explode(".", $input->get('task'));
+        $contr = $ar[0];
+
+        $input->set('controller', $contr);
+    }
+
+}
+
+if ($input->get('controller', '') != '') {
 
     // Require specific controller if requested
     if ($controller = $input->get('controller')) {
@@ -82,6 +105,8 @@ if ($input->get('controller', '') != '') {
             $controller = '';
         }
     }
+
+
 
     // Create the controller
     $classname = 'MatukioController' . $controller;
@@ -121,38 +146,16 @@ if ($input->get('view', '') != '') {
 }
 
 jimport('joomla.database.*');
-//require_once(JApplicationHelper::getPath('admin_html'));
-
-
 require_once(JPATH_COMPONENT_ADMINISTRATOR . "/admin.matukio.html.php");
 require_once(JPATH_ROOT . "/components/com_matukio/matukio.class.php");
-//require_once(JApplicationHelper::getPath('class'));
-
-require_once(JPATH_COMPONENT_ADMINISTRATOR . '/helper/settings.php');
-require_once(JPATH_COMPONENT_ADMINISTRATOR . '/helper/util_basic.php');
-require_once(JPATH_COMPONENT_ADMINISTRATOR . '/helper/util_admin.php');
-require_once(JPATH_COMPONENT_ADMINISTRATOR . '/helper/util_booking.php');
-require_once(JPATH_COMPONENT_ADMINISTRATOR . '/helper/util_events.php');
-require_once(JPATH_COMPONENT_ADMINISTRATOR . '/helper/util_date.php');
 
 $document = JFactory::getDocument();
 $document->addCustomTag("<link rel=\"stylesheet\" href=\"components/" . $input->get('option') . "/css/icon.css\" type=\"text/css\" />");
 $mainframe = JFactory::getApplication();
 $task = trim($input->get('task', 'show'));
-//$cid = $input->get('cid');
-//$uid = $input->get('uid');
-
-// $cidar = array( 'cid' => 'int');
 
 $cid = $input->get('cid', array(), 'array');
 $uid = $input->get('uid', array(), 'array');
-
-
-//var_dump($cid);
-
-//$cid = JRequest::getVar('cid', array(0));
-//$uid = JRequest::getVar('uid', array(0));
-
 
 // ++++++++++++++++++++++++++++++++++
 // +++ Auswahl der Aktion         +++
@@ -180,8 +183,13 @@ switch ($task) {
         break;
 
     case "14":
-// Veranstaltung speichern
+// Veranstaltung save & close
         sem_g007(2);
+        break;
+
+    case "14a":
+// Veranstaltung apply
+        sem_g007(2, 1);
         break;
 
     case "15":
@@ -304,15 +312,15 @@ switch ($task) {
         sem_g032();
         break;
 
-    case "3":
-// Einstellungen anzeigen
-        showConfiguration();
-        break;
-
-    case "31":
-// Eintellungen speichern
-        saveConfiguration();
-        break;
+//    case "3":
+//// Einstellungen anzeigen
+//        showConfiguration();
+//        break;
+//
+//    case "31":
+//// Eintellungen speichern
+//        saveConfiguration();
+//        break;
 
 // ABOUT
     case "50":
@@ -322,6 +330,11 @@ switch ($task) {
     case "addNewBooking":
         $mainframe->redirect(JURI::base() . "index.php?option=" . $input->get('option')
             . "&controller=bookings&task=editBooking&event_id=" . $input->getInt("event_id",0));
+        break;
+
+    case "contactParticipants":
+        $mainframe->redirect(JURI::base() . "index.php?option=" . $input->get('option')
+            . "&controller=contactPart&view=contactPart&event_id=" . $input->getInt("event_id",0));
         break;
 
     default:
@@ -405,7 +418,7 @@ function sem_g006($uid, $art)
 // +++ Kurs speichern             +++
 // ++++++++++++++++++++++++++++++++++
 
-function sem_g007($art)
+function sem_g007($art, $apply = 0)
 {
     $database = JFactory::getDBO();
     $caid = JFactory::getApplication()->input->getInt('caid', 0);
@@ -432,6 +445,9 @@ function sem_g007($art)
     $_booked_hour = JFactory::getApplication()->input->get('_booked_hour', '00', 'string');
     $_booked_minute = JFactory::getApplication()->input->get('_booked_minute', '00', 'string');
 
+    $hot_event = JFactory::getApplication()->input->get('hot_event', 0);
+    $top_event = JFactory::getApplication()->input->get('top_event', 0);
+
     if ($id > 0) {
         $kurs = JTable::getInstance('Matukio', 'Table');
         $kurs->load($id);
@@ -447,10 +463,11 @@ function sem_g007($art)
 
     $row = JTable::getInstance('Matukio', 'Table');
     $row->load($id);
+
     if (!$row->bind($post)) {
-        return JError::raiseError(500, $row->getError());
-        exit();
+        JError::raiseError(500, $row->getError());
     }
+
     // Zuweisung der aktuellen Zeit
     if ($id == 0) {
         $row->publishdate = $neudatum;
@@ -534,6 +551,9 @@ function sem_g007($art)
     $row->file3desc = MatukioHelperUtilsBasic::cleanHTMLfromText($row->file3desc);
     $row->file4desc = MatukioHelperUtilsBasic::cleanHTMLfromText($row->file4desc);
     $row->file5desc = MatukioHelperUtilsBasic::cleanHTMLfromText($row->file5desc);
+
+    $row->hot_event = $hot_event;
+    $row->top_event = $top_event;
     if ($row->id > 0 OR $vorlage > 0) {
 
         if ($deldatei1 != 1) {
@@ -736,6 +756,7 @@ function sem_g007($art)
         $fehler = implode("<br />", $fehler);
         JError::raiseWarning(1, $fehler);
     }
+
     // Ausgabe der Kurse
     if (count($fehlerzahl) > 1 AND $speichern == TRUE) {
         sem_g006($row->id, $art);
@@ -743,7 +764,11 @@ function sem_g007($art)
         sem_g006($row->id, $art, $row);
     } else {
         if ($art == 2) {
-            sem_g027();
+            if($apply == 0)  {
+                sem_g027();
+            } else {
+                sem_g006($row->id, $art);
+            }
         } else {
             sem_g032();
         }
@@ -1029,8 +1054,6 @@ function sem_g029($uid)
 {
     $uid = $uid[0];
 
-//    var_dump($uid);
-//    die("asdf");
     TOOLBAR_matukio::_VIEW_BOOK();
     $database = JFactory::getDBO();
     $kurs = JTable::getInstance('Matukio', 'Table');
@@ -1466,103 +1489,103 @@ function sem_g032()
 // +++ Konfiguration anzeigen      +++
 // +++++++++++++++++++++++++++++++++++
 
-function showConfiguration()
-{
-    jimport('joomla.database.table');
-    jimport('joomla.database.table.asset');
-    jimport('joomla.database.table.component');
-    jimport('joomla.filesystem.file');
-    jimport('joomla.form.form');
-    jimport('joomla.utilities.simplexml');
-
-    TOOLBAR_matukio::_CONFIG();
-    $option = "com_matukio";
-
-    $db = JFactory::getDBO();
-
-    $row = JTable::getInstance('extension');
-    $lists = array();
-
-    $query = ' SELECT st.*'
-        . ' FROM #__matukio_settings AS st'
-        . ' ORDER BY st.id';
-
-    $db->setQuery($query);
-    $result = $db->loadObjectList();
-
-    //  die ("asdf");
-    $items = $result;
-
-    for ($i = 0; $i < count($items); $i++) {
-        $item = $items[$i];
-
-        if ($item->catdisp == "basic") {
-            $items_basic[$item->id] = $item;
-        }
-        if ($item->catdisp == "layout") {
-            $items_layout[$item->id] = $item;
-        }
-        if ($item->catdisp == "advanced") {
-            $items_advanced[$item->id] = $item;
-        }
-        if ($item->catdisp == "security") {
-            $items_security[$item->id] = $item;
-        }
-        if ($item->catdisp == "payment") {
-            $items_payment[$item->id] = $item;
-        }
-    }
-
-    HTML_matukio::showSettings($items_basic, $items_layout, $items_advanced, $items_security, $items_payment);
-}
+//function showConfiguration()
+//{
+//    jimport('joomla.database.table');
+//    jimport('joomla.database.table.asset');
+//    jimport('joomla.database.table.component');
+//    jimport('joomla.filesystem.file');
+//    jimport('joomla.form.form');
+//    jimport('joomla.utilities.simplexml');
+//
+//    TOOLBAR_matukio::_CONFIG();
+//    $option = "com_matukio";
+//
+//    $db = JFactory::getDBO();
+//
+//    $row = JTable::getInstance('extension');
+//    $lists = array();
+//
+//    $query = ' SELECT st.*'
+//        . ' FROM #__matukio_settings AS st'
+//        . ' ORDER BY st.id';
+//
+//    $db->setQuery($query);
+//    $result = $db->loadObjectList();
+//
+//    //  die ("asdf");
+//    $items = $result;
+//
+//    for ($i = 0; $i < count($items); $i++) {
+//        $item = $items[$i];
+//
+//        if ($item->catdisp == "basic") {
+//            $items_basic[$item->id] = $item;
+//        }
+//        if ($item->catdisp == "layout") {
+//            $items_layout[$item->id] = $item;
+//        }
+//        if ($item->catdisp == "advanced") {
+//            $items_advanced[$item->id] = $item;
+//        }
+//        if ($item->catdisp == "security") {
+//            $items_security[$item->id] = $item;
+//        }
+//        if ($item->catdisp == "payment") {
+//            $items_payment[$item->id] = $item;
+//        }
+//    }
+//
+//    HTML_matukio::showSettings($items_basic, $items_layout, $items_advanced, $items_security, $items_payment);
+//}
 
 // +++++++++++++++++++++++++++++++++++
 // +++ Konfiguration speichern     +++
 // +++++++++++++++++++++++++++++++++++
 
-function saveConfiguration()
-{
-    //$post = JRequest::get('post');
-    //$dataArray = JFactory::getApplication()->input->get('matukioset', array(0), 'post', 'array'); // Todo update this
-
-    $dataArray = JRequest::getVar('matukioset', array(0), 'post', 'array');
-
-    jimport('joomla.database.table');
-    jimport('joomla.database.table.asset');
-    jimport('joomla.database.table.component');
-    jimport('joomla.filesystem.file');
-    jimport('joomla.form.form');
-    jimport('joomla.utilities.simplexml');
-
-    $db = JFactory::getDBO();
-
-    $row = JTable::getInstance('settings', 'Table');
-
-    if (!empty($dataArray)) {
-        foreach ($dataArray as $key => $value) {
-            $data['id'] = $key;
-            $data['value'] = $value;
-
-            if (!$row->bind($data)) {
-                $this->setError($this->_db->getErrorMsg());
-                return false;
-            }
-
-            if (!$row->check()) {
-                $this->setError($this->_db->getErrorMsg());
-                return false;
-            }
-
-            if (!$row->store()) {
-                $this->setError($this->_db->getErrorMsg());
-                return false;
-            }
-        }
-    }
-
-    $msg = JText::sprintf('SAVED');
-    showConfiguration();
-}
+//function saveConfiguration()
+//{
+//    //$post = JRequest::get('post');
+//    //$dataArray = JFactory::getApplication()->input->get('matukioset', array(0), 'post', 'array'); // Todo update this
+//
+//    $dataArray = JRequest::getVar('matukioset', array(0), 'post', 'array');
+//
+//    jimport('joomla.database.table');
+//    jimport('joomla.database.table.asset');
+//    jimport('joomla.database.table.component');
+//    jimport('joomla.filesystem.file');
+//    jimport('joomla.form.form');
+//    jimport('joomla.utilities.simplexml');
+//
+//    $db = JFactory::getDBO();
+//
+//    $row = JTable::getInstance('settings', 'Table');
+//
+//    if (!empty($dataArray)) {
+//        foreach ($dataArray as $key => $value) {
+//            $data['id'] = $key;
+//            $data['value'] = $value;
+//
+//            if (!$row->bind($data)) {
+//                $this->setError($this->_db->getErrorMsg());
+//                return false;
+//            }
+//
+//            if (!$row->check()) {
+//                $this->setError($this->_db->getErrorMsg());
+//                return false;
+//            }
+//
+//            if (!$row->store()) {
+//                $this->setError($this->_db->getErrorMsg());
+//                return false;
+//            }
+//        }
+//    }
+//
+//    $msg = JText::sprintf('SAVED');
+//    showConfiguration();
+//}
 
 function showAbout()
 {
@@ -1579,6 +1602,7 @@ class TOOLBAR_matukio
     public static function _NEW()
     {
         JToolBarHelper::title(JText::_('COM_MATUKIO_NEW_EVENT'), 'article');
+        JToolBarHelper::apply('14a');
         JToolBarHelper::save('14');
         JToolBarHelper::cancel('0');
         JToolBarHelper::help('screen.matukio', true);
@@ -1587,6 +1611,7 @@ class TOOLBAR_matukio
     public static function _EDIT()
     {
         JToolBarHelper::title(JText::_('COM_MATUKIO_EDIT_EVENT'), 'article');
+        JToolBarHelper::apply('14a');
         JToolBarHelper::save('14');
         JToolBarHelper::cancel('0');
         JToolBarHelper::help('screen.matukio', true);
@@ -1614,16 +1639,17 @@ class TOOLBAR_matukio
     public static function _VIEW_BOOK()
     {
         JToolBarHelper::title(JText::_('COM_MATUKIO_BOOKINGS'), 'generic');
+        JToolbarHelper::custom("contactParticipants", "send.png", "send.png", JText::_("COM_MATUKIO_CONTACT_PARTICIPANTS"), false);
         JToolBarHelper::addNew('addNewBooking');
         JToolBarHelper::deleteList('', '28');
-        JToolBarHelper::custom("show", "back.png", "back_f2.png", "Back", false);
+        JToolBarHelper::custom("show", "back.png", "back_f2.png", JText::_("COM_MATUKIO_BACK"), false);
         JToolBarHelper::help('screen.matukio', true);
     }
 
     public static function _VIEW_STAT()
     {
         JToolBarHelper::title(JText::_('COM_MATUKIO_STATS'), 'levels');
-        JToolBarHelper::custom("4", "back.png", "back_f2.png", "Back", false);
+        JToolBarHelper::custom("4", "back.png", "back_f2.png", JText::_("COM_MATUKIO_BACK"), false);
         JToolBarHelper::help('screen.matukio', true);
     }
 
@@ -1658,7 +1684,7 @@ class TOOLBAR_matukio
     public static function _CONFIG()
     {
         JToolBarHelper::title(JText::_('COM_MATUKIO_SETTINGS'), 'config');
-        JToolBarHelper::save('31');
+        JToolBarHelper::apply('31');
         JToolBarHelper::preferences("com_matukio");
         JToolBarHelper::help('screen.matukio', true);
     }

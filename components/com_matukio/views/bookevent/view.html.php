@@ -35,31 +35,25 @@ class MatukioViewBookEvent extends JViewLegacy {
             $steps = 2;
         }
 
-        $payment = array();
-
-        // TODO Optimize
-
-        if(MatukioHelperSettings::getSettings("payment_cash", 1) == 1){
-            $payment[] = array("name" => "payment_cash", "title" => "COM_MATUKIO_PAYMENT_CASH");
-        }
-
-        if(MatukioHelperSettings::getSettings("payment_banktransfer", 1) == 1){
-            $payment[] = array("name" => "payment_banktransfer", "title" => "COM_MATUKIO_PAYMENT_BANKTRANSFER");
-        }
-
-        if(MatukioHelperSettings::getSettings("payment_paypal", 1) == 1){
-            $payment[] = array("name" => "payment_paypal", "title" => "COM_MATUKIO_PAYMENT_PAYPAL");
-        }
-
-        if(MatukioHelperSettings::getSettings("payment_invoice", 1) == 1){
-            $payment[] = array("name" => "payment_invoice", "title" => "COM_MATUKIO_PAYMENT_INVOICE");
-        }
-
-
-        if(empty($payment)){
-            // If no payment then set Steps to 2 :)
-            $steps = 2;
-        }
+//        $payment = array();
+//
+//        // TODO Optimize
+//
+//        if(MatukioHelperSettings::getSettings("payment_cash", 1) == 1){
+//            $payment[] = array("name" => "payment_cash", "title" => "COM_MATUKIO_PAYMENT_CASH");
+//        }
+//
+//        if(MatukioHelperSettings::getSettings("payment_banktransfer", 1) == 1){
+//            $payment[] = array("name" => "payment_banktransfer", "title" => "COM_MATUKIO_PAYMENT_BANKTRANSFER");
+//        }
+//
+//        if(MatukioHelperSettings::getSettings("payment_paypal", 1) == 1){
+//            $payment[] = array("name" => "payment_paypal", "title" => "COM_MATUKIO_PAYMENT_PAYPAL");
+//        }
+//
+//        if(MatukioHelperSettings::getSettings("payment_invoice", 1) == 1){
+//            $payment[] = array("name" => "payment_invoice", "title" => "COM_MATUKIO_PAYMENT_INVOICE");
+//        }
 
         $fields_p1 = MatukioHelperUtilsBooking::getBookingFields(1);
         $fields_p2 = MatukioHelperUtilsBooking::getBookingFields(2);
@@ -68,6 +62,33 @@ class MatukioViewBookEvent extends JViewLegacy {
         MatukioHelperUtilsBasic::expandPathway(JTEXT::_('COM_MATUKIO_EVENTS'), JRoute::_("index.php?option=com_matukio&view=eventlist"));
         MatukioHelperUtilsBasic::expandPathway(JTEXT::_('COM_MATUKIO_EVENT_BOOKING'), "");
 
+        $dispatcher = JDispatcher::getInstance();
+
+        $pplugins = array("paypal", "paypalpro", "bycheck", "byorder", "linkpoint", "ccavenue", "payu", "authorizenet");
+        JPluginHelper::importPlugin("payment");
+        $gateways = $dispatcher->trigger('onTP_GetInfo', array($pplugins));
+
+        /**
+         * array(6) { [0]=> object(stdClass)#670 (2) { ["name"]=> string(11) "PayBy Check" ["id"]=> string(7) "bycheck" }
+         * [1]=> object(stdClass)#669 (2) { ["name"]=> string(20) "PayBy Purchase Order" ["id"]=> string(7) "byorder" }
+         * [2]=> object(stdClass)#668 (2) { ["name"]=> string(9) "Linkpoint" ["id"]=> string(9) "linkpoint" }
+         * [3]=> object(stdClass)#667 (2) { ["name"]=> string(6) "Paypal" ["id"]=> string(6) "paypal" }
+         * [4]=> object(stdClass)#666 (2) { ["name"]=> string(9) "Paypalpro" ["id"]=> string(9) "paypalpro" }
+         * [5]=> object(stdClass)#665 (2) { ["name"]=> string(39) "Payu Credit Card/Debit Card/Net Banking" ["id"]=> string(4) "payu" } }
+         */
+
+        $payment = array();
+
+        foreach($gateways as $gway) {
+            $payment[] = array("name" => $gway->id, "title" => $gway->name);
+        }
+
+        if(empty($payment)){
+            // If no payment then set Steps to 2 :)
+            $steps = 2;
+        }
+
+        $this->gateways = $gateways;
         $this->event = $event;
         $this->uid = $uid;
         $this->user = $user;

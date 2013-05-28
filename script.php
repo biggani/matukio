@@ -19,13 +19,16 @@ class com_matukioInstallerScript
 	 * The release value to be displayed and checked against throughout this file.
 	 */
     private $release = '1.0';
-    private $minimum_joomla_release = '2.5';
+    private $minimum_joomla_release = '2.5.6';
 
     private $installationQueue = array(
         // modules => { (folder) => { (module) => { (position), (published) } }* }*
         'modules' => array(
             'site' => array(
-                'mod_matukio' => array('left', 0)
+                'mod_matukio' => array('left', 0),
+                'mod_matukio_booking' => array('left', 0),
+                'mod_matukio_calendar' => array('left', 0),
+                'mod_matukio_upcoming' => array('left', 0),
             ),
             'admin' => array(
                 "mod_ccc_matukio_icons" => array('ccc_matukio_left', 1),
@@ -33,7 +36,24 @@ class com_matukioInstallerScript
                 "mod_ccc_matukio_update" => array('ccc_matukio_slider', 1),
                 "mod_ccc_matukio_overview" => array('ccc_matukio_slider', 1),
                 "mod_ccc_matukio_promotion" => array('ccc_matukio_promotion', 1),
-            )
+            ),
+
+        ),
+
+        'plugins' => array(
+                'plg_search_matukio' => 1,
+                'plg_system_compojoom' => 1,
+                'plg_payment_alphauserpoints' => 1,
+                'plg_payment_amazon' => 1,
+                'plg_payment_authorizenet' => 1,
+                'plg_payment_bycheck' => 1,
+                'plg_payment_byorder' => 1,
+                'plg_payment_ccavenue' => 1,
+                'plg_payment_jomsocialpoints' => 1,
+                'plg_payment_linkpoint' => 1,
+                'plg_payment_paypal' => 1,
+                'plg_payment_paypalpro' => 1,
+                'plg_payment_payu' => 1
         )
     );
 
@@ -75,6 +95,7 @@ class com_matukioInstallerScript
     {
         $this->parent = $parent;
         $this->uninstallModules();
+        $this->status->plugins = $this->uninstallPlugins($this->installationQueue['plugins']);
 
         echo $this->displayInfoUninstallation();
     }
@@ -169,6 +190,7 @@ class com_matukioInstallerScript
 
                 // Settings Reset for version 2.0
                 $this->dummyContent();
+                $this->update22();
             } else if ($update->value == "2.0.0") {
                 // Settings Reset for version 2.0 and 2.0.1
                 $query = "TRUNCATE #__matukio_settings";
@@ -176,7 +198,7 @@ class com_matukioInstallerScript
                 $db->execute();
 
                 $this->settingsContent();
-
+                $this->update22();
             } else if ($update->value == "2.0.1") {
                 $query = "INSERT INTO " . $db->nameQuote('#__matukio_settings') . " (`id`, `title`, `value`, `values`, `type`, `catdisp`) VALUES
                           (66, 'banktransfer_iban', '','', 'text', 'payment'),
@@ -191,10 +213,8 @@ class com_matukioInstallerScript
                 $db->setQuery($query);
                 $db->execute();
 
-                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.10" WHERE title = ' . $db->Quote('db_version');
-
-                $db->setQuery($query);
-                $db->execute();
+                $this->updateDBVersion();
+                $this->update22();
             } else if ($update->value == "2.0.2") {
                 $query = "ALTER TABLE  " . $db->nameQuote('#__matukio') . " ADD `language` VARCHAR( 255 ) NOT NULL DEFAULT '*'";
 
@@ -207,86 +227,129 @@ class com_matukioInstallerScript
                 $db->setQuery($query);
                 $db->execute();
 
-                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.10" WHERE title = ' . $db->Quote('db_version');
-
-                $db->setQuery($query);
-                $db->execute();
+                $this->updateDBVersion();
+                $this->update22();
             } else if ($update->value == "2.1.0") {
-                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.10" WHERE title = ' . $db->Quote('db_version');
-
-                $db->setQuery($query);
-                $db->execute();
+                $this->updateDBVersion();
 
                 $query = "INSERT INTO " . $db->nameQuote('#__matukio_settings') . " (`title`, `value`, `values`, `type`, `catdisp`) VALUES
                           ('oldbooking_redirect_after', 'bookingpage', '{bookingpage=BOOKINGPAGE}{eventpage=EVENTPAGE}{eventlist=EVENTLIST}', 'select', 'advanced');";
 
                 $db->setQuery($query);
                 $db->execute();
+                $this->update22();
             } else if ($update->value == "2.1.1") {
-                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.10" WHERE title = ' . $db->Quote('db_version');
-
-                $db->setQuery($query);
-                $db->execute();
+                $this->updateDBVersion();
 
                 $query = "INSERT INTO " . $db->nameQuote('#__matukio_settings') . " (`title`, `value`, `values`, `type`, `catdisp`) VALUES
                           ('oldbooking_redirect_after', 'bookingpage', '{bookingpage=BOOKINGPAGE}{eventpage=EVENTPAGE}{eventlist=EVENTLIST}', 'select', 'advanced');";
 
                 $db->setQuery($query);
                 $db->execute();
+                $this->update22();
             } else if ($update->value == "2.1.2") {
-                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.10" WHERE title = ' . $db->Quote('db_version');
-
-                $db->setQuery($query);
-                $db->execute();
+                $this->updateDBVersion();
 
                 $query = "INSERT INTO " . $db->nameQuote('#__matukio_settings') . " (`title`, `value`, `values`, `type`, `catdisp`) VALUES
                           ('oldbooking_redirect_after', 'bookingpage', '{bookingpage=BOOKINGPAGE}{eventpage=EVENTPAGE}{eventlist=EVENTLIST}', 'select', 'advanced');";
 
                 $db->setQuery($query);
                 $db->execute();
+                $this->update22();
             } else if ($update->value == "2.1.3") {
-                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.10" WHERE title = ' . $db->Quote('db_version');
-
-                $db->setQuery($query);
-                $db->execute();
+                $this->updateDBVersion();
+                $this->update22();
             } else if ($update->value == "2.1.4") {
-                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.10" WHERE title = ' . $db->Quote('db_version');
-
-                $db->setQuery($query);
-                $db->execute();
+                $this->updateDBVersion();
+                $this->update22();
             }  else if ($update->value == "2.1.5") {
-                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.10" WHERE title = ' . $db->Quote('db_version');
-
-                $db->setQuery($query);
-                $db->execute();
+                $this->updateDBVersion();
+                $this->update22();
             } else if ($update->value == "2.1.6") {
-                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.10" WHERE title = ' . $db->Quote('db_version');
-
-                $db->setQuery($query);
-                $db->execute();
+                $this->updateDBVersion();
+                $this->update22();
             } else if ($update->value == "2.1.7") {
-                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.10" WHERE title = ' . $db->Quote('db_version');
-
-                $db->setQuery($query);
-                $db->execute();
+                $this->updateDBVersion();
+                $this->update22();
             } else if ($update->value == "2.1.8") {
-                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.10" WHERE title = ' . $db->Quote('db_version');
-
-                $db->setQuery($query);
-                $db->execute();
+                $this->updateDBVersion();
+                $this->update22();
             } else if ($update->value == "2.1.9") {
-                $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.1.10" WHERE title = ' . $db->Quote('db_version');
-
-                $db->setQuery($query);
-                $db->execute();
+                $this->updateDBVersion();
+                $this->update22();
             } else if ($update->value == "2.1.10") {
-            // Current release
+                $this->updateDBVersion();
+                $this->update22();
+            } else if ($update->value == "2.2.0") {
+                // Current release
 
-            }else {
+            }  else {
                 // Reinsert settings
                 $this->settingsContent();
+                $this->templatesContent();
             }
         }
+    }
+
+    public function updateDBVersion() {
+        $db = JFactory::getDbo();
+        $query = 'UPDATE ' . $db->nameQuote('#__matukio_settings') . ' SET value = "2.2.0" WHERE title = ' . $db->Quote('db_version');
+
+        $db->setQuery($query);
+        $db->execute();
+    }
+
+    public function update22()
+    {
+        $db = JFactory::getDbo();
+
+        $query = 'UPDATE ' . $db->quoteName('#__matukio_settings') . ' SET value = "2.2.0" WHERE title = ' . $db->Quote('db_version');
+
+        $db->setQuery($query);
+        $db->execute();
+
+        $query = "INSERT INTO " . $db->quoteName('#__matukio_settings') . " (`title`, `value`, `values`, `type`, `catdisp`) VALUES
+                          ('mat_signature', '<strong>Please do not answer this E-Mail</strong>', '', 'text', 'layout'),
+                          ('email_html', '1', '', 'bool', 'layout'),
+                          ('export_csv_separator',  ';',  '',  'text',  'advanced'),
+                          ('location_image', '1', '', 'bool', 'modernlayout'),
+                          ('bookingfield_desc', '0', '', 'bool', 'advanced'),
+                          ('navi_eventlist_number', '1', '', 'bool', 'modernlayout'),
+                          ('navi_eventlist_search', '1', '', 'bool', 'modernlayout'),
+                          ('navi_eventlist_categories', '1', '', 'bool', 'modernlayout'),
+                          ('navi_eventlist_types', '1', '', 'bool', 'modernlayout'),
+                          ('navi_eventlist_reset', '1', '', 'bool', 'modernlayout');";
+
+        // Todo alter {3=NEVER} Settings
+        // UPDATE  `j25d`.`jos_matukio_settings` SET  `catdisp` =  'modernlayout' WHERE  `jos_matukio_settings`.`id` =69;
+
+        $db->setQuery($query);
+        $db->execute();
+
+        $query = "ALTER TABLE " . $db->quoteName('#__matukio_bookings')
+                    . " ADD `payment_status` VARCHAR( 255 ) NOT NULL DEFAULT 'P' ,
+                        ADD `status` TINYINT NOT NULL DEFAULT '0'";
+        $db->setQuery($query);
+        $db->execute();
+
+        $settings_del = array("certificate_htmlcode", "payment_cash", "payment_banktransfer", "payment_paypal", "payment_invoice");
+
+        $query = "DELETE FROM " . $db->quoteName('#__matukio_settings') . " WHERE title IN (\"" . implode('","', $settings_del) . "\")";  // Delete certificate setting
+        $db->setQuery($query);
+        $db->execute();
+
+        $query = "ALTER TABLE " . $db->quoteName('#__matukio') . " ADD  `booking_mail` TEXT NOT NULL ,
+                                             ADD  `certificate_code` TEXT NOT NULL ,
+                                             ADD  `top_event` TINYINT( 1 ) NOT NULL DEFAULT  '0' ,
+                                             ADD  `hot_event` TINYINT( 1 ) NOT NULL DEFAULT  '0' ,
+                                             ADD  `language` VARCHAR( 255 ) NOT NULL DEFAULT  '*' ,
+                                             ADD  `asset_id` INT( 10 ) NOT NULL DEFAULT  '0' ,
+                                             ADD  `status` TINYINT NOT NULL DEFAULT  '0'";
+
+        $db->setQuery($query);
+        $db->execute();
+
+        $this->templatesContent();
     }
 
     /**
@@ -347,6 +410,7 @@ class com_matukioInstallerScript
 
         // let us install the modules
         $this->installModules();
+        $this->installPlugins($this->installationQueue['plugins']);
 
         echo $this->displayInfoInstallation();
 
@@ -373,6 +437,30 @@ class com_matukioInstallerScript
                 }
             }
         }
+    }
+
+    public function uninstallPlugins($plugins)
+    {
+        $db = JFactory::getDbo();
+        $status = array();
+
+        foreach ($plugins as $plugin => $published) {
+            $parts = explode('_', $plugin);
+            $pluginType = $parts[1];
+            $pluginName = $parts[2];
+            $db->setQuery('SELECT `extension_id` FROM #__extensions WHERE `type` = "plugin" AND `element` = ' . $db->Quote($pluginName) . ' AND `folder` = ' . $db->Quote($pluginType));
+
+            $id = $db->loadResult();
+
+            if ($id) {
+                $installer = new JInstaller;
+                $result = $installer->uninstall('plugin', $id, 1);
+                $status[] = array('name' => $plugin, 'group' => $pluginType, 'result' => $result);
+                $this->status->plugins[] = array('name' => $plugin, 'group' => $pluginType, 'result' => $result);
+            }
+        }
+
+        return $status;
     }
 
     private function installModules()
@@ -428,6 +516,58 @@ class com_matukioInstallerScript
         }
     }
 
+    public function installPlugins($plugins)
+    {
+        $src = $this->parent->getParent()->getPath('source');
+
+        $db = JFactory::getDbo();
+        $status = array();
+
+        foreach ($plugins as $plugin => $published) {
+            $parts = explode('_', $plugin);
+            $pluginType = $parts[1];
+            $pluginName = $parts[2];
+
+            $path = $src . "/plugins/$pluginType/$pluginName";
+
+            $query = "SELECT COUNT(*) FROM  #__extensions WHERE element=" . $db->Quote($pluginName) . " AND folder=" . $db->Quote($pluginType);
+
+            $db->setQuery($query);
+            $count = $db->loadResult();
+
+            $installer = new JInstaller;
+            $result = $installer->install($path);
+            $status[] = array('name' => $plugin, 'group' => $pluginType, 'result' => $result);
+
+            if ($published && !$count) {
+                $query = "UPDATE #__extensions SET enabled=1 WHERE element=" . $db->Quote($pluginName) . " AND folder=" . $db->Quote($pluginType);
+                $db->setQuery($query);
+                $db->query();
+            }
+        }
+
+        return $status;
+    }
+
+    /**
+     * Insert the templates Data into DB
+     */
+    private function templatesContent() {
+        $db = JFactory::getDbo();
+
+        $query = "INSERT INTO `#__matukio_templates` (`id`, `tmpl_name`, `category`, `subject`, `value`, `value_text`, `default`, `modified_by`, `published`) VALUES
+            (1, 'mail_booking', 0, '##COM_MATUKIO_EVENT## MAT_EVENT_SEMNUM: MAT_EVENT_TITLE', '<p>##COM_MATUKIO_THANK_YOU_FOR_YOUR_BOOKING##<br /><br /> ##COM_MATUKIO_BOOKING_DETAILS##:<br />MAT_BOOKING_ALL_DETAILS_HTML<br /><br /> ##COM_MATUKIO_EVENT_DETAILS##:<br />MAT_EVENT_ALL_DETAILS_HTML<br /> <br /> MAT_SIGNATURE</p>', '##COM_MATUKIO_THANK_YOU_FOR_YOUR_BOOKING##\r\n\r\n##COM_MATUKIO_BOOKING_DETAILS##:\r\n\r\nMAT_BOOKING_ALL_DETAILS_TEXT\r\n\r\n##COM_MATUKIO_EVENT_DETAILS##:\r\n\r\nMAT_EVENT_ALL_DETAILS_TEXT\r\n\r\nMAT_SIGNATURE\r\n ', '', 0, 1),
+            (2, 'mail_booking_canceled_admin', 0, '##COM_MATUKIO_BOOKING_CANCELED## MAT_EVENT_SEMNUM: MAT_EVENT_TITLE (MAT_BOOKING_NUMBER)', '<p>##COM_MATUKIO_THE_ADMIN_CANCELED_THE_BOOKING_OF_FOLLOWING##<br /> <br /> MAT_BOOKING_ALL_DETAILS_HTML <br /> MAT_SIGNATURE</p>', '##COM_MATUKIO_THE_ADMIN_CANCELED_THE_BOOKING_OF_FOLLOWING##\r\n\r\nMAT_BOOKING_ALL_DETAILS_TEXT\r\n\r\nMAT_SIGNATURE', '', 0, 1),
+            (3, 'mail_booking_canceled', 0, '##COM_MATUKIO_BOOKING_CANCELED## MAT_EVENT_SEMNUM: MAT_EVENT_TITLE (MAT_BOOKING_NUMBER)', '<p>##COM_MATUKIO_YOU_HAVE_CANCELLED## ##COM_MATUKIO_BOOKING_FOR_EVENT_CANCELLED##<br /> <br /> MAT_BOOKING_ALL_DETAILS_HTML <br /><br /> MAT_SIGNATURE</p>', '##COM_MATUKIO_YOU_HAVE_CANCELLED## ##COM_MATUKIO_BOOKING_FOR_EVENT_CANCELLED##\r\n\r\nMAT_BOOKING_ALL_DETAILS_HTML\r\n\r\nMAT_SIGNATURE', '', 0, 1),
+            (4, 'export_csv', 1, 'ID', '''MAT_BOOKING_NUMBER'';''MAT_EVENT_TITLE'';MAT_CSV_BOOKING_DETAILS', '', '', 0, 1),
+            (5, 'export_signaturelist', 1, '##COM_MATUKIO_SIGNATURE_LIST##', '<p>MAT_NR MAT_BOOKING_NUMBER MAT_BOOKING_FIRSTNAME MAT_BOOKING_LASTNAME MAT_SIGN</p>', '<table class=\"mat_table\" style=\"width: 100%;\" border=\"0\">\r\n<tbody>\r\n<tr>\r\n<td class=\"key\" width=\"150px\"><strong>##COM_MATUKIO_NR##:</strong></td>\r\n<td>MAT_EVENT_NUMBER</td>\r\n</tr>\r\n<tr>\r\n<td width=\"150px\"><strong>##COM_MATUKIO_FIELDS_TITLE##:</strong></td>\r\n<td>MAT_EVENT_TITLE</td>\r\n</tr>\r\n<tr>\r\n<td width=\"150px\"><strong>##COM_MATUKIO_BEGIN##:</strong></td>\r\n<td>MAT_EVENT_BEGIN</td>\r\n</tr>\r\n<tr>\r\n<td width=\"150px\"><strong>##COM_MATUKIO_END##:</strong></td>\r\n<td>MAT_EVENT_END</td>\r\n</tr>\r\n<tr>\r\n<td width=\"150px\"><strong>##COM_MATUKIO_FEES##:</strong></td>\r\n<td>MAT_EVENT_FEES</td>\r\n</tr>\r\n</tbody>\r\n</table>', '', 0, 1),
+            (6, 'export_participantslist', 1, '##COM_MATUKIO_PARTICIPANTS_LIST##', '<table class=\"mat_table\" style=\"width: 100%;\" border=\"0\">\r\n<tbody>\r\n<tr>\r\n<td width=\"150px\"><strong>##COM_MATUKIO_NAME##:</strong></td>\r\n<td>MAT_BOOKING_NAME</td>\r\n</tr>\r\n<tr>\r\n<td width=\"150px\"><strong>##COM_MATUKIO_EMAIL##:</strong></td>\r\n<td>MAT_BOOKING_EMAIL </td>\r\n</tr>\r\n<tr>\r\n<td width=\"150px\"><strong>##COM_MATUKIO_BOOKING_NUMBER##:</strong></td>\r\n<td>MAT_BOOKING_NUMBER </td>\r\n</tr>\r\n<tr>\r\n<td width=\"150px\"><strong>##COM_MATUKIO_STATUS##:</strong></td>\r\n<td>MAT_BOOKING_STATUS </td>\r\n</tr>\r\n<tr>\r\n<td width=\"150px\"><strong>##COM_MATUKIO_BOOKEDNR##:</strong></td>\r\n<td>MAT_BOOKING_BOOKEDNR</td>\r\n</tr>\r\n<tr>\r\n<td width=\"150px\"><strong>##COM_MATUKIO_PAYMENT_FEES##:</strong></td>\r\n<td>MAT_BOOKING_FEES_STATUS</td>\r\n</tr>\r\n<tr>\r\n<td style=\"text-align: center;\" colspan=\"2\">MAT_BOOKING_QRCODE_ID<em><br /></em></td>\r\n</tr>\r\n</tbody>\r\n</table>', '<table class=\"mat_table\" style=\"width: 100%;\" border=\"0\">\r\n<tbody>\r\n<tr>\r\n<td class=\"key\" width=\"150px\"><strong>##COM_MATUKIO_NR##:</strong></td>\r\n<td>MAT_EVENT_NUMBER</td>\r\n</tr>\r\n<tr>\r\n<td width=\"150px\"><strong>##COM_MATUKIO_FIELDS_TITLE##:</strong></td>\r\n<td>MAT_EVENT_TITLE</td>\r\n</tr>\r\n<tr>\r\n<td width=\"150px\"><strong>##COM_MATUKIO_BEGIN##:</strong></td>\r\n<td>MAT_EVENT_BEGIN</td>\r\n</tr>\r\n<tr>\r\n<td width=\"150px\"><strong>##COM_MATUKIO_END##:</strong></td>\r\n<td>MAT_EVENT_END</td>\r\n</tr>\r\n<tr>\r\n<td width=\"150px\"><strong>##COM_MATUKIO_FEES##:</strong></td>\r\n<td>MAT_EVENT_FEES</td>\r\n</tr>\r\n</tbody>\r\n</table>', '', 0, 1),
+            (7, 'export_certificate', 2, 'E', '<div style=\"position: absolute; top: 0; left: 0; z-index: 0;\"><img src=\"MAT_IMAGEDIRcertificate.png\" border=\"0\" /></div>\r\n<div style=\"position: absolute; top: 0; left: 0; z-index: 1;\">\r\n<table style=\"width: 734pt;\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\r\n<tbody>\r\n<tr>\r\n<td rowspan=\"8\" width=\"180pt\" height=\"1080pt\"> </td>\r\n<th width=\"554pt\" height=\"150pt\"><span style=\"color: #330099; font-size: 48pt; font-family: Verdana;\">##COM_MATUKIO_CERTIFICATE##</span></th></tr>\r\n<tr><th width=\"554pt\" height=\"150pt\"><span style=\"color: #000000; font-size: 28pt; font-family: Verdana;\">MAT_BOOKING_NAME</span></th></tr>\r\n<tr>\r\n<td width=\"554pt\" height=\"100pt\"><span style=\"color: #000000; font-size: 24pt; font-family: Verdana;\">##COM_MATUKIO_CERTIFICATE_ATTENDED##</span></td>\r\n</tr>\r\n<tr><th width=\"554pt\" height=\"250pt\"><span style=\"color: #000000; font-size: 28pt; font-family: Verdana;\">MAT_EVENT_TITLE</span></th></tr>\r\n<tr>\r\n<td width=\"554pt\" height=\"230pt\"><span style=\"color: #000000; font-size: 18pt; font-family: Verdana;\">##COM_MATUKIO_BEGIN##: MAT_EVENT_BEGIN</span>\r\n<p style=\"margin-top: 20pt; margin-bottom: 8pt;\"><span style=\"color: #000000; font-size: 18pt; font-family: Verdana;\"><span>##COM_MATUKIO_END##</span>: MAT_EVENT_END</span></p>\r\n<p style=\"margin-top: 20pt; margin-bottom: 8pt;\"><span style=\"color: #000000; font-size: 18pt; font-family: Verdana;\"><span>##COM_MATUKIO_CITY##</span>: MAT_EVENT_LOCATION</span></p>\r\n</td>\r\n</tr>\r\n<tr>\r\n<td width=\"554pt\" height=\"100pt\"><span style=\"color: #000000; font-size: 18pt; font-family: Verdana;\">##COM_MATUKIO_TUTOR##: MAT_EVENT_TEACHER</span></td>\r\n</tr>\r\n<tr>\r\n<td width=\"554pt\" height=\"100pt\"><span style=\"color: #000000; font-size: 18pt; font-family: Verdana;\">##COM_MATUKIO_DATE##: MAT_DATE</span></td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n</div>', '', '', 0, 1);
+            ";
+
+        $db->setQuery($query);
+        $this->status->sql['#__matukio_templates'] = $db->execute();
+    }
 
     private function settingsContent()
     {
@@ -448,7 +588,6 @@ class com_matukioInstallerScript
         (13, 'frontend_ratingsystem', '0', '', 'bool', 'basic'),
         (14, 'frontend_certificatesystem', '0', '', 'bool', 'basic'),
         (15, 'frontend_userprintcertificate', '0', '', 'bool', 'advanced'),
-        (16, 'certificate_htmlcode', '" . '<div style="position: absolute; top:0; left:0; z-index: 0;"><img src="SEM_IMAGEDIRcertificate.png"></div><div style="position: absolute; top:0; left:0; z-index: 1;"><table cellpadding="0" cellspacing="0" border="0" width="734pt" height="1080pt""><tr><td width="180pt" height="1080pt" rowspan="8">&nbsp;</td><th width="554pt" height="150pt"><span style="color: #330099; font-size: 48pt; font-family: Verdana;">Certificate</span></th></tr><tr><th width="554pt" height="150pt"><span style="color: #000000; font-size: 28pt; font-family: Verdana;">SEM_NAME</span></center></th></tr><tr><td width="554pt" height="100pt"><span style="color: #000000; font-size: 24pt; font-family: Verdana;">has successfully attended the event</span></td></tr><tr><th width="554pt" height="250pt"><span style="color: #000000; font-size: 28pt; font-family: Verdana;">SEM_COURSE</span></th></tr><tr><td width="554pt" height="230pt"><span style="color: #000000; font-size: 18pt; font-family: Verdana; ">Begin: SEM_BEGIN</span><p style="margin-top: 20pt; margin-bottom: 8pt;"><span style="color: #000000; font-size: 18pt; font-family: Verdana; ">End: SEM_END</span><p style="margin-top: 20pt; margin-bottom: 8pt;"><span style="color: #000000; font-size: 18pt; font-family: Verdana; ">Place: SEM_LOCATION</span></td></tr><tr><td width="554pt" height="100pt"><span style="color: #000000; font-size: 18pt; font-family: Verdana; ">Tutor: SEM_TEACHER</span></td></tr><tr><td width="554pt" height="100pt"><span style="color: #000000; font-size: 18pt; font-family: Verdana; ">Date: SEM_TODAY</span></td></tr></table></div>' . "', '', 'textarea', 'advanced'),
         (17, 'sendmail_teilnehmer', '1', '', 'bool', 'basic'),
         (18, 'sendmail_owner', '1', '', 'bool', 'basic'),
         (19, 'sendmail_contact', '1', '', 'bool', 'basic'),
@@ -467,26 +606,22 @@ class com_matukioInstallerScript
         (33, 'frontend_usermehrereplaetze', '1', '', 'bool', 'basic'),
         (34, 'booking_edit', '1', '', 'bool', 'basic'),
         (35, 'booking_stornotage', '1', '', 'text', 'advanced'),
-        (36, 'event_stopshowing', '0', '{0=START}{1=END}{2=ANMELDESCHLUSS}', 'select', 'advanced'),
-        (37, 'event_showanzahl', '10', '', 'text', 'layout'),
-        (38, 'agb_text', '', '', 'textarea', 'advanced'),
+        (36, 'event_stopshowing', '0', '{0=START}{1=END}{2=ANMELDESCHLUSS}{3=NEVER}', 'select', 'advanced'),
+        (37, 'event_showanzahl', '20', '', 'text', 'layout'),
+        (38, 'agb_text', '', '', 'textarea', 'basic'),
         (39, 'frontend_showfooter', '1', '', 'bool', 'layout'),
         (40, 'rss_feed', '1', '', 'bool', 'advanced'),
-        (41, 'frontend_unregisteredshowlogin', '1', '', 'bool', 'layout'),
+        (41, 'frontend_unregisteredshowlogin', '0', '', 'bool', 'layout'),
         (42, 'csv_export_charset', 'ISO-8859-15', '', 'text', 'advanced'),
         (43, 'frontend_showownerdetails', '1', '', 'bool', 'basic'),
         (44, 'date_format_small', 'd-m-Y, H:i', '', 'text', 'layout'),
         (45, 'date_format_without_time', 'd-m-Y', '', 'text', 'layout'),
         (46, 'time_format', 'H:i', '', 'text', 'layout'),
         (47, 'date_format', 'l, d. F Y - h:i a', '', 'text', 'layout'),
-        (48, 'db_version', '2.1.10', '', 'text', 'hidden'),
-        (49, 'oldbookingform', '0', '', 'bool', 'layout'),
-        (50, 'paypal_address', '', '', 'text', 'payment'),
+        (48, 'db_version', '2.2.0', '', 'text', 'hidden'),
+        (49, 'oldbookingform', '0', '', 'bool', 'basic'),
+        (50, 'paypal_address', 'paypal@compojoom.com', '', 'text', 'payment'),
         (51, 'paypal_currency', 'USD', '', 'text', 'payment'),
-        (52, 'payment_cash', '1', '', 'bool', 'payment'),
-        (53, 'payment_banktransfer', '1', '', 'bool', 'payment'),
-        (54, 'payment_paypal', '1', '', 'bool', 'payment'),
-        (55, 'payment_invoice', '0', '', 'bool', 'payment'),
         (56, 'payment_coupon', '1', '', 'bool', 'payment'),
         (57, 'banktransfer_account', '', '', 'text', 'payment'),
         (58, 'banktransfer_blz', '', '', 'text', 'payment'),
@@ -496,16 +631,25 @@ class com_matukioInstallerScript
         (62, 'cpp_header_image', '', '', 'text', 'payment'),
         (63, 'cpp_headerback_color', '', '', 'text', 'payment'),
         (64, 'cpp_headerborder_color', '', '', 'text', 'payment'),
-        (65, 'captcha', '0', '', 'bool', 'advanced'),
+        (65, 'captcha', '0', '', 'bool', 'security'),
         (66, 'banktransfer_iban', '', '', 'text', 'payment'),
         (67, 'banktransfer_bic', '', '', 'text', 'payment'),
         (68, 'frontend_unregisteredshowlogin', '1', '', 'bool', 'layout'),
-        (69, 'social_media', '1', '', 'bool', 'layout'),
+        (69, 'social_media', '1', '', 'bool', 'modernlayout'),
         (70, 'oldbooking_redirect_after', 'bookingpage', '{bookingpage=BOOKINGPAGE}{eventpage=EVENTPAGE}{eventlist=EVENTLIST}', 'select', 'advanced'),
         (71, 'frontend_topnavshowmodules', 'SEM_NUMBER SEM_SEARCH SEM_CATEGORIES SEM_RESET', '', 'text', 'advanced'),
         (72, 'frontend_topnavbookingmodules', 'SEM_NUMBER SEM_SEARCH SEM_TYPES SEM_RESET', '', 'text', 'advanced'),
-        (73, 'frontend_topnavoffermodules', 'SEM_NUMBER SEM_SEARCH SEM_TYPES SEM_RESET', '', 'text', 'advanced')
-        ;";
+        (73, 'frontend_topnavoffermodules', 'SEM_NUMBER SEM_SEARCH SEM_TYPES SEM_RESET', '', 'text', 'advanced'),
+        (74, 'mat_signature', '<strong>Please do not answer this E-Mail</strong>', '', 'text', 'layout'),
+        (75, 'email_html', '1', '', 'bool', 'layout'),
+        (76, 'export_csv_separator',  ';',  '',  'text',  'advanced'),
+        (77, 'location_image', '1', '', 'bool', 'modernlayout'),
+        (78, 'bookingfield_desc', '0', '', 'bool', 'advanced'),
+        (79, 'navi_eventlist_number', '1', '', 'bool', 'modernlayout'),
+        (80, 'navi_eventlist_search', '1', '', 'bool', 'modernlayout'),
+        (81, 'navi_eventlist_categories', '1', '', 'bool', 'modernlayout'),
+        (82, 'navi_eventlist_types', '1', '', 'bool', 'modernlayout'),
+        (83, 'navi_eventlist_reset', '1', '', 'bool', 'modernlayout');";
 
         $db->setQuery($query);
         $this->status->sql['#__matukio_settings'] = $db->execute();
@@ -517,7 +661,7 @@ class com_matukioInstallerScript
         $this->settingsContent();
 
         $query = "INSERT INTO `#__matukio_booking_fields` (`id`, `field_name`, `label`, `default`, `values`, `page`, `type`, `required`, `ordering`, `style`, `published`) VALUES
-        (1, 'title', 'COM_MATUKIO_FIELDS_TITLE', 'choose', '{=COM_MATUKIO_FIELD_CHOOSE}{mr=COM_MATUKIO_FIELD_MR}{ms=COM_MATUKIO_FIELD_MS}', 1, 'select', 1, 0, NULL, 1),
+        (1, 'title', 'COM_MATUKIO_FIELDS_TITLE', 'choose', '{=COM_MATUKIO_FIELD_CHOOSE}{Mr=COM_MATUKIO_FIELD_MR}{Ms=COM_MATUKIO_FIELD_MS}', 1, 'select', 1, 0, NULL, 1),
         (2, 'company', 'COM_MATUKIO_FIELDS_COMPANY', NULL, NULL, 1, 'text', 0, 1, NULL, 1),
         (3, 'firstname', 'COM_MATUKIO_FIELDS_FIRST_NAME', NULL, NULL, 1, 'text', 1, 2, NULL, 1),
         (4, 'lastname', 'COM_MATUKIO_FIELDS_SURNAME', NULL, NULL, 1, 'text', 1, 3, NULL, 1),
@@ -563,24 +707,28 @@ class com_matukioInstallerScript
         }
         $html[] = '</table>';
 
+        if ($this->status->plugins) {
+            $html[] = $this->renderPluginInfoInstall($this->status->plugins);
+        }
+
         return implode('', $html);
     }
-
     private function displayInfoInstallation()
     {
         if (file_exists(JPATH_ADMINISTRATOR . "/components/com_joomfish/config.joomfish.php")) {
             rename(JPATH_ADMINISTRATOR . "/components/com_matukio/joomfish/jf_matukio.xml", JPATH_ADMINISTRATOR . "/components/com_joomfish/contentelements/matukio.xml");
         }
-        $update = "";
+        $update = "2.2.0";
 
         $imagedir = "../media/com_matukio/images/";
         $lang = JFactory::getLanguage();
         $sprache = strtolower(substr($lang->getName(), 0, 2));
-        $html[] = "<img src=\"" . $imagedir . "logo.png\" valign=\"middle\"><font size=\"+1\" color=\"#0B55C4\"> Matukio" . $update . "</font>";
-        $html[] = "<div align=\"center\"><table border=\"0\" width=\"90%\"><tbody>";
-        $html[] = "<tr><td width=\"18%\"><b>Autor:</b></td><td width=\"80%\">Compojoom.com (Daniel Dimitrov &amp; Yves Hoppe)</td></tr>";
+        $html[] = "<div style=\"float: right;\"><img src=\"" . $imagedir . "logo.png\" valign=\"middle\"></div>";
+        $html[] = "<divs style=\"float: left;\"><table border=\"0\" width=\"100%\"><tbody>";
+        $html[] = "<tr><td width=\"18%\"><b>Autor:</b></td><td width=\"80%\">Matukio " . $update . "</td></tr>";
+        $html[] = "<tr><td width=\"18%\"><b>Autor:</b></td><td width=\"80%\">Compojoom.com - Yves Hoppe</td></tr>";
         $html[] = "<tr><td width=\"18%\"><b>Internet:</b></td><td width=\"80%\"><a target=\"_blank\" href=\"http://compojoom.com\">http://compojoom.com</a></td></tr>";
-        $html[] = "<tr><td width=\"18%\"><b>Version:</b></td><td width=\"80%\">2.1.10</td></tr>";
+        $html[] = "<tr><td width=\"18%\"><b>Version:</b></td><td width=\"80%\">" . $update . "</td></tr>";
         switch ($sprache) {
             case "de":
                 $html[] = "<tr><td colspan=\"2\">";
@@ -632,12 +780,11 @@ class com_matukioInstallerScript
                 break;
             default:
                 $html[] = "<tr><td colspan=\"2\">";
-                $html[] = "Please fill in the needed Matukio parameters first and create an event category. Matukio needs a Joomla menu link to eventlist overview in order to work properply with search engine friendly urls.<p>";
-                $html[] = "Matukio has been released under the <a href=\"http://www.gnu.org/licenses/gpl.html\" target=\"_new\">GNU general public license</a>.<p>";
+                $html[] = "<strong>Thank you for installing Matukio!</strong><br /><br />Please fill in the Matukio parameters first and create an event category. Matukio needs a Joomla menu link to the eventlist overview (can be hidden) in order to work properply with search engine friendly urls.";
                 $html[] = "</td>";
                 break;
         }
-        $html[] = "</tr></tbody></table></div>";
+        $html[] = "</tr></tbody></table></div><div class=\"clr clear\"></div>";
 
 
         if (isset($this->status->sql) && count($this->status->sql)) {
@@ -675,8 +822,125 @@ class com_matukioInstallerScript
         }
         $html[] = '</table>';
 
+        $html[] = $this->renderPluginInfoInstall($this->status->plugins);
+
         return implode('', $html);
     }
+
+    public function renderModuleInfoInstall($modules) {
+        $rows = 0;
+
+        $html = array();
+        if (count($modules)) {
+            $html[] = '<table class="table">';
+            $html[] = '<tr>';
+            $html[] = '<th>' . JText::_(strtoupper($this->extension) .'_MODULE') . '</th>';
+            $html[] = '<th>' . JText::_(strtoupper($this->extension) .'_CLIENT') . '</th>';
+            $html[] = '<th>' . JText::_(strtoupper($this->extension) .'_STATUS') . '</th>';
+            $html[] = '</tr>';
+            foreach ($modules as $module) {
+                $html[] = '<tr class="row' . (++$rows % 2) . '">';
+                $html[] = '<td class="key">' . $module['name'] . '</td>';
+                $html[] = '<td class="key">' . ucfirst($module['client']) . '</td>';
+                $html[] = '<td>';
+                $html[] = '<span style="color:' . (($module['result']) ? 'green' : 'red') . '; font-weight: bold;">';
+                $html[] = ($module['result']) ? JText::_(strtoupper($this->extension) .'_MODULE_INSTALLED') : JText::_(strtoupper($this->extension) .'_MODULE_NOT_INSTALLED');
+                $html[] = '</span>';
+                $html[] = '</td>';
+                $html[] = '</tr>';
+            }
+            $html[] = '</table>';
+        }
+
+
+        return implode('', $html);
+    }
+
+    public function renderModuleInfoUninstall($modules)
+    {
+        $rows = 0;
+        $html = array();
+        if (count($modules)) {
+            $html[] = '<table class="table">';
+            $html[] = '<tr>';
+            $html[] = '<th>' . JText::_(strtoupper($this->extension) . '_MODULE') . '</th>';
+            $html[] = '<th>' . JText::_(strtoupper($this->extension) . '_CLIENT') . '</th>';
+            $html[] = '<th>' . JText::_(strtoupper($this->extension) . '_STATUS') . '</th>';
+            $html[] = '</tr>';
+            foreach ($modules as $module) {
+                $html[] = '<tr class="row' . (++$rows % 2) . '">';
+                $html[] = '<td class="key">' . $module['name'] . '</td>';
+                $html[] = '<td class="key">' . ucfirst($module['client']) . '</td>';
+                $html[] = '<td>';
+                $html[] = '<span style="color:' . (($module['result']) ? 'green' : 'red') . '; font-weight: bold;">';
+                $html[] = ($module['result']) ? JText::_(strtoupper($this->extension) . '_MODULE_UNINSTALLED') : JText::_(strtoupper($this->extension) . '_MODULE_COULD_NOT_UNINSTALL');
+                $html[] = '</span>';
+                $html[] = '</td>';
+                $html[] = '</tr>';
+            }
+            $html[] = '</table>';
+        }
+
+        return implode('', $html);
+    }
+
+    public function renderPluginInfoInstall($plugins)
+    {
+        $rows = 0;
+        $html[] = '<table class="table">';
+        if (count($plugins)) {
+            $html[] = '<tr>';
+            $html[] = '<th>' . JText::_(strtoupper($this->extension) . '_PLUGIN') . '</th>';
+            $html[] = '<th>' . JText::_(strtoupper($this->extension) . '_GROUP') . '</th>';
+            $html[] = '<th>' . JText::_(strtoupper($this->extension) . '_STATUS') . '</th>';
+            $html[] = '</tr>';
+            foreach ($plugins as $plugin) {
+                $html[] = '<tr class="row' . (++$rows % 2) . '">';
+                $html[] = '<td class="key">' . $plugin['name'] . '</td>';
+                $html[] = '<td class="key">' . ucfirst($plugin['group']) . '</td>';
+                $html[] = '<td>';
+                $html[] = '<span style="color: ' . (($plugin['result']) ? 'green' : 'red') . '; font-weight: bold;">';
+                $html[] = ($plugin['result']) ? JText::_(strtoupper($this->extension) . '_PLUGIN_INSTALLED') : JText::_(strtoupper($this->extension) . 'PLUGIN_NOT_INSTALLED');
+                $html[] = '</span>';
+                $html[] = '</td>';
+                $html[] = '</tr>';
+            }
+        }
+        $html[] = '</table>';
+
+        return implode('', $html);
+    }
+
+    public function renderPluginInfoUninstall($plugins)
+    {
+        $rows = 0;
+        $html = array();
+        if (count($plugins)) {
+            $html[] = '<table class="table">';
+            $html[] = '<tbody>';
+            $html[] = '<tr>';
+            $html[] = '<th>Plugin</th>';
+            $html[] = '<th>Group</th>';
+            $html[] = '<th></th>';
+            $html[] = '</tr>';
+            foreach ($plugins as $plugin) {
+                $html[] = '<tr class="row' . (++$rows % 2) . '">';
+                $html[] = '<td class="key">' . $plugin['name'] . '</td>';
+                $html[] = '<td class="key">' . ucfirst($plugin['group']) . '</td>';
+                $html[] = '<td>';
+                $html[] = '	<span style="color:' . (($plugin['result']) ? 'green' : 'red') . '; font-weight: bold;">';
+                $html[] = ($plugin['result']) ? JText::_(strtoupper($this->extension) . '_PLUGIN_UNINSTALLED') : JText::_(strtoupper($this->extension) . '_PLUGIN_NOT_UNINSTALLED');
+                $html[] = '</span>';
+                $html[] = '</td>';
+                $html[] = ' </tr> ';
+            }
+            $html[] = '</tbody > ';
+            $html[] = '</table > ';
+        }
+
+        return implode('', $html);
+    }
+
 
     /*
      * get a variable from the manifest file (actually, from the manifest cache).

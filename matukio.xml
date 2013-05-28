@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <extension type="component" version="2.5" method="upgrade">
     <name>COM_MATUKIO</name>
-    <creationDate>2013-01-02</creationDate>
+    <creationDate>2013-04-16</creationDate>
     <author>Yves Hoppe - Compojoom.com</author>
-    <copyright>(C) 2012 Yves Hoppe - Compojoom.com</copyright>
+    <copyright>(C) 2012 - 2013 Yves Hoppe - Compojoom.com</copyright>
     <description><![CDATA[Matukio is an advanced event manager by Compojoom.com]]>
     </description>
     <license>http://www.gnu.org/licenses/gpl.html</license>
     <authorEmail>yves@compojoom.com</authorEmail>
     <authorUrl>https://compojoom.com</authorUrl>
-    <version>2.1.10</version>
+    <version>git_180c8fe</version>
     <scriptfile>script.php</scriptfile>
     <install>
         <sql>
@@ -43,7 +43,7 @@
             </menu>
             <menu img="../media/com_matukio/backend/images/icon-16-coupons.png" view="coupons">COUPONS</menu>
             <menu img="../media/com_matukio/backend/images/icon-16-bookingfields.png" view="bookingfields">BOOKINGFIELDS</menu>
-            <menu task="3" img="../media/com_matukio/backend/images/icon-16-sem_config.png">CONFIGURATION</menu>
+            <menu img="../media/com_matukio/backend/images/icon-16-sem_config.png" view="settings">CONFIGURATION</menu>
             <menu task="4" img="../media/com_matukio/backend/images/icon-16-sem_statistic.png">STATISTICS</menu>
             <menu img="../media/com_matukio/backend/images/live-update.png" view="liveupdate">LIVEUPDATE</menu>
         </submenu>

@@ -26,7 +26,27 @@ class MatukioControllerEventlist extends JControllerLegacy
         $view = $this->getView($viewName, $viewType);
         $model = $this->getModel('Eventlist', 'MatukioModel');
         $view->setModel($model, true);
-        $view->setLayout('default');
+
+        $tmpl = MatukioHelperSettings::getSettings("event_template", "default");
+
+        $params = JComponentHelper::getParams( 'com_matukio' );
+        $menuitemid = JFactory::getApplication()->input->getInt( 'Itemid' );
+        if ($menuitemid)
+        {
+//            $menu = JSite::getMenu();
+            $site = new JSite();
+            $menu = $site->getMenu();
+            $menuparams = $menu->getParams( $menuitemid );
+            $params->merge( $menuparams );
+        }
+
+        $ptmpl = $params->get('template', '');
+
+        if(!empty($ptmpl)) {
+            $tmpl = $ptmpl;
+        }
+
+        $view->setLayout($tmpl);
         $view->display();
     }
 }

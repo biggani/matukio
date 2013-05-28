@@ -34,9 +34,9 @@ foreach($this->events as $event) {
     $icsdata .= "LOCATION:" . str_replace("(\r\n|\n|\r)", ", ", $event->place) . "\n";
     $icsdata .= "DESCRIPTION:" . str_replace("(\r\n|\n|\r)", " ", $event->shortdesc) . "\n";
     $icsdata .= "CLASS:PUBLIC\n";
-    $icsdata .= "DTSTART:" . strftime("%Y%m%dT%H%M%S", strtotime($event->begin)) . "\n";
-    $icsdata .= "DTEND:" . strftime("%Y%m%dT%H%M%S", strtotime($event->end)) . "\n";
-    $icsdata .= "DTSTAMP:" . strftime("%Y%m%dT%H%M%S", strtotime(MatukioHelperUtilsDate::getCurrentDate())) . "\n";
+    $icsdata .= "DTSTART:" . strftime("%Y%m%dT%H%M%S", JFactory::getDate($event->begin)->toUnix()) . "\n";
+    $icsdata .= "DTEND:" . strftime("%Y%m%dT%H%M%S", JFactory::getDate($event->end)->toUnix()) . "\n";
+    $icsdata .= "DTSTAMP:" . strftime("%Y%m%dT%H%M%S", JFactory::getDate(MatukioHelperUtilsDate::getCurrentDate())->toUnix()) . "\n";
     $icsdata .= "BEGIN:VALARM\n";
     $icsdata .= "TRIGGER:-PT1440M\n";
     $icsdata .= "ACTION:DISPLAY\n";

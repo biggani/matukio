@@ -65,6 +65,7 @@ class MatukioControllerRateEvent extends JControllerLegacy
             $geswert = 0;
         }
         $database->setQuery("UPDATE #__matukio SET grade='$geswert' WHERE id='$cid'");
+
         if (!$database->execute()) {
             JError::raiseError(500, $database->getError());
             $msg = "COM_MATUKIO_RATING_FAILED " . $database->getError();
@@ -104,7 +105,7 @@ class MatukioControllerRateEvent extends JControllerLegacy
             $mailer->sendMail($from, $sender, $email, $subject, $body, 1, null, null, null, $replyto, $replyname);
         }
 
-        $link = JRoute::_("index.php?option=com_matukio&tmpl=component&view=rateevent&cid=" . $cid);
+        $link = "index.php?option=com_matukio&tmpl=component&s=" . MatukioHelperUtilsBasic::getRandomChar() . "&view=rateevent&cid=" . $cid;
 
         $this->setRedirect($link, $msg);
     }

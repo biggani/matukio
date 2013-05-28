@@ -33,6 +33,8 @@ class MatukioViewParticipants extends JViewLegacy {
         $limitstart = JFactory::getApplication()->input->getInt('limitstart', 0);
         $cid = JFactory::getApplication()->input->getInt('cid', 0);
 
+        $user = JFactory::getUser();
+
         $kurs = JTable::getInstance('matukio', 'Table');
         $kurs->load($cid);
 
@@ -45,6 +47,34 @@ class MatukioViewParticipants extends JViewLegacy {
             $anztyp = array(JTEXT::_('COM_MATUKIO_MY_OFFERS'), 2);
         } else if ($art == 3) {
             $anztyp = array(JTEXT::_('COM_MATUKIO_MY_OFFERS'), 3);
+        }
+
+        if($art == 0) {
+            if (!((MatukioHelperSettings::getSettings('frontend_userviewteilnehmer', 0) == 2 AND $user->id > 1)
+                 OR (MatukioHelperSettings::getSettings('frontend_userviewteilnehmer', 0) == 1)))
+            {
+                return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
+            }
+        }
+
+        if($art == 1) {
+            if (!((MatukioHelperSettings::getSettings('frontend_userviewteilnehmer', 0) == 2 AND $user->id > 1)
+                OR (MatukioHelperSettings::getSettings('frontend_userviewteilnehmer', 0) == 1)))
+            {
+                return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
+            }
+        }
+
+        if($art == 2) {
+            if($kurs->publisher == JFactory::getUser()->id) {
+                if (!JFactory::getUser()->authorise('core.edit.own', 'com_matukio')) {
+                    return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
+                }
+            } else {
+                if (!JFactory::getUser()->authorise('core.edit', 'com_matukio')) {
+                    return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
+                }
+            }
         }
 
         $database->setQuery("SELECT a.*, cc.*, a.id AS sid, a.name AS aname, a.email AS aemail FROM #__matukio_bookings

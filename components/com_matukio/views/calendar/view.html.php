@@ -30,18 +30,12 @@ class MatukioViewCalendar extends JViewLegacy {
             $params->merge( $menuparams );
         }
 
-
         // Todo integrate category support - in requests tmpl
         if(empty($catid)){
             $catid = $params->get('catid', 0);
         }
 
         $ue_title = $params->get('title', 'COM_MATUKIO_CALENDAR_TITLE');
-        //$number = $params->get('number', 10);
-        $orderby = $params->get('orderby', 'begin ASC');
-
-        $model = $this->getModel();
-        //$events = $model->getEvents($catid, 100, $orderby);
 
         MatukioHelperUtilsBasic::expandPathway(JTEXT::_('COM_MATUKIO_UPCOMING_EVENTS'), "");
 

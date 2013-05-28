@@ -16,6 +16,18 @@ class MatukioHelperSettings
     private static $instance;
 
     /**
+     * @param string $title
+     * @param string $default
+     * @return mixed
+     */
+    public static function _($title = '', $default = ''){
+        if (!isset(self::$instance)) {
+            self::$instance = self::_loadSettings();
+        }
+        return self::$instance->get($title, $default);
+    }
+
+    /**
      *
      * @param <type> $title - the name of the variable
      * @param <type> $eventlist - eventlist value

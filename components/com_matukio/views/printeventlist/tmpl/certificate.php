@@ -1,4 +1,4 @@
-<?php
+ <?php
 /**
  * Matukio
  * @package Joomla!
@@ -17,23 +17,24 @@ $database->setQuery("SELECT * FROM #__matukio_bookings WHERE id='" . $this->uid 
 $booking = $database->loadObject();
 
 $database->setQuery("SELECT * FROM #__matukio WHERE id='" . $booking->semid .  "'");
-$rows = $database->loadObjectList();
-$row = &$rows[0];
+$kurs = $database->loadObject();
 
-if ($booking->userid == 0) {
-    $user = JFactory::getUser(0);
-    $user->name = $booking->name;
-    $user->email = $booking->email;
-} else {
-    $user = JFactory::getuser($booking->userid);
+$tmpl_code = MatukioHelperTemplates::getTemplate("export_certificate")->value;
+
+if(!empty($kurs->certicate_code)) {
+    $tmpl_code = $kurs->certificate_code; // Custom code for certificates
+}
+// Parse language strings
+$tmpl_code = MatukioHelperTemplates::replaceLanguageStrings($tmpl_code);
+
+echo "\n<body onload=\" parent.sbox-window.focus(); parent.sbox-window.print(); \">";
+
+$replaces = MatukioHelperTemplates::getReplaces($kurs, $booking);
+
+foreach($replaces as $key => $replace) {
+    $tmpl_code = str_replace($key, $replace, $tmpl_code);
 }
 
-$html = "\n<body onload=\" parent.sbox-window.focus(); parent.sbox-window.print(); \">";
+echo $tmpl_code;
 
-if (MatukioHelperSettings::getSettings('certificate_htmlcode', '') != "") {
-    $html .= MatukioHelperSettings::getSettings('certificate_htmlcode', '');
-} else {
-    $html .= JTEXT::_('COM_MATUKIO_CREATE_CERTIFICATE_CODE_IN_BACKEND_SETTINGS');
-}
-$html .= "</body></html>";
-echo MatukioHelperUtilsEvents::replaceSEMConstants($html, $row, $user);
+echo "</body></html>";

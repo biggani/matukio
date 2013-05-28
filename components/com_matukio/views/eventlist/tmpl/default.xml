@@ -7,6 +7,16 @@
     <!-- joomla 1.6 -->
     <fields name="params">
         <fieldset name="basic">
+            <field name="template" type="list" default="default" required="true"
+                   label="COM_MATUKIO_EVENTLIST_TEMPLATE">
+                <option value="default">Default</option>
+                <option value="modern">Modern</option>
+            </field>
+
+            <field name="title" type="text" size="50" default="COM_MATUKIO_EVENTS_OVERVIEW"
+                   label="COM_MATUKIO_EVENTS_OVERVIEW">
+            </field>
+
             <field name="startcat" type="category" extension="com_matukio" size="5" default="0"
                    label="COM_MATUKIO_EVENTLIST_CATEGORY">
                 <option value="0">JALL</option>
@@ -22,6 +32,13 @@
                 <option value="50">50</option>
                 <option value="100">100</option>
             </field>
+        </fieldset>
+        <fieldset name="advanced">
+
+            <field name="orderby" type="text" size="50" default="a.begin ASC" required="true"
+                   label="COM_MATUKIO_UPCOMING_EVENTS_ORDER_BY">
+            </field>
+
         </fieldset>
     </fields>
 </metadata>

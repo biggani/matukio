@@ -35,6 +35,8 @@ JLoader::register('MatukioHelperUtilsEvents', JPATH_COMPONENT_ADMINISTRATOR . '/
 JLoader::register('MatukioHelperRoute', JPATH_COMPONENT_ADMINISTRATOR . '/helper/util_route.php');
 JLoader::register('MatukioHelperCategories', JPATH_COMPONENT_ADMINISTRATOR . '/helper/util_categories.php');
 JLoader::register('MatukioHelperPayment', JPATH_COMPONENT_ADMINISTRATOR . '/helper/util_payment.php');
+JLoader::register('MatukioHelperTemplates', JPATH_COMPONENT_ADMINISTRATOR . '/helper/util_templates.php');
+JLoader::register('MatukioHelperOrganizer', JPATH_COMPONENT_ADMINISTRATOR . '/helper/util_organizer.php');
 
 
 // thank you for this black magic Nickolas :)

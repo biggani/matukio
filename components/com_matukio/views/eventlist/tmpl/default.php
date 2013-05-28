@@ -19,29 +19,6 @@ JHTML::_('behavior.modal');
 JHTML::_('stylesheet', 'media/com_matukio/css/matukio.css');
 JHTML::_('script', 'media/com_matukio/js/matukio.js');
 
-//$script = "window.addEvent('domready', function () {
-//                $(\"search_field\").addEvent('keyup', function (e) {
-//                    if (e.code == 13) {
-//                        //alert(e.code);
-//                        var search = $('search_field').get('value');
-//                        var lim = $('limit').get('value');
-//                        var art = $('hidden_art').get('value');
-//                        var catid = $('catid').get('value');
-//
-//                        var jsonRequest = new Request.JSON({url: 'index.php?option=com_matukio&view=requests&task=route_link',
-//                            onSuccess: function(url){
-//                                window.location= url.link;
-//                        }}).get({'link': \"index.php?option=com_matukio&view=eventlist&art=\" + art + \"&catid=\" + catid + \"&search=\" +search + \"&limit=\" + lim});
-//
-//                        e.stop();
-//                        return false;
-//                    }
-//                });
-//            });
-//            ";
-
-//$document->addScriptDeclaration($script);
-
 $params = JComponentHelper::getParams( 'com_matukio' );
 $menuitemid = JFactory::getApplication()->input->get( 'Itemid' );
 if ($menuitemid)
@@ -98,14 +75,13 @@ if (count($this->rows) > 0) {
         $knopfoben .= "<a href=\"" . $href . "\" target=\"_new\" title=\"" . JTEXT::_('COM_MATUKIO_DOWNLOAD_CALENDER_FILE') . "\" border=\"0\">" . JHTML::_('image',
             MatukioHelperUtilsBasic::getComponentImagePath() . '3316.png', null, array('border' => '0', 'align' => 'absmiddle')) . "</a>";
 
-        $knopfunten .= " <button class=\"mat_button\" style=\"cursor:pointer;\" type=\"button\" onClick=\"window.open('" . $href . "');\"><img src=\""
+        $knopfunten .= " <span class=\"mat_button\" style=\"cursor:pointer;\" type=\"button\" onClick=\"window.open('" . $href . "');\"><img src=\""
             . MatukioHelperUtilsBasic::getComponentImagePath() . "3316.png\" border=\"0\" align=\"absmiddle\">&nbsp;" . JTEXT::_('COM_MATUKIO_DOWNLOAD_CALENDER_FILE')
-            . "</button>";
+            . "</span>";
     }
 
-
     $knopfoben .= MatukioHelperUtilsEvents::getPrintWindow(($this->art + 2), '', '', '');
-    $knopfunten .= "&nbsp;" . MatukioHelperUtilsEvents::getPrintWindow(($this->art + 2), '', '', 'b');
+$knopfunten .= "&nbsp;" . MatukioHelperUtilsEvents::getPrintWindow(($this->art + 2), '', '', 'b');
 }
 if (MatukioHelperSettings::getSettings('event_buttonposition', 2) == 0 OR MatukioHelperSettings::getSettings('event_buttonposition', 2) == 2) {
     echo $knopfoben;
@@ -132,6 +108,7 @@ if ($this->art == 0) {
     $headline = array(JTEXT::_('COM_MATUKIO_MY_OFFERS'), JTEXT::_('COM_MATUKIO_ALL_OFFERED_EVENTS'));
     $navioben1 = explode(" ", MatukioHelperSettings::getSettings('frontend_topnavoffermodules', 'SEM_NUMBER SEM_SEARCH SEM_TYPES SEM_RESET'));
 }
+
 MatukioHelperUtilsEvents::printHeading($headline[0], $headline[1]);
 
 // ------------------------------------------------
@@ -188,7 +165,7 @@ if ($n > 0) {
 
     // Schleife beginnen
     for ($i = 0, $n; $i < $n; $i++) {
-        $row = &$this->rows[$i];
+        $row = $this->rows[$i];
 
         // Pruefung, ob Lehrgang buchbar
         $buchopt = MatukioHelperUtilsEvents::getEventBookableArray($this->art, $row, $my->id);
@@ -252,14 +229,7 @@ if ($n > 0) {
             $linksbild = MatukioHelperUtilsBasic::getComponentImagePath() . "2604.png";
             $zusimage = MatukioHelperUtilsBasic::getComponentImagePath() . "2200.png";
         }
-        //        if($row->catimage!="") {
-        //          $linksbild = sem_f007(0).$row->catimage;
-        //          $zusbild = 1;
-        //        }
-        //        if($row->image!="" AND $config->get('sem_p032','')==1) {
-        //          $linksbild = sem_f007(1).$row->image;
-        //          $zusbild = 1;
-        //        }
+
         if($row->image!="" AND  MatukioHelperSettings::getSettings('event_image', 1)==1) {
             $linksbild = MatukioHelperUtilsBasic::getEventImagePath(1).$row->image;
             $zusbild = 1;
@@ -289,7 +259,7 @@ if ($n > 0) {
                         $klasse = "sem_fees_notpaid";
                     }
                     if ($buchopt[2][0]->nrbooked > 1) {
-                        $gebuehr = MatukioHelperUtilsEvents::getFormatedCurrency($row->fees * $buchopt[2][0]->nrbooked);
+                        $gebuehr = MatukioHelperUtilsEvents::getFormatedCurrency($buchopt[2][0]->payment_brutto);
                     }
                 }
             }
@@ -362,10 +332,10 @@ if ($n > 0) {
         }
 
         // Anzeige der Teilnehmer erlauben          -- todo fix acl
-        if ((MatukioHelperSettings::getSettings('frontend_userviewteilnehmer', 0) == 2 AND MatukioHelperUtilsBasic::getUserLevel() > 1 // Falls registrierte sehen dürfen und user registriert ist und art 0 ist
+        if ((MatukioHelperSettings::getSettings('frontend_userviewteilnehmer', 0) == 2 AND $my->id > 0 // Falls registrierte sehen dürfen und user registriert ist und art 0 ist
             AND $this->art == 0) OR (MatukioHelperSettings::getSettings('frontend_userviewteilnehmer', 0) == 1 //    ODER Jeder (auch unregistrierte die Teilnehmer sehen dürfen und art 0 ist
             AND $this->art == 0)
-            OR (MatukioHelperSettings::getSettings('frontend_teilnehmerviewteilnehmer', 0) > 0 AND MatukioHelperUtilsBasic::getUserLevel() > 1 // Wenn  Teilnehmer Teilnehmer sehen dürfen (wtf ist der check ob er teilnehmer ist?? nur mit art = 1??)
+            OR (MatukioHelperSettings::getSettings('frontend_teilnehmerviewteilnehmer', 0) > 0 AND $my->id > 0 // Wenn  Teilnehmer Teilnehmer sehen dürfen (wtf ist der check ob er teilnehmer ist?? nur mit art = 1??)
                 AND $this->art == 1)
             OR (MatukioHelperSettings::getSettings('frontend_ownereditevent', 1) > 0 AND $this->art == 2) //Falls Frontendedit event 1 ist und art = 2
         ) {

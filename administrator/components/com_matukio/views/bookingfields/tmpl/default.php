@@ -13,6 +13,8 @@ defined('_JEXEC') or die('Restricted access');
 
 JHTML::_('behavior.tooltip');
 jimport('joomla.filter.output');
+
+JHTML::_('stylesheet', 'media/com_matukio/backend/css/matukio.css');
 ?>
 <script type="text/javascript">
     <?php
@@ -36,7 +38,7 @@ jimport('joomla.filter.output');
 <form action="index.php" method="post" name="adminForm" id="adminForm">
     <table>
         <tr>
-            <td align="left" width="100%"><?php echo JText::_('JSEARCH_FILTER_LABEL'); ?>:
+            <td align="left" width="100%"><?php echo JText::_('JSEARCH_FILTER_LABEL'); ?>
                 <input type="text" name="search" id="search" value="<?php echo $this->filter['search']; ?>"
                        class="text_area" onchange="document.adminForm.submit();"/>
                 <button onclick="this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
@@ -51,7 +53,6 @@ jimport('joomla.filter.output');
             </td>
         </tr>
     </table>
-
     <div id="editcell">
         <table class="adminlist">
             <thead>
@@ -61,7 +62,7 @@ jimport('joomla.filter.output');
                     <input type="checkbox" name="toggle" value=""
                            onclick="Joomla.checkAll(this);"/>
                 </th>
-                <th class="title"><?php echo JHTML::_('grid.sort', 'JGLOBAL_TITLE', 'cc.$field_name', $this->filter['order_Dir'],
+                <th class="title"><?php echo JHTML::_('grid.sort', 'COM_MATUKIO_FIELD_NAME', 'cc.$field_name', $this->filter['order_Dir'],
                                             $this->filter['order']); ?></th>
                 <th width="7%"><?php echo JText::_('JGRID_HEADING_ID'); ?></th>
                 <th width="30%"><?php echo JText::_('COM_MATUKIO_LABEL'); ?></th>
@@ -136,3 +137,5 @@ jimport('joomla.filter.output');
     <input type="hidden" name="filter_order_Dir" value="<?php echo $this->filter['order_Dir']; ?>"/>
     <?php echo JHTML::_('form.token'); ?>
 </form>
+
+<?php echo MatukioHelperUtilsBasic::getCopyright(); ?>

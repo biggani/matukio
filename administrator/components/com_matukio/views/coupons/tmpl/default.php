@@ -14,7 +14,7 @@ defined('_JEXEC') or die('Restricted access');
 JHTML::_('behavior.tooltip');
 jimport('joomla.filter.output');
 
-//JHtmlBehavior::framework();
+JHTML::_('stylesheet', 'media/com_matukio/backend/css/matukio.css');
 
 ?>
 <script type="text/javascript">
@@ -28,7 +28,7 @@ jimport('joomla.filter.output');
             var view = new Element('input', {
                 type:'hidden',
                 name:'view',
-                'value':'bookingfields'
+                'value':'coupons'
             });
 
             view.inject(document.adminForm);
@@ -131,3 +131,5 @@ jimport('joomla.filter.output');
     <input type="hidden" name="filter_order_Dir" value="<?php echo $this->filter['order_Dir']; ?>"/>
     <?php echo JHTML::_('form.token'); ?>
 </form>
+
+<?php echo MatukioHelperUtilsBasic::getCopyright(); ?>

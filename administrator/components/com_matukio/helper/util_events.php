@@ -62,8 +62,7 @@ class MatukioHelperUtilsEvents
 
     public static function getFormatedCurrency($betrag)
     {
-
-        return $betrag; // TODO FIX THIS
+        return number_format($betrag, MatukioHelperSettings::getSettings('dezimal_stellen', 2), MatukioHelperSettings::getSettings('dezimal_trennzeichen', '.'), ' '); // TODO Improve
     }
 
 
@@ -221,7 +220,7 @@ class MatukioHelperUtilsEvents
     public static function getEventlistHeader($tab)
     {
         $confusers = JComponentHelper::getParams('com_users');
-        $reglevel = MatukioHelperUtilsBasic::getUserLevel();
+        //$reglevel = MatukioHelperUtilsBasic::getUserLevel();
         switch ($tab) {
             case "2":
                 $tabnum = array(0, 1, 0);
@@ -234,7 +233,7 @@ class MatukioHelperUtilsEvents
                 break;
         }
         $html = "<table cellpadding=\"5\" cellspacing=\"0\" border=\"0\" width=\"100%\"><tr>";
-        if ($reglevel > 1) {
+        if (JFactory::getUser()->id > 0) {
 
             // Default View
             // semauf(0,'','');
@@ -257,19 +256,10 @@ class MatukioHelperUtilsEvents
                 . "2700.png\" border=\"0\" align=\"absmiddle\"> " . JTEXT::_('COM_MATUKIO_MY_BOOKINGS') . "</a>";
             $html .= "\n</td>";
 
-            //MatukioHelperUtilsBasic::checkUserLevel(MatukioHelperSettings::getSettings('frontend_createevents', 0));
-
-            // Own Events
-            //javascript:document.FrontForm.limitstart.value='0';semauf(2,'','');
             $linkownevents = JRoute::_("index.php?option=com_matukio&art=2");
 
-            $create_frontendevents = MatukioHelperSettings::getSettings('frontend_createevents', 0);
-
-            //if(!empty($create_frontendevents)) {
-//                if ($reglevel >= $create_frontendevents) {
-            if (JFactory::getUser()->authorise('core.create', 'com_matukio.frontend.')) {
-
-                    $html .= "\n<td class=\"sem_tab" . $tabnum[2] . "\">";
+            if (JFactory::getUser()->authorise('core.edit.own', 'com_matukio') && MatukioHelperSettings::getSettings('frontend_ownereditevent', 1)) {
+                $html .= "\n<td class=\"sem_tab" . $tabnum[2] . "\">";
                 $html .= "\n<a class=\"sem_tab\" title=\"" . JTEXT::_('COM_MATUKIO_MY_OFFERS') . "\" href=\"" . $linkownevents . "\" "
                     . MatukioHelperUtilsBasic::getMouseOverWindowStatus(JTEXT::_('COM_MATUKIO_MY_OFFERS')) . "><img src=\""
                     . MatukioHelperUtilsBasic::getComponentImagePath()
@@ -316,7 +306,7 @@ class MatukioHelperUtilsEvents
         $html .= "<td class=\"sem_notab\">&nbsp;";
         $knopfunten = "";
 
-        if ($reglevel > 1 and MatukioHelperSettings::getSettings('frontend_unregisteredshowlogin', 1) > 0) {
+        if (JFactory::getUser()->id > 0 and MatukioHelperSettings::getSettings('frontend_unregisteredshowlogin', 1) > 0) {
             $logoutlink = JRoute::_("index.php?option=com_matukio&view=matukio&task=logoutUser");
 
             $html .= JHTML::_('link', $logoutlink, JHTML::_('image', MatukioHelperUtilsBasic::getComponentImagePath() . '3232.png', null,
@@ -447,7 +437,7 @@ class MatukioHelperUtilsEvents
             $image = "240" . $imgid;
             $titel = JTEXT::_('COM_MATUKIO_YOUR_RATING');
             $href = JURI::ROOT() . "index.php?tmpl=component&s=" . MatukioHelperUtilsBasic::getRandomChar() . "&option="
-                 . JFactory::getApplication()->input->get('option') . "&cid=" . $cid . "&task=20";
+                 . JFactory::getApplication()->input->get('option') . "&cid=" . $cid . "&view=rateevent";
             $x = 500;
             $y = 280;
             return "<a title=\"" . $titel . "\" class=\"modal\" href=\"" . $href . "\" rel=\"{handler: 'iframe', size: {x: "
@@ -488,7 +478,7 @@ class MatukioHelperUtilsEvents
 // +++ Limitbox fuer Seitennavigation +++       sem_f040
 // ++++++++++++++++++++++++++++++++++++++
 
-    public static function getLimitboxSiteNav($art, $limit, $where = "eventlist")
+    public static function getLimitboxSiteNav($art, $limit, $where = "eventlist", $tmpl = "old")
     {
         $limits = array();
         $htxt = "FrontForm";
@@ -502,9 +492,14 @@ class MatukioHelperUtilsEvents
         $limits[] = JHTML::_('select.option', '50');
         $limits[] = JHTML::_('select.option', '100');
         $limits[] = JHTML::_('select.option', '0', JText::_('all'));
-//        return JHTML::_('select.genericlist', $limits, 'limit', 'class="sem_inputbox" size="1" onchange="document.'
-//            . $htxt . '.limitstart.value=0;document.' . $htxt . '.submit()"', 'value', 'text', $limit);
-        return JHTML::_('select.genericlist', $limits, 'limit', 'class="sem_inputbox" size="1" onchange="changeLimitEventlist()"', 'value', 'text', $limit);
+
+        $class = "sem_inputbox";
+
+        if($tmpl == "modern")
+            $class = "mat_inputbox";
+
+
+        return JHTML::_('select.genericlist', $limits, 'limit', 'class="' . $class . '" size="1" onchange="changeLimitEventlist()"', 'value', 'text', $limit);
 
     }
 
@@ -535,12 +530,8 @@ class MatukioHelperUtilsEvents
             }
             $query = "SELECT * FROM #__matukio_bookings WHERE semid='" . $row->id . "' AND userid = '" . $usrid . "'";
             $database->setQuery($query);
-            //echo $query;
         }
         $temp = $database->loadObjectList();
-
-        //var_dump($temp);
-        //die("asdf");
 
         $freieplaetze = $row->maxpupil - $gebucht;
         if ($freieplaetze < 0) {
@@ -647,7 +638,8 @@ class MatukioHelperUtilsEvents
 
     public static function getColorDescriptions($green, $yellow, $red)
     {
-        $html = MatukioHelperUtilsEvents::getTableHeader(4) . "<tr>";
+        $html = '<table cellpadding="4" class="mat_table" border="0" width="100%" style="margin: 15px 0 8px 0;">';
+        $html .= "<tr>";
         if ($green != "") {
             $html .= MatukioHelperUtilsEvents::getTableCell("<img src=\"" . MatukioHelperUtilsBasic::getComponentImagePath()
                 . "2502.png\" border=\"0\" align=\"absmiddle\"> " . $green, 'd', 'c', '', 'sem_nav');
@@ -660,7 +652,8 @@ class MatukioHelperUtilsEvents
             $html .= MatukioHelperUtilsEvents::getTableCell("<img src=\"" . MatukioHelperUtilsBasic::getComponentImagePath()
                 . "2500.png\" border=\"0\" align=\"absmiddle\"> " . $red, 'd', 'c', '', 'sem_nav');
         }
-        $html .= "</tr>" . MatukioHelperUtilsEvents::getTableHeader('e');
+        $html .= "</tr>";
+        $html .= "</table>";
         return $html;
     }
 
@@ -734,11 +727,7 @@ class MatukioHelperUtilsEvents
         $y = 550;
         $htxt = "<a class=\"modal\" rel=\"{handler: 'iframe', size: {x: " . $x . ", y: " . $y . "}}\" href=\"" . $href;
 
-//        $btnclass = "button";
-//
-//        if($class == "modern"){
-            $btnclass = "mat_button";
-        //}
+        $btnclass = "mat_button";
 
         if ($art == 1 AND MatukioHelperUtilsBasic::getUserLevel() > 1 AND MatukioHelperSettings::getSettings('sendmail_contact', 1) > 0) {
             $html = $htxt . "19\" title=\"" . JTEXT::_('COM_MATUKIO_CONTACT') . "\"><img src=\"" . $dir . "1732.png\" border=\"0\" align=\"absmiddle\"></a>";
@@ -750,7 +739,10 @@ class MatukioHelperUtilsEvents
             $html = $htxt . "30\"><span class=\"" . $btnclass . "\" type=\"button\"><img src=\"" . $dir . "1716.png\" border=\"0\" align=\"absmiddle\">&nbsp;" . JTEXT::_('COM_MATUKIO_CONTACT') . "</span></a>";
         } else if ($art == 2) {
             $html = $htxt . "19\"><span class=\"" . $btnclass . "\" type=\"button\"><img src=\"" . $dir . "1716.png\" border=\"0\" align=\"absmiddle\">&nbsp;" . JTEXT::_('COM_MATUKIO_CONTACT') . "</span></a>";
+        } else if ($art == "organizer") {
+            $html = $htxt . "19\"><span class=\"" . $btnclass . "\" type=\"button\"><img src=\"" . $dir . "1716.png\" border=\"0\" align=\"absmiddle\">&nbsp;" . JTEXT::_('COM_MATUKIO_CONTACT') . "</span></a>";
         }
+
         return $html;
     }
 
@@ -766,8 +758,6 @@ class MatukioHelperUtilsEvents
         $zusfeld[] = array($row->file1down, $row->file2down, $row->file3down, $row->file4down, $row->file5down);
         return $zusfeld;
     }
-
-
 
     // ++++++++++++++++++++++++++++++++++++++
     // +++ Bestaetigungs-Emails versenden +++         sem_f050
@@ -810,6 +800,7 @@ class MatukioHelperUtilsEvents
             $gebucht = MatukioHelperUtilsEvents::calculateBookedPlaces($event);
             $gebucht = $gebucht->booked;
             switch ($art) {
+                // Booking confirmation
                 case 1:
                     if ($gebucht > $event->maxpupil) {
                         if ($event->stopbooking = 0) {
@@ -821,6 +812,7 @@ class MatukioHelperUtilsEvents
                         $body1 .= JTEXT::_('COM_MATUKIO_ADMIN_BOOKED_EVENT_FOR_YOU');
                     }
                     $body2 .= JTEXT::_('COM_MATUKIO_ADMIN_MADE_FOLLOWING_RESERVATION');
+
                     break;
                 case 2:
                     $body1 .= JTEXT::_('COM_MATUKIO_YOU_HAVE_CANCELLED');
@@ -888,19 +880,59 @@ class MatukioHelperUtilsEvents
                 $replyname = $publisher->name;
                 $replyto = $publisher->email;
                 $email = $user->email;
-                $body = $abody . $body1 . MatukioHelperUtilsEvents::getEmailBody($event, $booking, $user);
+                if($art == 1 || $art == 2 || $art == 3) {
+                    // New booking templates
+
+                    $tmpl_name = MatukioHelperTemplates::getEmailTemplateName($art);
+                    $tmpl = MatukioHelperTemplates::getEmailBody($tmpl_name, $event, $booking);
+
+                    if(MatukioHelperSettings::getSettings('email_html', 1)) {
+                        $body = $tmpl->value;
+                    } else {
+                        $body = $tmpl->value_text;
+                    }
+
+                    $subject =  $tmpl->subject;
+                    $mailer = JFactory::getMailer();
+                    $success = $mailer->sendMail($from, $sender, $email, $subject, $body, MatukioHelperSettings::getSettings('email_html', 1),
+                                null, null, null, $replyto, $replyname);
+                } else {
+                    // Old ones
+                    $body = $abody . $body1 . MatukioHelperUtilsEvents::getEmailBody($event, $booking, $user);
+                    $mailer = JFactory::getMailer();
+                    $success = $mailer->sendMail($from, $sender, $email, $subject, $body, 1,
+                        null, null, null, $replyto, $replyname);
+                }
                 //var_dump($email);
-                $mailer = JFactory::getMailer();
-                $success = $mailer->sendMail($from, $sender, $email, $subject, $body, 1, null, null, null, $replyto, $replyname);
+
             }
             if (MatukioHelperSettings::getSettings('sendmail_owner', 1) > 0 AND $art < 11) {
                 $replyname = $user->name;
                 $replyto = $user->email;
                 $email = $publisher->email;
-                //var_dump($email);
-                $body = $abody . $body2 . MatukioHelperUtilsEvents::getEmailBody($event, $booking, $user);
-                $mailer = JFactory::getMailer();
-                $success = $mailer->sendMail($from, $sender, $email, $subject, $body, 1, null, null, null, $replyto, $replyname);
+                if($art == 1 || $art == 2 || $art == 3) {
+                    // New booking templates
+
+                    $tmpl_name = MatukioHelperTemplates::getEmailTemplateName($art);
+                    $tmpl = MatukioHelperTemplates::getEmailBody($tmpl_name, $event, $booking);
+
+                    if(MatukioHelperSettings::getSettings('email_html', 1)) {
+                        $body = $tmpl->value;
+                    } else {
+                        $body = $tmpl->value_text;
+                    }
+
+                    $subject =  $tmpl->subject;
+                    $mailer = JFactory::getMailer();
+                    $success = $mailer->sendMail($from, $sender, $email, $subject, $body, MatukioHelperSettings::getSettings('email_html', 1),
+                        null, null, null, $replyto, $replyname);
+                } else {
+                     // Old ones
+                     $body = $abody . $body2 . MatukioHelperUtilsEvents::getEmailBody($event, $booking, $user);
+                     $mailer = JFactory::getMailer();
+                     $success = $mailer->sendMail($from, $sender, $email, $subject, $body, 1, null, null, null, $replyto, $replyname);
+                }
+
                 //die($cid . " " .  $uid . " " . $art . " " . $success);
             }
         }
@@ -1005,6 +1037,7 @@ class MatukioHelperUtilsEvents
 // +++ Kategorienliste ausgeben     +++        sem_f010
 // ++++++++++++++++++++++++++++++++++++++
 
+    // TODO update to ACL!!
     public static function getCategoryListArray($catid)
     {
         jimport('joomla.database.table');
@@ -1125,9 +1158,9 @@ class MatukioHelperUtilsEvents
     public static function getOranizerList($pub)
     {
         // TODO update !!!
-        $publevel = MatukioHelperSettings::getSettings('frontend_createevents', 0); //SettingsHelper::getSettings('frontend_createevents', 0);
-        $database = JFactory::getDBO();
-        $where = array();
+//        $publevel = MatukioHelperSettings::getSettings('frontend_createevents', 0); //SettingsHelper::getSettings('frontend_createevents', 0);
+//        $database = JFactory::getDBO();
+//        $where = array();
 //        $where [] = "usertype<>'Registered'";
 //        if ($publevel > 3) {
 //            $where [] = "usertype<>'Author'";
@@ -1140,13 +1173,15 @@ class MatukioHelperUtilsEvents
 //        } else if ($publevel > 7) {
 //            $where [] = "usertype<>'Administrator'";
 //        }
-        $database->setQuery("SELECT id AS value, name AS text FROM #__users"
-                . (count($where) ? "\nWHERE " . implode(' AND ', $where) : "")
-                . "\nORDER BY name"
-        );
-        $benutzer = $database->loadObjectList();
-        return JHTML::_('select.genericlist', array_merge($benutzer), 'publisher', 'class="sem_inputbox" size="1"',
-            'value', 'text', $pub);
+//        $database->setQuery("SELECT id AS value, name AS text FROM #__users"
+//                . (count($where) ? "\nWHERE " . implode(' AND ', $where) : "")
+//                . "\nORDER BY name"
+//        );
+//        $benutzer = $database->loadObjectList();
+//        return JHTML::_('select.genericlist', array_merge($benutzer), 'publisher', 'class="sem_inputbox" size="1"',
+//            'value', 'text', $pub);
+
+        return JHTML::_('list.users', "publisher", $pub, false, null, "name", 0);
     }
 
     // ++++++++++++++++++++++++++++++++++++++++++++
@@ -1176,9 +1211,6 @@ class MatukioHelperUtilsEvents
         }
         $html .= "<tr><td width=\"100%\">";
 
-
-//        $pane =& JPane::getInstance('sliders', array('allowAllClose' => true));
-
         $options = array(
             'onActive' => 'function(title, description){
                 description.setStyle("display", "block");
@@ -1192,8 +1224,6 @@ class MatukioHelperUtilsEvents
             'startOffset' => 0,  // 0 starts on the first tab, 1 starts the second, etc$
             'useCookie' => true, // this must not be a string. Don't use quotes.
         );
-
-
 
 
         $html .=  JHtml::_('sliders.start', 'mat_group', $options);
@@ -1291,6 +1321,18 @@ class MatukioHelperUtilsEvents
         $radios[] = JHTML::_('select.option', 1, JTEXT::_('COM_MATUKIO_YES'));
         $radios[] = JHTML::_('select.option', 0, JTEXT::_('COM_MATUKIO_NO'));
 
+        if(empty($row->showbegin)) {
+            $row->showbegin = 1;
+        }
+
+        if(empty($row->showend)) {
+            $row->showend = 1;
+        }
+
+        if(empty($row->showbooked)) {
+            $row->showbooked = 1;
+        }
+
         // Veranstaltungsbeginn
         $htxt = JHTML::_('calendar', JHtml::_('date',$row->begin, 'Y-m-d H:i:s'), '_begin_date', '_begin_date', '%Y-%m-%d %H:%M:%S', array('class' => 'inputbox', 'size' => '22'));
         $htxt .= $reqfield . " - " . JTEXT::_('COM_MATUKIO_DISPLAY') . " " . JHTML::_('select.radiolist', $radios, 'showbegin', 'class="sem_inputbox"', 'value', 'text', $row->showbegin);
@@ -1328,11 +1370,27 @@ class MatukioHelperUtilsEvents
             style=\"width:500px\" width=\"500\">" . $row->place . "</textarea>" . $reqfield, 'd', 'l', '80%', 'sem_edit') . "</tr>";
 
         // Veranstalter
-        if ($reglevel > 5 AND $art != 3) {
+        if ($art != 3) {
             $html .= "<tr>" . MatukioHelperUtilsEvents::getTableCell(JTEXT::_('COM_MATUKIO_ORGANISER') . ':'
                 . MatukioHelperUtilsBasic::createToolTip(JTEXT::_('COM_MATUKIO_ORGANISER_MANAGE_FRONTEND')), 'd', 'r', '20%', 'sem_edit')
                 . MatukioHelperUtilsEvents::getTableCell(MatukioHelperUtilsEvents::getOranizerList($row->publisher) . $reqfield, 'd', 'l', '80%', 'sem_edit') . "</tr>";
         }
+
+        if($row->webinar == 0) {
+            $webinar = "<input type=\"radio\" name=\"webinar\" id=\"webinar\" value=\"1\" class=\"sem_inputbox\""
+                . " /><label for=\"webinar\">" . JTEXT::_('COM_MATUKIO_YES') . "</label> <input type=\"radio\"
+                name=\"webinar\" id=\"webinar\" value=\"0\" class=\"sem_inputbox\" checked=\"checked\" /><label for=\"webinar\">"
+                . JTEXT::_('COM_MATUKIO_NO') . "</label>";
+        } else {
+            $webinar = "<input type=\"radio\" name=\"webinar\" id=\"webinar\" value=\"1\" class=\"sem_inputbox\" checked=\"checked\""
+                . " /><label for=\"webinar\">" . JTEXT::_('COM_MATUKIO_YES') . "</label> <input type=\"radio\"
+                name=\"webinar\" id=\"webinar\" value=\"0\" class=\"sem_inputbox\" /><label for=\"webinar\">"
+                . JTEXT::_('COM_MATUKIO_NO') . "</label>";
+        }
+
+        $html .= "<tr>" . MatukioHelperUtilsEvents::getTableCell(JTEXT::_('COM_MATUKIO_WEBINAR') . ':', 'd', 'r', '20%', 'sem_edit')
+            . MatukioHelperUtilsEvents::getTableCell($webinar, 'd', 'l', '80%', 'sem_edit') . "</tr>";
+
 
         // Plätze
         $htxt = "<input class=\"sem_inputbox\" type=\"text\" name=\"maxpupil\" size=\"3\" maxlength=\"5\" value=\""
@@ -1350,6 +1408,7 @@ class MatukioHelperUtilsEvents
         $html .= "<tr>" . MatukioHelperUtilsEvents::getTableCell(JTEXT::_('COM_MATUKIO_MAX_BOOKABLE_PLACES') . ':'
             . MatukioHelperUtilsBasic::createToolTip(JTEXT::_('COM_MATUKIO_CANNOT_BOOK_ONLINE')), 'd', 'r', '20%', 'sem_edit');
 
+
         $bookableplaces = $row->nrbooked;
 
         if(empty($bookableplaces)) {
@@ -1366,6 +1425,9 @@ class MatukioHelperUtilsEvents
             $htxt = JHTML::_('select.genericlist', $radios, 'nrbooked', 'class="sem_inputbox" ', 'value', 'text', $row->nrbooked);
         }
         $html .= MatukioHelperUtilsEvents::getTableCell($htxt . $reqfield, 'd', 'l', '80%', 'sem_edit') . "</tr>";
+
+
+
         $html .= "</table>";
         //$html .= $pane->endPanel();
 
@@ -1453,12 +1515,19 @@ class MatukioHelperUtilsEvents
         }
         $html .= "<tr>" . MatukioHelperUtilsEvents::getTableCell(JTEXT::_('COM_MATUKIO_FEES') . ':', 'd', 'r', '20%', 'sem_edit')
             . MatukioHelperUtilsEvents::getTableCell($htxt, 'd', 'l', '80%', 'sem_edit') . "</tr>";
+
+        // Top event
+        $html .= "<tr>" . MatukioHelperUtilsEvents::getTableCell(JTEXT::_('COM_MATUKIO_TOP_EVENT') . ':', 'd', 'r', '20%', 'sem_edit')
+            . MatukioHelperUtilsEvents::getTableCell(JHTML::_("select.booleanlist", "top_event", 'class="mat_inputbox"',  $row->top_event), 'd', 'l', '80%', 'sem_edit') . "</tr>";
+
+        // Hot event
+        $html .= "<tr>" . MatukioHelperUtilsEvents::getTableCell(JTEXT::_('COM_MATUKIO_HOT_EVENT') . ':', 'd', 'r', '20%', 'sem_edit')
+            . MatukioHelperUtilsEvents::getTableCell(JHTML::_("select.booleanlist", "hot_event", 'class="mat_inputbox"', $row->hot_event), 'd', 'l', '80%', 'sem_edit') . "</tr>";
+
+
         $html .= "</table>";
-        //$html .= $pane->endPanel();
 
         // ### Panel 3 ###
-
-        //$html .= $pane->startPanel(JTEXT::_('COM_MATUKIO_GENERAL_INPUT_FIELDS'), 'panel3');
 
         $html .= JHtml::_('sliders.panel', JText::_( 'COM_MATUKIO_GENERAL_INPUT_FIELDS' ), 'panel3' );
 
@@ -1538,6 +1607,18 @@ class MatukioHelperUtilsEvents
             $html .= "</table>";
 //            $html .= $pane->endPanel();
         }
+
+        $html .= JHtml::_('sliders.panel', JText::_( 'COM_MATUKIO_OVERRIDES' ), 'panel5' );
+
+        $editor = JFactory::getEditor();
+
+        $html .= "<table width=\"100%\">";
+        $html .= "<tr><td>" . JText::_("COM_MATUKIO_OVERRIDES_INTRO") . "</td></tr>";
+        $html .= "<tr><td>" . JText::_("COM_MATUKIO_CUSTOM_BOOKING_MAIL_TEXT") . ":</td></tr>";
+        $html .= "<tr><td>" .  $editor->display("booking_mail", $row->booking_mail, 800, 300, 40, 20, 1) . "</td></tr>";
+        $html .= "<tr><td>" . JText::_("COM_MATUKIO_CUSTOM_CERTIFICATE_CODE") . ":</td></tr>";
+        $html .= "<tr><td>" .  $editor->display("certificate_code", $row->certificate_code, 800, 300, 40, 20, 1) . "</td></tr>";
+        $html .= "</table>";
 
         //$html .= $pane->endPane();
 
@@ -1749,5 +1830,7 @@ class MatukioHelperUtilsEvents
 
         return $link;
     }
-    
+
+
+
 }

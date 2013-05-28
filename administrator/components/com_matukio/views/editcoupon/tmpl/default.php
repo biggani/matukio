@@ -21,6 +21,7 @@ else
 JHTML::_('behavior.calendar');
 JHTML::_('behavior.tooltip');
 
+JHTML::_('stylesheet', 'media/com_matukio/backend/css/matukio.css');
 ?>
 <div id="matukio" class="matukio">
     <form action="index.php" method="post" name="adminForm" id="adminForm" class="form" enctype="multipart/form-data">
@@ -29,22 +30,25 @@ JHTML::_('behavior.tooltip');
             <table>
                 <tr>
                     <td width="200" align="left" class="key">
-                        <?php echo JText::_('COM_MATUKIO_COUPON_CODE'); ?>:
+                         <span class="editlinktip hasTip matTip" title="<?php echo JText::_("COM_MATUKIO_TOOLTIP_COUPON_CODE");
+                         ?>"><img src="../media/com_matukio/images/info.png" align="right" style="float: right !important;"/></span><?php echo JText::_('COM_MATUKIO_COUPON_CODE'); ?>:
                     </td>
                     <td>
-                        <input class="text_area" type="text" name="code" id="code" size="50" maxlength="250" value="<?php echo $this->coupon->code; ?>" />
+                       <input class="text_area" type="text" name="code" id="code" size="50" maxlength="250" value="<?php echo $this->coupon->code; ?>" />
                     </td>
                 </tr>
                 <tr>
                     <td width="100"  class="key">
-                        <?php echo JText::_('COM_MATUKIO_VALUE'); ?>:
+                        <span class="editlinktip hasTip matTip" title="<?php echo JText::_("COM_MATUKIO_TOOLTIP_COUPON_VALUE");
+                        ?>"><img src="../media/com_matukio/images/info.png" align="right" style="float: right !important;"/></span><?php echo JText::_('COM_MATUKIO_VALUE'); ?>:
                     </td>
                     <td>
                         <input class="text_area" type="text" size="10" maxlength="15" name="value" id="value" value="<?php echo $this->coupon->value; ?>" />
                 </tr>
                 <tr>
                     <td width="100" class="key">
-                        <?php echo JText::_('COM_MATUKIO_PERCENT'); ?>:
+                        <span class="editlinktip hasTip matTip" title="<?php echo JText::_("COM_MATUKIO_TOOLTIP_PERCENT");
+                        ?>"><img src="../media/com_matukio/images/info.png" align="right" style="float: right !important;"/></span><?php echo JText::_('COM_MATUKIO_PERCENT'); ?>:
                     </td>
                     <td>
                         <?php echo $this->select_procent; ?>
@@ -75,5 +79,9 @@ JHTML::_('behavior.tooltip');
         <input type="hidden" name="view" value="editcoupon" />
         <input type="hidden" name="model" value="editcoupon" />
         <input type="hidden" name="task" value="editcoupon" />
+        <?php echo JHTML::_('form.token'); ?>
+
     </form>
 </div>
+
+<?php echo MatukioHelperUtilsBasic::getCopyright(); ?>

@@ -30,7 +30,7 @@ class MatukioViewEditBooking extends JViewLegacy {
         }
 
         // Check authorization
-        if (!JFactory::getUser()->authorise('core.edit', 'com_matukio.frontend.')) {
+        if (!JFactory::getUser()->authorise('core.edit', 'com_matukio')) {
             return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
         }
 

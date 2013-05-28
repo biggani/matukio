@@ -3,17 +3,20 @@
 */
 
 /* Calendar Header/Controls */
-.mooECal{margin:0; padding:0; width:400px; height:350px; border:1px solid #999; border-left:none; text-align:center; border-collapse:separate; font-family:Arial, Helvetica, sans-serif;}
+.mooECal{margin:0; padding:0; width: 100%; height:200px; border:1px solid #999; border-left:none; text-align:center; border-collapse:separate; font-family:Arial, Helvetica, sans-serif;}
 .mooECal li, .mooECal ul{list-style:none; display:inline; margin:0; padding:0;}
 .thControls, .ulControls{text-align:left;}
 .thControls{ border-bottom:1px solid #999; border-left:1px solid #999; height:25px;}
-.mooECal .liHeaderCal{font-size:0.8em; float:right; width:50%; text-align:center; margin-right:1%;} /* date range of current view */
+.mooECal .liHeaderCal{font-size:0.8em; float:right; width:50%; text-align:center; margin-right:20%;} /* date range of current view */
+
 .aPrevCal,.aNextCal{text-decoration:none; font-size:1.2em;} /* left/right nav arrow */
 .mooECal .liNextCal{float:right;}
+
 .mooECal .liLoading{font-size:0.6em; color:#999; letter-spacing:0.1em; margin-left:1%;}/* "loading..." text */
 /* month, week, day view links*/
-.ulViewPicker li{float:right;}
-.aViewCal{text-decoration:none; font-size:10px; margin-right:0.6em; color:#999;} 
+.ulViewPicker li{float:right; }
+.liMonthPicker {margin-right: 30px !important;}
+.aViewCal{text-decoration:none; font-size:10px;  margin-right:0.6em; color:#999;}
 .aViewCal:hover{text-decoration:underline;}
 /* mon, tues, wed ... row */
 .mooECal tr.dowRow th{border-left:1px solid #999; font-size:0.6em; text-align:center;}

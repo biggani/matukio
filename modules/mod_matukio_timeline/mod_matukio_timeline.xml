@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<extension type="module" version="2.5" method="upgrade" client="site">
+    <name>mod_matukio_timeline</name>
+    <creationDate>2013-04-16</creationDate>
+    <author>Compjoom - Yves Hoppe</author>
+    <copyright>(C) 2013 Compojoom - Yves Hoppe</copyright>
+    <license>http://www.gnu.org/licenses/gpl.html</license>
+    <authorEmail>yves@compojoom.com</authorEmail>
+    <authorUrl>http://compojoom.com</authorUrl>
+    <version>git_180c8fe</version>
+    <description>MOD_MATUKIO_TIMELINE_DESCRIPTION</description>
+    <files>
+        <file>helper.php</file>
+<file>index.html</file>
+<file module="mod_matukio_timeline">mod_matukio_timeline.php</file>
+<folder>tmpl</folder>
+    </files>
+    <languages folder="language">
+        <language tag="en-GB">en-GB/en-GB.mod_matukio_timeline.ini</language>
+    </languages>
+    <media destination="mod_matukio_timeline" folder="media/mod_matukio_timeline">
+        <folder>css</folder>
+<file>index.html</file>
+    </media>
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+
+                // -------------------------------------------------------
+                // Modulklassensuffix abfragen
+                // -------------------------------------------------------
+                <field name="moduleclass_sfx" type="text" default="" label="MOD_MATUKIO_CLASS_SUFFIX"
+                       description="MOD_MATUKIO_CLASS_SUFFIX_DESC"/>
+
+
+            </fieldset>
+
+        </fields>
+    </config>
+</extension>
+

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<extension type="module" version="1.6.0" method="upgrade" client="site">
+<extension type="module" version="2.5" method="upgrade" client="site">
     <name>mod_matukio</name>
-    <creationDate>2013-01-02</creationDate>
+    <creationDate>2013-04-16</creationDate>
     <author>Compjoom - Yves Hoppe</author>
     <copyright>(C) 2012 Compojoom - Yves Hoppe</copyright>
     <license>http://www.gnu.org/licenses/gpl.html</license>
     <authorEmail>yves@compojoom.com</authorEmail>
     <authorUrl>http://compojoom.com</authorUrl>
-    <version>2.1.10</version>
-    <description>Modul for Matukio</description>
+    <version>git_180c8fe</version>
+    <description>Old Module for Matukio (deprecated)</description>
     <files>
         <folder>images</folder>
 <file>index.html</file>
@@ -18,6 +18,9 @@
         <language tag="de-DE">de-DE/de-DE.mod_matukio.ini</language>
 <language tag="en-GB">en-GB/en-GB.mod_matukio.ini</language>
     </languages>
+    <media destination="mod_matukio" folder="media/mod_matukio">
+        
+    </media>
     <config>
         <fields name="params">
             <fieldset name="basic">

@@ -20,15 +20,23 @@ class ControlCenterView extends JViewLegacy
 	{
         $config = ControlCenterConfig::getInstance();
 
-        JToolBarHelper::title(JText::_($config->_extensionTitle) .' &ndash; '.JText::_('COMPOJOOM_CONTROLCENTER_TASK_OVERVIEW'),'controlcenter');
+        $task = JFactory::getApplication()->input->get('task','overview');
+
+        if($task == "information") {
+            JToolBarHelper::title(JText::_($config->_extensionTitle) .' &ndash; '.JText::_('COMPOJOOM_CONTROLCENTER_TASK_INFORMATION'), 'user-profile');
+        } else {
+            JToolBarHelper::title(JText::_($config->_extensionTitle) .' &ndash; '.JText::_('COMPOJOOM_CONTROLCENTER_TASK_OVERVIEW'), 'controlcenter');
+        }
+
         JToolBarHelper::help('screen.' . $config->_extensionTitle);
 
         $this->assign('config', $config);
 
-        switch(JFactory::getApplication()->input->get('task','overview'))
+        switch($task)
         {
             case 'information':
                 $this->setLayout('information');
+
                 break;
 
             case 'overview':

@@ -57,6 +57,7 @@ class MatukioHelperUtilsAdmin
             case 2:
                 $href .= "print_teilnehmerliste&art=1&cid=" . $cid;  // Teilnehmerliste  // 34
                 $image = "1932";
+                $title = JTEXT::_('COM_MATUKIO_PRINT_SIGNATURE_LIST');
                 break;
             case 3:
                 $href .= "certificate&cid=" . $cid;   // 35
@@ -66,6 +67,7 @@ class MatukioHelperUtilsAdmin
             case 4:
                 $href .= "print_teilnehmerliste&cid=" . $cid;         // Unterschriftliste
                 $image = "2032";
+                $title = JTEXT::_('COM_MATUKIO_PRINT_PARTICIPANTS_LIST');
                 break;
             case 5:
                 $href = JURI::ROOT() ."index.php?option=com_matukio&view=printeventlist&format=raw&todo=csvlist&cid=" . $cid;

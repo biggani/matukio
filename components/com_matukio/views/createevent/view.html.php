@@ -45,12 +45,12 @@ class MatukioViewCreateEvent extends JViewLegacy {
 
         if(empty($cid)){
             // Access check for creating new event
-            if (!JFactory::getUser()->authorise('core.create', 'com_matukio.frontend.')) {
+            if (!JFactory::getUser()->authorise('core.create', 'com_matukio')) {
                 return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
             }
         } else {
             // Access check for editing this event
-            if (!JFactory::getUser()->authorise('core.edit', 'com_matukio.frontend.', $cid)) {
+            if (!JFactory::getUser()->authorise('core.edit.own', 'com_matukio', $cid)) {
                 return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
             }
         }

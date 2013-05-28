@@ -34,7 +34,7 @@ class MatukioControllerParticipants extends JControllerLegacy
     public function toogleStatusPayed()
     {
 
-        if (!JFactory::getUser()->authorise('core.edit', 'com_matukio.frontend.')) {
+        if (!JFactory::getUser()->authorise('core.edit', 'com_matukio')) {
             return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
         }
 
@@ -91,7 +91,9 @@ class MatukioControllerParticipants extends JControllerLegacy
         }
         MatukioHelperUtilsEvents::sendBookingConfirmationMail($rows[0]->semid, $uid, $certmail);
 
-        $link = JRoute::_('index.php?option=com_matukio&view=participants&art=2&uid=' . $uid . "&cid=" . $cid);
+        // $link = JRoute::_('index.php?option=com_matukio&view=participants&art=2&uid=' . $uid . "&cid=" . $cid);
+        $link = JRoute::_('index.php?option=com_matukio&view=participants&art=2&cid=" . $cid); // TODO Test
+
 
         $this->setRedirect($link, $msg);
 
@@ -100,7 +102,7 @@ class MatukioControllerParticipants extends JControllerLegacy
 
     public function cancelBookingOrganizer()
     {
-        if (!JFactory::getUser()->authorise('core.edit', 'com_matukio.frontend.')) {
+        if (!JFactory::getUser()->authorise('core.edit', 'com_matukio')) {
             return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
         }
 
@@ -131,7 +133,7 @@ class MatukioControllerParticipants extends JControllerLegacy
 
     public function changeBookingOrganizer()
     {
-        if (!JFactory::getUser()->authorise('core.edit', 'com_matukio.frontend.')) {
+        if (!JFactory::getUser()->authorise('core.edit', 'com_matukio')) {
             return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
         }
 

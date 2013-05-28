@@ -1,6 +1,6 @@
 <?php
 /**
- * Tiles
+ * Matukio
  * @package Joomla!
  * @Copyright (C) 2012 - Yves Hoppe - compojoom.com
  * @All rights reserved
@@ -23,6 +23,7 @@ class MatukioControllerBookings extends JControllerLegacy
         // Register Extra tasks
         $this->registerTask('addBooking', 'editBooking');
         $this->registerTask('apply', 'save');
+        $this->registerTask('contact', 'contactParticipants');
     }
 
     /**
@@ -46,8 +47,6 @@ class MatukioControllerBookings extends JControllerLegacy
     {
         $cid = JFactory::getApplication()->input->get('cid', array(), '', 'array');
         $db = JFactory::getDBO();
-
-//        die("delet");
 
         if (count($cid)) {
             $cids = implode(',', $cid);
@@ -84,8 +83,6 @@ class MatukioControllerBookings extends JControllerLegacy
         $this->setRedirect($link, $msg);
     }
 
-    // Edit Gallery
-
     public function editBooking()
     {
         $document = JFactory::getDocument();
@@ -99,6 +96,9 @@ class MatukioControllerBookings extends JControllerLegacy
         $view->display();
     }
 
+    public function contactParticipants() {
+        die("TODO");
+    }
 
     function save()
     {
@@ -113,7 +113,7 @@ class MatukioControllerBookings extends JControllerLegacy
         $event_id = JFactory::getApplication()->input->getInt('event_id', 0);
         $uid = JFactory::getApplication()->input->getInt('uid', 0);
         $uuid = JFactory::getApplication()->input->getInt('uuid', 0);
-        $nrbooked = JFactory::getApplication()->input->getInt('nrbooked', 0);
+        $nrbooked = JFactory::getApplication()->input->getInt('nrbooked', 1);
         $userid = JFactory::getApplication()->input->getInt('userid', 0);
         $id = JFactory::getApplication()->input->getInt("id", 0);
 
@@ -127,8 +127,6 @@ class MatukioControllerBookings extends JControllerLegacy
         $event = JTable::getInstance('matukio', 'Table');
         $event->load($event_id);
 
-        //var_dump($event);
-        //echo $event_id;
         $reason = "";
 
         if (!empty($uid)) {
@@ -255,8 +253,40 @@ class MatukioControllerBookings extends JControllerLegacy
 
             $neu->newfields = $newfields;
 
-            if (!empty($event->fees)) {
+            if(!empty($event->fees)){
                 $neu->payment_method = $payment_method;
+                $payment_brutto = $event->fees * $neu->nrbooked;
+                $coupon_code = $neu->coupon_code;
+
+                if(!empty($coupon_code)) {
+
+                    $cdate = new DateTime();
+
+                    $db = JFactory::getDBO();
+                    $query= $db->getQuery(true);
+                    $query->select('*')->from('#__matukio_booking_coupons')
+                        ->where('code = ' . $db->quote($coupon_code) . ' AND published = 1 AND published_up < '
+                        . $db->quote($cdate->format('Y-m-d H:i:s')) . " AND published_down > " . $db->quote($cdate->format('Y-m-d H:i:s')));
+
+                    //echo $query;
+                    $db->setQuery( $query );
+                    $coupon = $db->loadObject();
+
+                    //var_dump($coupon);
+
+                    if(!empty($coupon)){
+                        if($coupon->procent == 1){
+                            // Get a procent value
+                            $payment_brutto = round($payment_brutto * ((100 - $coupon->value) / 100), 2);
+                        } else {
+                            $payment_brutto = $payment_brutto - $coupon->value;
+                        }
+                    } else {
+                        // Raise an error
+                        JError::raise(E_ERROR, 500, JText::_("COM_MATUKIO_INVALID_COUPON_CODE"));
+                    }
+                }
+                $neu->payment_brutto = $payment_brutto;
             }
         }
 
@@ -304,6 +334,10 @@ class MatukioControllerBookings extends JControllerLegacy
         $this->setRedirect($link, $msg);
     }
 
+    /**
+     * OLD booking form
+     * @return object
+     */
     function saveOld(){
         $database = JFactory::getDBO();
         $art = 4; // Backend
@@ -312,7 +346,7 @@ class MatukioControllerBookings extends JControllerLegacy
         $event_id = JFactory::getApplication()->input->getInt('event_id', 0);
         $uid = 0; // Hardcoded to get it working, could cause some new bugs
         $uuid = JFactory::getApplication()->input->getInt('uuid', 0);
-        $nrbooked = JFactory::getApplication()->input->getInt('nrbooked', 0);
+        $nrbooked = JFactory::getApplication()->input->getInt('nrbooked', 1);
         $userid = JFactory::getApplication()->input->getInt('userid', 0);
 
 //      var_dump($userid);
@@ -324,8 +358,6 @@ class MatukioControllerBookings extends JControllerLegacy
         $event = JTable::getInstance('matukio', 'Table');
         $event->load($event_id);
 
-        //var_dump($event);
-        //echo $event_id;
         $reason = "";
 
         if (!empty($uid)) {
@@ -360,8 +392,6 @@ class MatukioControllerBookings extends JControllerLegacy
 //            }
 //        }
 
-//        echo "Pflichtfeld " . $pflichtfeld;
-//        die("asd");
 
 //        if ($pflichtfeld) {
 //            $allesok = 0;
@@ -429,9 +459,14 @@ class MatukioControllerBookings extends JControllerLegacy
         $neu->zusatz20 = MatukioHelperUtilsBasic::cleanHTMLfromText($neu->zusatz20);
         $neu->nrbooked = $nrbooked;
 
+        if (!empty($event->fees)) {
+            $neu->payment_method = "cash";
 
-
-        //die("adsf");
+            if($nrbooked > 0)
+                $neu->payment_brutto = $event->fees * $nrbooked;
+            else
+                $neu->payment_brutto = $event->fees;
+        }
 
         if (!$neu->check()) {
             return JError::raiseError(500, $database->stderr());
@@ -477,5 +512,8 @@ class MatukioControllerBookings extends JControllerLegacy
         $link = 'index.php?option=com_matukio&task=2';
         $this->setRedirect($link);
     }
+
+
+
 
 }

@@ -27,11 +27,6 @@ class MatukioModelPayPalPayment extends JModelLegacy {
         $query = $db->getQuery(true);
         $query->select('*')->from('#__matukio_bookings')->where('uuid='.$db->quote($uuid));
         $db->setQuery($query,0,1);
-
-        //$booking = $db->loadObject();
-//        echo $query;
-//        var_dump($booking);
-//        die("asdf");
         return $db->loadObject();;
     }
 }

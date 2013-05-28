@@ -21,6 +21,7 @@ JHTML::_('behavior.tooltip');
 $event = JTable::getInstance('matukio', 'Table');
 $event->load($this->booking->semid);
 
+JHTML::_('stylesheet', 'media/com_matukio/backend/css/matukio.css');
 ?>
 <div id="matukio" class="matukio">
 <form action="index.php" method="post" name="adminForm" id="adminForm" class="form" enctype="multipart/form-data">
@@ -283,6 +284,8 @@ $event->load($this->booking->semid);
         echo '</tr>';
         echo "</table>";
 
+    } else {
+        echo '<input type="hidden" name="nrbooked" value="1" />';
     }
 
     ?>
@@ -318,5 +321,8 @@ echo $hidden;
         <?php
     }
 ?>
+<?php echo JHTML::_('form.token'); ?>
 </form>
 </div>
+
+<?php echo MatukioHelperUtilsBasic::getCopyright(); ?>

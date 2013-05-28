@@ -39,7 +39,7 @@ class MatukioControllerEvent extends JControllerLegacy
             $params->merge( $menuparams );
         }
 
-        $ptmpl = $params->get('template', '');
+        $ptmpl = $params->get('event_template', '');
 
         if(!empty($ptmpl)) {
             $tmpl = $ptmpl;
@@ -243,6 +243,41 @@ class MatukioControllerEvent extends JControllerLegacy
             $neu->zusatz19 = MatukioHelperUtilsBasic::cleanHTMLfromText($neu->zusatz19);
             $neu->zusatz20 = MatukioHelperUtilsBasic::cleanHTMLfromText($neu->zusatz20);
 
+            if(!empty($row->fees)){
+                $neu->payment_method = "cash";
+                $payment_brutto = $row->fees * $neu->nrbooked;
+                $coupon_code = $neu->coupon_code;
+
+                if(!empty($coupon_code)) {
+
+                    $cdate = new DateTime();
+
+                    $db = JFactory::getDBO();
+                    $query= $db->getQuery(true);
+                    $query->select('*')->from('#__matukio_booking_coupons')
+                        ->where('code = ' . $db->quote($coupon_code) . ' AND published = 1 AND published_up < '
+                        . $db->quote($cdate->format('Y-m-d H:i:s')) . " AND published_down > " . $db->quote($cdate->format('Y-m-d H:i:s')));
+
+                    //echo $query;
+                    $db->setQuery( $query );
+                    $coupon = $db->loadObject();
+
+                    //var_dump($coupon);
+
+                    if(!empty($coupon)){
+                        if($coupon->procent == 1){
+                            // Get a procent value
+                            $payment_brutto = round($payment_brutto * ((100 - $coupon->value) / 100), 2);
+                        } else {
+                            $payment_brutto = $payment_brutto - $coupon->value;
+                        }
+                    } else {
+                        // Perhaps delete this invalid field, or display an error?! TODO
+                    }
+                }
+                $neu->payment_brutto = $payment_brutto;
+            }
+
             if (!$neu->check()) {
                 JError::raiseError(500, $database->stderr());
                 exit();
@@ -269,6 +304,8 @@ class MatukioControllerEvent extends JControllerLegacy
                 // category overview
                 $link = JRoute::_("index.php?option=com_matukio&view=eventlist");
             }
+
+
 
 
             if ($art == 4) {

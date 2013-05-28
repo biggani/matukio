@@ -8,12 +8,10 @@
 .mat_event_title {display: inline-block;}
 .mat_event_location {width: 100%; }
 
-
 .mat_event_description{width: 100%; padding: 17px 0 5px 0;}
 
 .mat_event_footer {width: 100%; padding: 10px 0; clear: both;}
 .mat_event_footer_inner {}
-
 
 .mat_event_infoline {float: left; padding: 10px 10px 10px 0;}
 .mat_event_footer_buttons {}

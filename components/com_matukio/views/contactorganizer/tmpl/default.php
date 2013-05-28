@@ -64,11 +64,16 @@ if ($this->art == 1) {
     <input type="hidden" name="controller" value="contactorganizer"/>
     <input type="hidden" name="task" value="sendEmail"/>
 
-    <input type="hidden" name="event_id" value="<?php echo $this->event->id; ?>" />
+    <?php if ($this->art != "organizer"): ?>
+        <input type="hidden" name="event_id" value="<?php echo $this->event->id; ?>" />
+        <input type="hidden" name="organizer_id" value="0" />
+    <?php else: ?>
+        <input type="hidden" name="event_id" value="0" />
+        <input type="hidden" name="organizer_id" value="<?php echo $this->organizer->id; ?>" />
+    <?php endif; ?>
+
     <input type="hidden" name="art" value="<?php echo $this->art?>" />
-
-
-<br /><center><input type="submit" style="cursor:pointer;" type="button" value="<?php echo JTEXT::_('COM_MATUKIO_SEND') ?>"</center>
+    <br /><center><input type="submit" style="cursor:pointer;" type="button" value="<?php echo JTEXT::_('COM_MATUKIO_SEND') ?>"</center>
 </form>
 </body>
 </html>

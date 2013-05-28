@@ -15,6 +15,15 @@ class MatukioHelperUtilsBooking
 {
     private static $instance;
 
+    public static $BOOKED = 0;
+    public static $WAITLIST = 1;
+    public static $ARCHIVED = 2;
+    public static $DELETED = 3;
+
+
+    public static $PAID_NOT = 0;
+    public static $PAID = 1;
+
     /**
      * @param $id
      * @return string
@@ -301,10 +310,23 @@ class MatukioHelperUtilsBooking
         if ($required) {
             $req = " required";
         }
-        return '<input class="' . $class . $req . '" type="text" name="' . $name . '"
+
+        $data_validator = "";
+
+        if($name == "email"){
+            $data_validator = " validate-email";
+        }
+
+        $bookingfield_desc = JText::_(strtoupper($title));
+
+        if(MatukioHelperSettings::getSettings('bookingfield_desc', 0))  {
+            $bookingfield_desc = JText::_(strtoupper($title) . '_DESC');
+        }
+
+        return '<input class="' . $class . $req . $data_validator . '" type="text" name="' . $name . '"
             id="' . $name . '" value="' . $value . '" size="' . $size . '"
             maxlength="' . $maxlength . '" style="' . $style . '" title="' .
-            JText::_(strtoupper($title) . '_DESC') . '" />';
+            $bookingfield_desc . '" />';
     }
 
 
@@ -351,7 +373,7 @@ class MatukioHelperUtilsBooking
      * @param bool $pageone
      * @param $value
      */
-    public static function printFieldElement($field, $pageone = false, $value = -1)
+    public static function printFieldElement($field, $pageone = false, $value = -1, $field_style = "default")
     {
         if ($field->type == 'spacer') {
             echo "</table>";
@@ -359,7 +381,14 @@ class MatukioHelperUtilsBooking
             echo "<table class=\"mat_table\">\n";
         } else {
             echo '<tr>';
-            echo '<td class="key" width="150px">';
+
+            if($field_style == "small") {
+                $size = "100px";
+            } else {
+                $size = "150px";
+            }
+
+            echo '<td class="key" width="' . $size . '">';
             echo '<label for="' . $field->field_name . '" width="100" title="' . JText::_($field->label) . '">';
             echo JText::_($field->label);
             if ($field->required == 1) {
@@ -368,9 +397,14 @@ class MatukioHelperUtilsBooking
             echo '</label>';
             echo '</td>';
 
-            echo '<td colspan="2">';
+            echo '<td>';
 
-            $style = "width: 250px";
+            if ($field_style == "small") {
+                $style = "width: 100px";
+            } else {
+                $style = "width: 250px"; // Default
+            }
+
             if (!empty($field->style)) {
                 $style = $field->style;
             }
@@ -430,5 +464,38 @@ class MatukioHelperUtilsBooking
         return $booking;
     }
 
+
+    /**
+     * @param int $s
+     * @return string
+     */
+    public static function getBookingStatusName($s = 0){
+        switch($s) {
+            default:
+            case MatukioHelperUtilsBooking::$BOOKED:
+                return JText::_("COM_MATUKIO_PARTICIPANT_ASSURED");
+
+            case MatukioHelperUtilsBooking::$ARCHIVED:
+                return JText::_("COM_MATUKIO_ARCHIVED");
+
+            case MatukioHelperUtilsBooking::$DELETED:
+                return JText::_("COM_MATUKIO_DELETED");
+
+            case MatukioHelperUtilsBooking::$WAITLIST:
+                return JText::_("COM_MATUKIO_BOOKING_ON_WAITLIST");
+        }
+
+    }
+
+    public static function getBookingPaidName($s = 0){
+        switch($s) {
+            default:
+            case MatukioHelperUtilsBooking::$PAID_NOT:
+                return JText::_("COM_MATUKIO_NOT_PAID");
+
+            case MatukioHelperUtilsBooking::$PAID:
+                return JText::_("COM_MATUKIO_PAID");
+        }
+    }
 
 }

@@ -43,7 +43,7 @@ class MatukioControllerCreateEvent extends JControllerLegacy
         $database = JFactory::getDBO();
         $my = JFactory::getuser();
         $cid = JFactory::getApplication()->input->getInt('cid', 0);
-        if (!JFactory::getUser()->authorise('core.edit', 'com_matukio.frontend.', $cid)) {
+        if (!JFactory::getUser()->authorise('core.edit', 'com_matukio', $cid)) {
             return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
         }
         $vorlage = JFactory::getApplication()->input->getInt('vorlage', 0);
@@ -81,7 +81,7 @@ class MatukioControllerCreateEvent extends JControllerLegacy
         $cid = JFactory::getApplication()->input->getInt('cid', 0);
 
         // Check authorise
-        if (!JFactory::getUser()->authorise('core.edit', 'com_matukio.frontend.', $cid)) {
+        if (!JFactory::getUser()->authorise('core.edit', 'com_matukio', $cid)) {
             return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
         }
         $database->setQuery("SELECT * FROM #__matukio WHERE id='$cid'");
@@ -134,11 +134,11 @@ class MatukioControllerCreateEvent extends JControllerLegacy
 
         $msg = JTEXT::_("COM_MATUKIO_EVENT_SAVED");
         if(empty($cid)){
-            if (!JFactory::getUser()->authorise('core.create', 'com_matukio.frontend.')) {
+            if (!JFactory::getUser()->authorise('core.create', 'com_matukio')) {
                 return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
             }
         } else {
-            if (!JFactory::getUser()->authorise('core.edit', 'com_matukio.frontend.', $cid)) {
+            if (!JFactory::getUser()->authorise('core.edit', 'com_matukio', $cid)) {
                 return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
             }
         }

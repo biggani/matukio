@@ -246,8 +246,6 @@ class HTML_matukio
 
     public static function sem_g029($kurs, $rows, $uid)
     {
-//        var_dump($uid);
-//        die();
         global $my;
         JHTML::_('behavior.modal');
 
@@ -257,7 +255,7 @@ class HTML_matukio
 
         $html = MatukioHelperUtilsBasic::printFormstart(2) . "\n<table width=\"100%\"><tr><th width=\"90%\" style=\"text-align:left\">"
                 . JTEXT::_('COM_MATUKIO_EVENT') . ": " . $kurs->title . "</th>";
-        $html .= "<td style=\"text-align: right; white-space: nowrap\">" . MatukioHelperUtilsAdmin::getBackendPrintWindow(2, $kurs->id)
+        $html .= "<td style=\"text-align: right; white-space: nowrap\">" . MatukioHelperUtilsAdmin::getBackendPrintWindow(2, $kurs->id) // 2 = signature, 4 = participant list, 5 = csv export
                 . MatukioHelperUtilsAdmin::getBackendPrintWindow(4, $kurs->id) . MatukioHelperUtilsAdmin::getBackendPrintWindow(5, $kurs->id)
                 . "</td></tr></table>";
 
@@ -279,7 +277,6 @@ class HTML_matukio
 
         $n = count($rows);
 
-//       var_dump($rows);
 
         if ($n > 0) {
             $k = 0;
@@ -852,204 +849,203 @@ class HTML_matukio
         echo '<form action="index.php" method="post" name="adminForm" id="adminForm">';
         //$pane =& JPane::getInstance('tabs', array('startOffset' => 0));
 
-        $options = array(
-            'startOffset' => 0,  // 0 starts on the first tab, 1 starts the second, etc$
-            'useCookie' => true, // this must not be a string. Don't use quotes.
-        );
-
-        echo JHtml::_('tabs.start', $options);
-        echo JHtml::_('tabs.panel', JText::_( 'COM_MATUKIO_BASIC' ), 'basic' );
-        ?>
-
-    <div class="col60">
-        <div id="matsettings">
-        <fieldset class="adminform">
-            <legend><?php echo JText::_('COM_MATUKIO_BASIC'); ?></legend>
-            <table class="admintable">
-                <?php
-                foreach ($items_basic as $value) {
-
-                    echo '<tr>';
-                    echo '<td class="key">';
-                    echo '<label for="' . $value->title . '" width="100" title="' . JText::_('COM_MATUKIO_' . strtoupper($value->title) . '_DESC') . '">';
-                    echo JText::_('COM_MATUKIO_' . strtoupper($value->title));
-                    echo '</label>';
-                    echo '</td>';
-
-                    echo '<td colspan="2">';
-
-                    echo MatukioHelperSettings::getSettingField($value);
-
-                    echo '</td>';
-                    echo '</tr>';
-                }
-                ?>
-            </table>
-        </fieldset>
-        </div>
-    </div>
-    <div class="clr"></div>
-    <?php
-        echo JHtml::_('tabs.panel', JText::_( 'COM_MATUKIO_LAYOUT' ), 'layout' );
-
-        //echo $pane->startPanel(JText::_('COM_MATUKIO_LAYOUT'), 'layout');
-        ?>
-    <div class="col60">
-        <fieldset class="adminform">
-            <legend><?php echo JText::_('COM_MATUKIO_LAYOUT'); ?></legend>
-
-            <table class="admintable">
-                <?php
-                foreach ($items_layout as $value) {
-
-                    echo '<tr>';
-                    echo '<td class="key">';
-                    echo '<label for="' . $value->title . '" width="100" title="' . JText::_('COM_MATUKIO_' . strtoupper($value->title) . '_DESC') . '">';
-                    echo JText::_('COM_MATUKIO_' . strtoupper($value->title));
-                    echo '</label>';
-                    echo '</td>';
-
-                    echo '<td colspan="2">';
-
-                    echo MatukioHelperSettings::getSettingField($value);
-
-                    echo '</td>';
-                    echo '</tr>';
-
-                }
-                ?>
-            </table>
-        </fieldset>
-    </div>
-    <div class="clr"></div>
-    <?php
-        echo JHtml::_('tabs.panel', JText::_( 'COM_MATUKIO_PAYMENT' ), 'payment' );
-
-
-//        echo $pane->endPanel();
-//        echo $pane->startPanel(JText::_('COM_MATUKIO_PAYMENT'), 'layout');
-        ?>
-    <div class="col60">
-        <fieldset class="adminform">
-            <legend><?php echo JText::_('COM_MATUKIO_PAYMENT'); ?></legend>
-
-            <table class="admintable">
-                <?php
-                foreach ($items_payment as $value) {
-
-                    echo '<tr>';
-                    echo '<td class="key">';
-                    echo '<label for="' . $value->title . '" width="100" title="' . JText::_('COM_MATUKIO_' . strtoupper($value->title) . '_DESC') . '">';
-                    echo JText::_('COM_MATUKIO_' . strtoupper($value->title));
-                    echo '</label>';
-                    echo '</td>';
-
-                    echo '<td colspan="2">';
-
-                    echo MatukioHelperSettings::getSettingField($value);
-
-                    echo '</td>';
-                    echo '</tr>';
-
-                }
-                ?>
-            </table>
-        </fieldset>
-    </div>
-    <div class="clr"></div>
-    <?php
-
-//        echo $pane->endPanel();
-//        echo $pane->startPanel(JText::_('COM_MATUKIO_ADVANCED'), 'layout');
-
-        echo JHtml::_('tabs.panel', JText::_( 'COM_MATUKIO_ADVANCED' ), 'advanced' );
-
-        ?>
-    <div class="col60">
-        <fieldset class="adminform">
-            <legend><?php echo JText::_('COM_MATUKIO_ADVANCED'); ?></legend>
-
-            <table class="admintable">
-                <?php
-                foreach ($items_advanced as $value) {
-
-                    echo '<tr>';
-                    echo '<td class="key">';
-                    echo '<label for="' . $value->title . '" width="100" title="' . JText::_('COM_MATUKIO_' . strtoupper($value->title) . '_DESC') . '">';
-                    echo JText::_('COM_MATUKIO_' . strtoupper($value->title));
-                    echo '</label>';
-                    echo '</td>';
-
-                    echo '<td colspan="2">';
-
-                    echo MatukioHelperSettings::getSettingField($value);
-
-                    echo '</td>';
-                    echo '</tr>';
-
-                }
-                ?>
-            </table>
-        </fieldset>
-    </div>
-    <div class="clr"></div>
-    <?php
-
-//        echo $pane->endPanel();
-//        echo $pane->startPanel(JText::_('COM_MATUKIO_SECURITY'), 'layout');
-
-        echo JHtml::_('tabs.panel', JText::_( 'COM_MATUKIO_SECURITY' ), 'security' );
-
-        ?>
-    <div class="col60">
-        <fieldset class="adminform">
-            <legend><?php echo JText::_('COM_MATUKIO_SECURITY'); ?></legend>
-
-            <table class="admintable">
-                <?php
-                foreach ($items_security as $value) {
-
-                    echo '<tr>';
-                    echo '<td class="key">';
-                    echo '<label for="' . $value->title . '" width="100" title="' . JText::_('COM_MATUKIO_' . strtoupper($value->title) . '_DESC') . '">';
-                    echo JText::_('COM_MATUKIO_' . strtoupper($value->title));
-                    echo '</label>';
-                    echo '</td>';
-
-                    echo '<td colspan="2">';
-
-                    switch ($value->type) {
-                        case 'textarea':
-                            echo MatukioHelperSettings::getTextareaSettings($value->id, $value->title, $value->value);
-                            break;
-
-                        case 'select':
-                            echo MatukioHelperSettings::getSelectSettings($value->id, $value->title, $value->value, $value->values);
-                            break;
-
-
-                        case 'text':
-                        default:
-
-                            echo MatukioHelperSettings::getTextSettings($value->id, $value->title, $value->value);
-                            break;
-
-                    }
-                    echo '</td>';
-                    echo '</tr>';
-
-                }
-                ?>
-            </table>
-        </fieldset>
-    </div>
-    <div class="clr"></div>
-    <?php
-
-//        echo $pane->endPanel();
-//        echo $pane->endPane();
-        echo JHtml::_('tabs.end');
-    ?>
+//        $params['useCookie'] = true;
+//        $params['startOffset'] = 0;
+//
+//        $group = 'tabs';
+//
+//        echo JHtml::_('tabs.start', $group, $params);
+//        echo JHtml::_('tabs.panel', JText::_( 'COM_MATUKIO_BASIC' ), 'basic' );
+//        ?>
+<!---->
+<!--    <div class="col60">-->
+<!--        <div id="matsettings">-->
+<!--        <fieldset class="adminform">-->
+<!--            <legend>--><?php //echo JText::_('COM_MATUKIO_BASIC'); ?><!--</legend>-->
+<!--            <table class="admintable">-->
+<!--                --><?php
+//                foreach ($items_basic as $value) {
+//
+//                    echo '<tr>';
+//                    echo '<td class="key">';
+//                    echo '<label for="' . $value->title . '" width="100" title="' . JText::_('COM_MATUKIO_' . strtoupper($value->title) . '_DESC') . '">';
+//                    echo JText::_('COM_MATUKIO_' . strtoupper($value->title));
+//                    echo '</label>';
+//                    echo '</td>';
+//
+//                    echo '<td colspan="2">';
+//
+//                    echo MatukioHelperSettings::getSettingField($value);
+//
+//                    echo '</td>';
+//                    echo '</tr>';
+//                }
+//                ?>
+<!--            </table>-->
+<!--        </fieldset>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    <div class="clr"></div>-->
+<!--    --><?php
+//        echo JHtml::_('tabs.panel', JText::_('COM_MATUKIO_LAYOUT'), 'layout');
+//
+//        //echo $pane->startPanel(JText::_('COM_MATUKIO_LAYOUT'), 'layout');
+//        ?>
+<!--    <div class="col60">-->
+<!--        <fieldset class="adminform">-->
+<!--            <legend>--><?php //echo JText::_('COM_MATUKIO_LAYOUT'); ?><!--</legend>-->
+<!---->
+<!--            <table class="admintable">-->
+<!--                --><?php
+//                foreach ($items_layout as $value) {
+//
+//                    echo '<tr>';
+//                    echo '<td class="key">';
+//                    echo '<label for="' . $value->title . '" width="100" title="' . JText::_('COM_MATUKIO_' . strtoupper($value->title) . '_DESC') . '">';
+//                    echo JText::_('COM_MATUKIO_' . strtoupper($value->title));
+//                    echo '</label>';
+//                    echo '</td>';
+//
+//                    echo '<td colspan="2">';
+//
+//                    echo MatukioHelperSettings::getSettingField($value);
+//
+//                    echo '</td>';
+//                    echo '</tr>';
+//
+//                }
+//                ?>
+<!--            </table>-->
+<!--        </fieldset>-->
+<!--    </div>-->
+<!--    <div class="clr"></div>-->
+<!--    --><?php
+//        echo JHtml::_('tabs.panel', JText::_( 'COM_MATUKIO_PAYMENT' ), 'payment' );
+//
+//
+////        echo $pane->endPanel();
+////        echo $pane->startPanel(JText::_('COM_MATUKIO_PAYMENT'), 'layout');
+//        ?>
+<!--    <div class="col60">-->
+<!--        <fieldset class="adminform">-->
+<!--            <legend>--><?php //echo JText::_('COM_MATUKIO_PAYMENT'); ?><!--</legend>-->
+<!---->
+<!--            <table class="admintable">-->
+<!--                --><?php
+//                foreach ($items_payment as $value) {
+//
+//                    echo '<tr>';
+//                    echo '<td class="key">';
+//                    echo '<label for="' . $value->title . '" width="100" title="' . JText::_('COM_MATUKIO_' . strtoupper($value->title) . '_DESC') . '">';
+//                    echo JText::_('COM_MATUKIO_' . strtoupper($value->title));
+//                    echo '</label>';
+//                    echo '</td>';
+//
+//                    echo '<td colspan="2">';
+//
+//                    echo MatukioHelperSettings::getSettingField($value);
+//
+//                    echo '</td>';
+//                    echo '</tr>';
+//
+//                }
+//                ?>
+<!--            </table>-->
+<!--        </fieldset>-->
+<!--    </div>-->
+<!--    <div class="clr"></div>-->
+<!--    --><?php
+//
+////        echo $pane->endPanel();
+////        echo $pane->startPanel(JText::_('COM_MATUKIO_ADVANCED'), 'layout');
+//
+//        echo JHtml::_('tabs.panel', JText::_( 'COM_MATUKIO_ADVANCED' ), 'advanced' );
+//
+//        ?>
+<!--    <div class="col60">-->
+<!--        <fieldset class="adminform">-->
+<!--            <legend>--><?php //echo JText::_('COM_MATUKIO_ADVANCED'); ?><!--</legend>-->
+<!---->
+<!--            <table class="admintable">-->
+<!--                --><?php
+//                foreach ($items_advanced as $value) {
+//
+//                    echo '<tr>';
+//                    echo '<td class="key">';
+//                    echo '<label for="' . $value->title . '" width="100" title="' . JText::_('COM_MATUKIO_' . strtoupper($value->title) . '_DESC') . '">';
+//                    echo JText::_('COM_MATUKIO_' . strtoupper($value->title));
+//                    echo '</label>';
+//                    echo '</td>';
+//
+//                    echo '<td colspan="2">';
+//
+//                    echo MatukioHelperSettings::getSettingField($value);
+//
+//                    echo '</td>';
+//                    echo '</tr>';
+//
+//                }
+//                ?>
+<!--            </table>-->
+<!--        </fieldset>-->
+<!--    </div>-->
+<!--    <div class="clr"></div>-->
+<!--    --><?php
+//
+////        echo $pane->endPanel();
+////        echo $pane->startPanel(JText::_('COM_MATUKIO_SECURITY'), 'layout');
+//
+//        echo JHtml::_('tabs.panel', JText::_( 'COM_MATUKIO_SECURITY' ), 'security' );
+//
+//        ?>
+<!--    <div class="col60">-->
+<!--        <fieldset class="adminform">-->
+<!--            <legend>--><?php //echo JText::_('COM_MATUKIO_SECURITY'); ?><!--</legend>-->
+<!---->
+<!--            <table class="admintable">-->
+<!--                --><?php
+//                foreach ($items_security as $value) {
+//
+//                    echo '<tr>';
+//                    echo '<td class="key">';
+//                    echo '<label for="' . $value->title . '" width="100" title="' . JText::_('COM_MATUKIO_' . strtoupper($value->title) . '_DESC') . '">';
+//                    echo JText::_('COM_MATUKIO_' . strtoupper($value->title));
+//                    echo '</label>';
+//                    echo '</td>';
+//
+//                    echo '<td colspan="2">';
+//
+//                    switch ($value->type) {
+//                        case 'textarea':
+//                            echo MatukioHelperSettings::getTextareaSettings($value->id, $value->title, $value->value);
+//                            break;
+//
+//                        case 'select':
+//                            echo MatukioHelperSettings::getSelectSettings($value->id, $value->title, $value->value, $value->values);
+//                            break;
+//
+//
+//                        case 'text':
+//                        default:
+//                            echo MatukioHelperSettings::getTextSettings($value->id, $value->title, $value->value);
+//                            break;
+//
+//                    }
+//                    echo '</td>';
+//                    echo '</tr>';
+//
+//                }
+//                ?>
+<!--            </table>-->
+<!--        </fieldset>-->
+<!--    </div>-->
+<!--    <div class="clr"></div>-->
+<!--    --><?php
+//
+////        echo $pane->endPanel();
+////        echo $pane->endPane();
+//        echo JHtml::_('tabs.end');
+//    ?>
 
     <input type="hidden" name="option" value="com_matukio"/>
     <input type="hidden" name="type" value="config"/>

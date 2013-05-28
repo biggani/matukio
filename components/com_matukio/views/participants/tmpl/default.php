@@ -235,10 +235,12 @@ if ($n > 0) {
                 if ($anzahl <= $this->kurs->maxpupil) {
                     // Certificate USER LInk     javascript:semauf(13,'" . $row->sid . "','');
                     $certlink = JRoute::_("index.php?option=com_matukio&view=participants&task=certificateUser&uid=" . $row->sid . "&cid=" . $this->kurs->id);
-                    $htxt = "<a title=\"" . $certtitel . "\" href=\"\"><img src=\""
+                    $htxt = "<a title=\"" . $certtitel . "\" href=\"" . $certlink . "\"><img src=\""
                         . MatukioHelperUtilsBasic::getComponentImagePath() . "220" . $row->certificated . ".png\" border=\"0\" align=\"absmiddle\"></a>";
                     if ($row->certificated == 1) {
-                        $htxt .= " " . MatukioHelperUtilsEvents::getPrintWindow(1, $row->sid, '', '');
+                        $htxt .= " " . MatukioHelperUtilsEvents::getPrintWindow(1, $row->sid, $row->id, '');
+
+                        // http://localhost/j25test/index.php?tmpl=component&s=5qn7418j1304687854715y725c682506317mp6n08711r12k076r5f17x2lgar3a524t26r2xq7gg0250517x90r89u13h1v3t75l139508w3k8b5v1fv1m1116nd431ou4u115160j0vgud56og3w300704la10h3p5i518hk4696js0x572dtn4xvu21l354i805304&option=com_matukio&view=printeventlist&dateid=1&catid=0&search=&limit=20&limitstart=0&cid=0&uid=1&todo=certificate
                     }
                 }
                 $html .= MatukioHelperUtilsEvents::getTableCell($htxt, 'd', 'c', '', "sem_row");

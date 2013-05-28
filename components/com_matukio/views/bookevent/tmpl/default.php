@@ -17,6 +17,7 @@ JHTML::_('stylesheet', 'media/com_matukio/css/matukio.css');
 JHTML::_('stylesheet', 'media/com_matukio/css/booking.css');
 
 $usermail = $this->user->email;
+
 ?>
 <script type="text/javascript">
 window.addEvent('domready', function () {
@@ -36,32 +37,39 @@ window.addEvent('domready', function () {
     var usermail = '<?php echo $usermail; ?>';
 
     var email = document.id('email');
+    var agb = document.id('agb');
 
-    email.set('value', usermail);
+    var nrbooked = document.id('nrbooked');
 
-    if(usermail != "") {
-        email.set('disabled', true);
+    var coupon_code = document.id('coupon_code');
+
+    if(email) {
+        email.set('value', usermail );
+
+        if(usermail != "")     {
+            // email.set('disabled', true); // TODO add a setting for this
+        }
     }
 
-<?php
-if (MatukioHelperSettings::getSettings("payment_coupon", 1) == 1 && !empty($this->event->fees)) {
-    echo "var coupon = true;\n";
-} else {
-    echo "var coupon = false;\n";
-}
-?>
+    <?php
+    if (MatukioHelperSettings::getSettings("payment_coupon", 1) == 1 && !empty($this->event->fees)) {
+        echo "var coupon = true;\n";
+    } else {
+        echo "var coupon = false;\n";
+    }
+    ?>
 
-<?php
-for ($i = 0; $i < count($this->fields_p1); $i++) {
-    $field = $this->fields_p1[$i];
+    <?php
+    for ($i = 0; $i < count($this->fields_p1); $i++) {
+        $field = $this->fields_p1[$i];
 
-    if ($field->type != 'spacer')
-        echo "var " . $field->field_name . " = document.id('" . $field->field_name . "');\n";
-    // Confirmation fields
-    if ($field->type != 'spacer')
-        echo "var conf_" . $field->field_name . " = document.id('conf_" . $field->field_name . "');\n";
-}
-?>
+        if ($field->type != 'spacer')
+            echo "var " . $field->field_name . " = document.id('" . $field->field_name . "');\n";
+        // Confirmation fields
+        if ($field->type != 'spacer')
+            echo "var conf_" . $field->field_name . " = document.id('conf_" . $field->field_name . "');\n";
+    }
+    ?>
 
     var mh1, mh2, mh3 = null;
 
@@ -72,6 +80,16 @@ for ($i = 0; $i < count($this->fields_p1); $i++) {
         mh1 = document.id('mat_hp1');
         mh2 = document.id('mat_hp2');
         mh3 = document.id('mat_hp3');
+    }
+
+    function validateAGB(){
+        if(agb) { // No AGB, so they are always true..
+            if(agb.checked == false){
+                return false;
+            }
+        }
+
+        return true;
     }
 
     function nextPage(event) {
@@ -96,17 +114,13 @@ for ($i = 0; $i < count($this->fields_p1); $i++) {
             return;
         }
 
-    <?php
-    if (MatukioHelperSettings::getSettings("payment_coupon", 1) == 1 && !empty($this->event->fees)) {
-        ?>
-        if (current_step == 3 && !validateCoupon()) {
-            alert("<?php echo JTEXT::_("COM_MATUKIO_INVALID_COUPON_CODE"); ?>");
-            current_step--;
-            return;
-        }
-        <?php
-    }
-    ?>
+        <?php if (MatukioHelperSettings::getSettings("payment_coupon", 1) == 1 && $this->event->fees > 0) : ?>
+            if (current_step == 3 && !validateCoupon()) {
+                alert("<?php echo JTEXT::_("COM_MATUKIO_INVALID_COUPON_CODE"); ?>");
+                current_step--;
+                return;
+            }
+        <?php endif; ?>
 
         btn_back.setStyle('display', 'inline-block');
 
@@ -135,6 +149,11 @@ for ($i = 0; $i < count($this->fields_p1); $i++) {
             btn_submit.setStyle('display', 'inline-block');
 
             fillConf();
+
+            if(steps == 3) {
+                fillPayment();
+            }
+
         }
 
     }
@@ -174,27 +193,82 @@ for ($i = 0; $i < count($this->fields_p1); $i++) {
     function sendPage(event) {
         event.stop();
 
-        // alert("submitting");
-        document.id('FrontForm').submit();
+        if(!validateAGB()) {
+            alert("<?php echo JText::_("COM_MATUKIO_AGB_NOT_ACCEPTED"); ?>");
+            return;
+        }
 
+        document.id('FrontForm').submit();
     }
 
     function fillConf() {
-    <?php
-    for ($i = 0; $i < count($this->fields_p1); $i++) {
-        $field = $this->fields_p1[$i];
+        <?php
+            // Generate js code for the confirmation fields
+            for ($i = 0; $i < count($this->fields_p1); $i++) {
+                $field = $this->fields_p1[$i];
 
-        if ($field->type != 'spacer') {
-            if($field->type != 'radio') {
-                echo "conf_" . $field->field_name . ".set('text', " . $field->field_name . ".get('value'));\n";
-            } else {
-                echo "conf_" . $field->field_name . ".set('text', document.id(FrontForm).getElement('input[name="
-                             . $field->field_name . "]:checked').value);\n";
-                //document.id('formID').getElement('input[name=foo]:checked").value
+                if ($field->type != 'spacer') {
+                    if($field->type != 'radio') {
+                        echo "conf_" . $field->field_name . ".set('text', " . $field->field_name . ".get('value'));\n";
+
+                        //echo "alert('Value (" . $field->field_name . "): ' + " .$field->field_name . ".get('value'));";
+                    } else {
+                        echo "conf_" . $field->field_name . ".set('text', document.id(FrontForm).getElement('input[name="
+                                     . $field->field_name . "]:checked').value);\n";
+                    }
+                }
             }
-        }
+        ?>
     }
+    <?php
+    /* conf_payment_type, conf_nrbooked, conf_coupon_code, conf_payment_total */
     ?>
+    function fillPayment() {
+        var conf_payment_type = document.id("conf_payment_type");
+        var conf_nrbooked = document.id("conf_nrbooked");
+        var conf_coupon_code = document.id("conf_coupon_code");
+        var conf_payment_total = document.id("conf_payment_total");
+
+        if(conf_payment_type) {
+            conf_payment_type.set('text', document.id("payment").get('value'));
+        }
+
+        if(conf_nrbooked) {
+            conf_nrbooked.set('text', document.id("nrbooked").get('value'));
+        }
+
+        if(conf_coupon_code) {
+            conf_coupon_code.set('text', document.id("coupon_code").get('value'));
+        }
+
+        // The tricky part
+        if(conf_payment_total) {
+            var code = "";
+
+            if(coupon_code) {
+                code = coupon_code.get('value');
+            }
+
+            var places = 1;
+
+            if(nrbooked) {
+                places = nrbooked.get('value');
+            }
+
+            var erg = new Request({
+                url:'index.php?option=com_matukio&view=requests&format=raw&task=get_total&code=' + code + '&fee=<?php echo $this->event->fees ?>&nrbooked=' + places,
+                method:'get',
+                async:false,
+
+                onSuccess:function (responseText) {
+                    resp = responseText;
+                    conf_payment_total.set('text', resp);
+                }
+            });
+
+            erg.send();
+        }
+
     }
 
     Form.Validator.add('required', {
@@ -218,9 +292,8 @@ for ($i = 0; $i < count($this->fields_p1); $i++) {
     }
 
 <?php
-if (MatukioHelperSettings::getSettings("payment_coupon", 1) == 1 && !empty($this->event->fees)) {
+if (MatukioHelperSettings::getSettings("payment_coupon", 1) == 1 && $this->event->fees > 0) {
     ?>
-    var coupon_code = document.id('coupon_code');
 
     function validateCoupon() {
         var response = false;
@@ -260,38 +333,38 @@ if (MatukioHelperSettings::getSettings("payment_coupon", 1) == 1 && !empty($this
     });
 
 <?php
-if (!empty($this->event->fees) && !empty($this->payment)) {
-    ?>
-    payment.addEvent('change', function (event) {
-        var val = payment.get('value');
-
-        <?php
-        if (MatukioHelperSettings::getSettings("payment_paypal", 1) == 1) {
-            echo "var div_pay_paypal = document.id('mat_paypal');\n";
-        }
-        if (MatukioHelperSettings::getSettings("payment_banktransfer", 1) == 1) {
-            echo "var div_pay_banktransfer = document.id('mat_banktransfer');\n";
-        }
-
-        if (MatukioHelperSettings::getSettings("payment_banktransfer", 1) == 1) {
-            echo "div_pay_banktransfer.setStyle('display', 'none');\n";
-        }
-        if (MatukioHelperSettings::getSettings("payment_paypal", 1) == 1) {
-            echo "div_pay_paypal.setStyle('display', 'none');\n";
-        }
-        ?>
-
-        if (val == 'payment_cash') {
-
-        } else if (val == 'payment_banktransfer') {
-            div_pay_banktransfer.setStyle('display', 'block');
-        } else if (val == 'payment_paypal') {
-            div_pay_paypal.setStyle('display', 'block');
-        }
-
-    });
-    <?php
-}
+//if (!empty($this->event->fees) && !empty($this->payment)) {
+//    ?>
+<!--    payment.addEvent('change', function (event) {-->
+<!--        var val = payment.get('value');-->
+<!---->
+<!--        --><?php
+//        if (MatukioHelperSettings::getSettings("payment_paypal", 1) == 1) {
+//            echo "var div_pay_paypal = document.id('mat_paypal');\n";
+//        }
+//        if (MatukioHelperSettings::getSettings("payment_banktransfer", 1) == 1) {
+//            echo "var div_pay_banktransfer = document.id('mat_banktransfer');\n";
+//        }
+//
+//        if (MatukioHelperSettings::getSettings("payment_banktransfer", 1) == 1) {
+//            echo "div_pay_banktransfer.setStyle('display', 'none');\n";
+//        }
+//        if (MatukioHelperSettings::getSettings("payment_paypal", 1) == 1) {
+//            echo "div_pay_paypal.setStyle('display', 'none');\n";
+//        }
+//        ?>
+<!---->
+<!--        if (val == 'payment_cash') {-->
+<!---->
+<!--        } else if (val == 'payment_banktransfer') {-->
+<!--            div_pay_banktransfer.setStyle('display', 'block');-->
+<!--        } else if (val == 'payment_paypal') {-->
+<!--            div_pay_paypal.setStyle('display', 'block');-->
+<!--        }-->
+<!---->
+<!--    });-->
+<!--    --><?php
+//}
 ?>
 });
 </script>
@@ -304,9 +377,20 @@ if (!empty($this->event->fees) && !empty($this->payment)) {
     echo MatukioHelperUtilsBooking::getBookingHeader($this->steps);
     echo "</div>";
     echo "<div id=\"mat_intro\">";
+    echo "<h3>" . JText::_($this->event->title) . "</h3>";
+
     echo JTEXT::_("COM_MATUKIO_BOOKING_INTRO");
+
+    if(MatukioHelperSettings::getSettings("booking_confirmation", 1)){
+        echo " " . JTEXT::_("COM_MATUKIO_BOOKING_EMAIL_CONFIRMATION"); // you get an email text
+    }
+
     echo "</div>";
     ?>
+    <noscript>
+        <h2><?php echo JText::_("COM_MATUKIO_JAVASCRIPT_REQUIRED"); ?></h2>
+    </noscript>
+
 </div>
 <div id="mat_pageone">
     <table class="mat_table" border="0" cellpadding="8" cellspacing="8">
@@ -448,14 +532,14 @@ if (!empty($this->event->fees) && !empty($this->payment)) {
         echo '</tr>';
         echo "</table>";
 
+    } else {
+       echo "<input type=\"hidden\" name=\"nrbooked\" id=\"nrbooked\"value=\"1\">";
     }
     ?>
 </div>
 <div id="mat_pagetwo">
     <?php
-//    echo $this->event->nrbooked;
-
-    if ($this->event->fees) {
+    if ($this->event->fees > 0) {
         ?>
         <table class="mat_table" border="0" cellpadding="8" cellspacing="8">
             <?php
@@ -468,7 +552,6 @@ if (!empty($this->event->fees) && !empty($this->payment)) {
             echo MatukioHelperPayment::getPaymentSelect($this->payment);
             echo '</td>';
             echo '</tr>';
-
             ?>
         </table>
         <?php
@@ -541,6 +624,14 @@ if (!empty($this->event->fees) && !empty($this->payment)) {
     <table class="mat_table" border="0" cellpadding="8" cellspacing="8">
         <?php
         // Confirmation
+
+//        echo "<tr>";
+//        echo '<td colspan="2">';
+//        echo JText::_($this->event->title);
+//        echo '</td>';
+//        echo '</tr>';
+
+        // Fields
         foreach ($this->fields_p1 as $field) {
 
             if ($field->type == 'spacer') {
@@ -559,7 +650,7 @@ if (!empty($this->event->fees) && !empty($this->payment)) {
                 echo '</label>';
                 echo '</td>';
 
-                echo '<td colspan="2">';
+                echo '<td >';
 
                 echo MatukioHelperUtilsBooking::getConfirmationfields($field->field_name);
 
@@ -610,7 +701,7 @@ if (!empty($this->event->fees) && !empty($this->payment)) {
             return ($str);
         }
 
-        header('Content-type: image/png');
+        //header('Content-type: image/png');
         $imagepath = (JPATH_BASE . '/components/com_matukio/captcha/');
         $captchatext = randomString(5);
         $img = ImageCreateFromPNG(JPATH_BASE . '/components/com_matukio/captcha/captcha.PNG');
@@ -634,13 +725,96 @@ if (!empty($this->event->fees) && !empty($this->payment)) {
         echo "</table>";
     }
 
+    // Payment
+
+    if($this->event->fees > 0) {
+
+        echo '<table class="mat_table" border="0" cellpadding="8" cellspacing="8">';
+
+        // Payment type
+        echo '<tr>';
+        echo '<td class="key" width="150px">';
+        echo '<label for="conf_payment_type" width="100" title="' . JText::_("COM_MATUKIO_FIELD_PAYMENT_METHOD") . '">';
+        echo JText::_("COM_MATUKIO_FIELD_PAYMENT_METHOD");
+
+        echo " <span class=\"mat_req\">*</span>";
+
+        echo '</label>';
+        echo '</td>';
+
+        echo '<td >';
+
+        echo "<div id=\"conf_payment_type\"></div>";
+
+        echo '</td>';
+        echo '</tr>';
+
+        // Nr Booked
+        if ($this->event->nrbooked > 1 AND MatukioHelperSettings::getSettings('frontend_usermehrereplaetze', 1) > 0) {
+            echo '<tr>';
+            echo '<td class="key" width="150px">';
+            echo '<label for="conf_nrbooked" width="100" title="' . JText::_("COM_MATUKIO_BOOKED_PLACES") . '">';
+            echo JText::_("COM_MATUKIO_BOOKED_PLACES");
+
+            echo '</label>';
+            echo '</td>';
+
+            echo '<td >';
+
+            echo "<div id=\"conf_nrbooked\"></div>";
+
+            echo '</td>';
+            echo '</tr>';
+        } else {
+            echo "<input type=\"hidden\" id=\"conf_nrbooked\" value=\"1\">";
+        }
+
+        if (MatukioHelperSettings::getSettings("payment_coupon", 1) == 1) {
+            echo '<tr>';
+            echo '<td class="key" width="150px">';
+            echo '<label for="conf_coupon_code" width="100" title="' . JText::_("COM_MATUKIO_FIELD_COUPON") . '">';
+            echo JText::_("COM_MATUKIO_FIELD_COUPON");
+
+            echo '</label>';
+            echo '</td>';
+
+            echo '<td >';
+
+            echo "<div id=\"conf_coupon_code\"></div>";
+
+            echo '</td>';
+            echo '</tr>';
+        } else {
+            echo "<input type=\"hidden\" id=\"conf_coupon_code\" value=\"1\">";
+        }
+
+        echo '<tr>';
+        echo '<td class="key" width="150px">';
+        echo '<label for="conf_payment_type" width="100" title="' . JText::_("COM_MATUKIO_TOTAL_AMOUNT") . '">';
+        echo JText::_("COM_MATUKIO_TOTAL_AMOUNT");
+
+        echo '</label>';
+        echo '</td>';
+
+        echo '<td >';
+
+        echo "<div id=\"conf_payment_total\"></div>";
+
+        echo '</td>';
+        echo '</tr>';
+
+
+        echo '</table>';
+    }
+
+
     // AGB
     echo "<br />";
     $agb = MatukioHelperSettings::getSettings("agb_text", "");
     if (!empty($agb)) {
         $link = JURI::ROOT() . "index.php?tmpl=component&s=" . MatukioHelperUtilsBasic::getRandomChar() . "&option=" . JFactory::getApplication()->input->get('option') . "&view=agb";
         echo MatukioHelperUtilsBooking::getCheckbox("agb", " ", false);
-        echo "<a href=\"" . $link . "\" class=\"modal\" rel=\"{handler: 'iframe', size: {x:500, y:350}}\">";
+        echo "<a href=\"" . $link . "\" class=\"modal\" rel=\"{handler: 'iframe', size: {x:700, y:500}}\">";
         echo JTEXT::_('COM_MATUKIO_TERMS_AND_CONDITIONS');
         echo "</a>";
     }
@@ -661,12 +835,9 @@ if (!empty($this->event->fees) && !empty($this->payment)) {
 </div>
 
 <?php
-if ($this->event->nrbooked <= 1 OR MatukioHelperSettings::getSettings('frontend_usermehrereplaetze', 1) < 1) {
-    echo "<input type=\"hidden\" name=\"nrbooked\" value=\"1\">";
-}
-
 echo $hidden;
 ?>
+
 <input type="hidden" name="option" value="com_matukio"/>
 <input type="hidden" name="view" value="bookevent"/>
 <input type="hidden" name="controller" value="bookevent"/>
@@ -677,13 +848,7 @@ echo $hidden;
 <input type="hidden" name="semid" value="<?php echo $this->event->id; ?>"/>
 <input type="hidden" name="userid" value="<?php echo $this->user->id; ?>"/>
 <input type="hidden" name="uuid" value="<?php echo MatukioHelperPayment::getUuid(true); ?>"/>
-<input type="hidden" name="ccval" value="<?php echo md5($captchatext); ?>"/>
-
-<?php
-if ($this->event->nrbooked <= 1 OR MatukioHelperSettings::getSettings('frontend_usermehrereplaetze', 1) < 1) {
-    $html .= "<input type=\"hidden\" name=\"nrbooked\" value=\"1\">";
-}
-?>
+<input type="hidden" name="ccval" value="<?php if(!empty($captchatext)){ echo md5($captchatext); } ?>"/>
 </form>
 
 <?php
